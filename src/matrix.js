@@ -5,7 +5,7 @@ class Matrix {
         this.app = app;
         this.containers = containers;
 
-        this.tileSize = 7;
+        this.tileSize = 5;
 
         // Initialize matrix to size of the canvas with null values
         this.rows = Math.trunc(containers.playArea.height / this.tileSize);
