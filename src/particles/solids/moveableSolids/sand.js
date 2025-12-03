@@ -5,7 +5,9 @@ class Sand extends MoveableSolid{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
         super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
 
-        this.rect.fill(0xff0000);
+        let colors = [0xDBD49D, 0xC7C089, 0xDED7A1, 0xCCC78F, 0xE9E9AE];
+
+        this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }

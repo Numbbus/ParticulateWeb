@@ -23,6 +23,12 @@ class Particle{
     move(){}
     action(){}
 
+    setColor(colors){
+        let i = Math.floor(Math.random() * colors.length);
+
+        this.rect.fill(colors[i]);
+    }
+
     getX(){ return this.x; }
     getY(){ return this.y; }
 
