@@ -2,7 +2,7 @@ import { Application, EventSystem, Text, Container, Graphics } from "pixi.js";
 import { FancyButton } from '@pixi/ui';
 import Matrix from './matrix.js' ;
 
-import Sand from "./particles/solids/moveableSolids/sand.js";
+import { Sand } from "./particles/particles.js";
 
 let mouseDown = false;
 let mouseX = null;

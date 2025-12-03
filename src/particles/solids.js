@@ -1,7 +1,22 @@
-import Solid from '../solid'
-import Sand from './sand';
+import Particle from "./particle";
 
-class MoveableSolid extends Solid{
+
+class Solid extends Particle{
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    }
+}
+
+
+class StaticSolid extends Solid{
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    }
+
+    move(){ console.log("Static move"); }
+}
+
+class MoveableSolid extends StaticSolid{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
     {
         super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
@@ -15,7 +30,7 @@ class MoveableSolid extends Solid{
 
             if(bottomTile === null){
                 this.matrix.swapParticles(this.getX(), this.getY(), this.getX(), this.getY()+1);
-            }else if(bottomTile instanceof Sand){
+            }else if(bottomTile instanceof Solid){
                 let bottomRight = this.matrix.getParticle(this.getX() + 1, this.getY() + 1);
                 let bottomLeft = this.matrix.getParticle(this.getX() - 1, this.getY() + 1);
 
@@ -32,11 +47,6 @@ class MoveableSolid extends Solid{
         }else{
             this.framesSinceLastUpdate++;
         }
-
-
-
-
-
     }
 
     action(){
@@ -44,4 +54,6 @@ class MoveableSolid extends Solid{
     }
 }
 
-export default MoveableSolid;
+export default Solid;
+
+export { Solid, StaticSolid, MoveableSolid }

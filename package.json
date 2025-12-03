@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@pixi/ui": "^2.3.2",
     "canvas": "^2.11.2",
     "pixi.js": "^8.14.3"
   },

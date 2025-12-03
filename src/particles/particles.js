@@ -1,5 +1,4 @@
-import { Graphics } from "pixi.js";
-import MoveableSolid from './moveableSolid'
+import { MoveableSolid } from "./solids";
 
 class Sand extends MoveableSolid{
     constructor(x, y, app, matrix){
@@ -11,8 +10,8 @@ class Sand extends MoveableSolid{
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
-
-
 }
 
 export default Sand;
+
+export { Sand };
