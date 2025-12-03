@@ -1,4 +1,4 @@
-import { Graphics } from "pixi.js";
+import { Graphics, styleAttributes } from "pixi.js";
 import Sand from "./particles/solids/moveableSolids/sand";
 
 class Matrix {
@@ -81,10 +81,15 @@ class Matrix {
                 dy = endY - startY;
             }
 
-            let slope = dy / dx;
+            let s = dy / dx;
+            let slope = Number.isNaN(s) ? 0 : s;
+            
 
             for (let x = startX; x <= endX; x++) {
                 let y = startY + slope * (x - startX);
+
+               
+                //console.log(`${startY + slope}, ${x- startX}, ${startY + slope * (x - startX)}`);
                 allCoords.push([x, Math.round(y)])
             }
         }else {

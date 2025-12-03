@@ -45,6 +45,9 @@ let previouseMouseY = null;
     app.stage.hitArea = app.screen;
 
     app.stage.on("mousedown", (event) => {
+        previouseMouseX = mouseX;
+        previouseMouseY = mouseY;
+        
         mouseX = Math.trunc(event.global.x / matrix.getTileSize());
         mouseY = Math.trunc(event.global.y / matrix.getTileSize());
         mouseDown = true;
