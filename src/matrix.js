@@ -63,7 +63,14 @@ class Matrix {
             this.matrix[y1][x1] = null;
             p1.setPosition(x2, y2);
         }
+        else{
+            this.matrix[y2][x2] = p1;
+            this.matrix[y1][x1] = p2;
+            p1.setPosition(x2, y2);
+            p2.setPosition(x1, y1); 
+        }
     }
+
 
     traverseMatrix(startX, startY, endX, endY){
         
@@ -196,6 +203,10 @@ class Matrix {
                 this.matrix[r][c] = null;
             }
         }
+    }
+
+    setParticle(x, y, p){
+        this.matrix
     }
 
     withinBounds(x, y){

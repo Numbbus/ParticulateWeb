@@ -1,11 +1,10 @@
 import { Application, EventSystem, Text, Container, Graphics } from "pixi.js";
-import { FancyButton } from '@pixi/ui';
 import Matrix from './matrix.js' ;
 
-import { Sand, Dirt, Stone } from "./particles/particles.js";
+import { Sand, Dirt, Stone, Water } from "./particles/particles.js";
 
 let maxWidth = 1800;
-let maxHeight = 800;
+let maxHeight = 1000;
 
 let mouseDown = false;
 let mouseX = null;
@@ -163,14 +162,26 @@ let selectedParticle = Sand;
             dirtBtn: createButton("Dirt").on('pointerdown', () => { selectedParticle = Dirt; }),
             wallBtn: createButton("Stone").on('pointerdown', () => { selectedParticle = Stone; }),
             eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null }),
+            waterBtn: createButton("Water").on('pointerdown', () => { selectedParticle = Water }),
         }
 
         let i = 0;
         for(let btn in allButtons){
 
+            let btnPos = buttonSpacing*i + buttonIndent;
+            let row = 1;
+
+            if(btnPos + allButtons[btn].width >= app.screen.width){
+                i = 0;
+                row++;
+
+                buttonY = (buttonY * row) + buttonIndent/2;
+                btnPos = buttonSpacing*i + buttonIndent;
+            }
+            
             if(i == 0){ allButtons[btn].position.set(buttonIndent, buttonY); }
             else{
-                allButtons[btn].position.set(buttonSpacing*i + buttonIndent, buttonY);
+                allButtons[btn].position.set(btnPos, buttonY);
             }
 
             containers.menu.addChild(allButtons[btn]);
@@ -180,6 +191,19 @@ let selectedParticle = Sand;
         return allButtons;
 
     }
+
+    /*window.addEventListener('resize', () => {
+        console.log('Resized!');
+
+        let newWidth = window.innerWidth < maxWidth ? window.innerWidth : maxWidth;
+        let newHegiht = window.innerHeight < maxHeight ? window.innerHeight : maxHeight;
+
+        app.renderer.resize( newWidth, newHegiht);
+
+        containers.playArea.width = newWidth;
+        containers.menu.width = newWidth;
+
+    })*/
 
 })();
 

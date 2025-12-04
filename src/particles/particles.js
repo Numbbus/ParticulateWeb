@@ -1,4 +1,5 @@
 import { MoveableSolid, StaticSolid } from "./solids";
+import { Liquid } from "./liquids";
 
 // Teplate for easy copying
 /*
@@ -58,8 +59,20 @@ class Dirt extends MoveableSolid {
 
 // Liquids
 
+class Water extends Liquid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [ 0x0000E6, 0x0000F0, 0x0000FA, 0x0000FF, 0x0A0AFF ];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
 // Misc
 
 export default Sand;
 
-export { Sand, Dirt, Stone };
+export { Sand, Dirt, Stone, Water };

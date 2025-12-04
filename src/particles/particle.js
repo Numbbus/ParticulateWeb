@@ -10,6 +10,7 @@ class Particle{
         this.movedThisFrame = false;
 
         this.speed = speed;
+        this.framesSinceLastUpdate = 0;
 
         this.app = app;
         this.matrix = matrix;
