@@ -38,24 +38,10 @@ let selectedParticle = Sand;
 
     // set background color and size of container
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 300).fill(0x555555));
-    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x333333))
+    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, 300).fill(0x333333))
 
 
-    const dirtBTN = createButton('Dirt');
-    dirtBTN.position.set(50, 50);
-    containers.menu.addChild(dirtBTN);
-
-    dirtBTN.on('pointerdown', () => { selectedParticle = Dirt; });
-
-
-    const sandBTN = createButton('Sand');
-    sandBTN.position.set(250, 50);
-    containers.menu.addChild(sandBTN);
-
-    sandBTN.on('pointerdown', () => { selectedParticle = Sand; });
-
-
-
+    
 
     const matrix = new Matrix(app, containers)
 
@@ -68,6 +54,8 @@ let selectedParticle = Sand;
             matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
         }
     }
+
+    createMenu();
 
     // Mouse and keyboard inputs
     app.renderer.events = new EventSystem(app.renderer);
@@ -98,7 +86,14 @@ let selectedParticle = Sand;
 
     function addToStage(){
         for(let i = 0; i < arguments.length; i++){
-            app.stage.addChild(arguments[i]);
+            let child = arguments[i];
+            if(child && child.emit){
+                app.stage.addChild(arguments[i]);
+            }
+            else{
+                console.error('Invalid Child: ', child);
+            }
+            
         }
     }
 
@@ -152,4 +147,37 @@ let selectedParticle = Sand;
         return container;
     }
 
+    function createMenu(){
+        let buttonY = 50;
+        let buttonIndent = 50;
+        let buttonSpacing = 175;
+        
+
+
+        let allButtons = createButtons(buttonY, buttonSpacing, buttonIndent);
+    }
+
+    function createButtons(buttonY, buttonSpacing, buttonIndent){
+        let allButtons = {
+            sandBtn: createButton("Sand").on('pointerdown', () => { selectedParticle = Sand; }),
+            dirtBtn: createButton("Dirt").on('pointerdown', () => { selectedParticle = Dirt; }),
+        }
+
+        let i = 0;
+        for(let btn in allButtons){
+
+            if(i == 0){ allButtons[btn].position.set(buttonIndent, buttonY); }
+            else{
+                allButtons[btn].position.set(buttonSpacing*i + buttonIndent, buttonY);
+            }
+
+            containers.menu.addChild(allButtons[btn]);
+            i++;
+        }
+
+        return allButtons;
+
+    }
+
 })();
+
