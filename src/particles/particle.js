@@ -39,6 +39,9 @@ class Particle{
         this.rect.position.set(x * this.tileSize, y * this.tileSize);
     }
 
+    setRect(r){ this.rect = r; }
+    getRect(){ return this.rect; }
+
 
     setX(n)
     { 

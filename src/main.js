@@ -161,6 +161,7 @@ let selectedParticle = Sand;
         let allButtons = {
             sandBtn: createButton("Sand").on('pointerdown', () => { selectedParticle = Sand; }),
             dirtBtn: createButton("Dirt").on('pointerdown', () => { selectedParticle = Dirt; }),
+            eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null })
         }
 
         let i = 0;

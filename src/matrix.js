@@ -37,10 +37,21 @@ class Matrix {
 
     createParticle(x, y, ParticleClass){
         if(this.withinBounds(x, y)){
-            if(this.matrix[y][x] === null){
+            if(ParticleClass === null){ this.deleteParticle(x, y) }
+
+            else if(this.matrix[y][x] === null){
                 this.matrix[y][x] = new ParticleClass(x, y,this.app, this);
             }
         } 
+    }
+
+    deleteParticle(x, y){
+        let p = this.matrix[y][x];
+
+        if(p != null){
+            p.getRect().destroy();
+            this.matrix[y][x] = null;
+        }
     }
 
     swapParticles(x1, y1, x2, y2){
