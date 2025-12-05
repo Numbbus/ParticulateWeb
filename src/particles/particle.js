@@ -16,6 +16,7 @@ class Particle{
         this.matrix = matrix;
 
         this.tileSize = matrix.getTileSize();
+        this.containers = matrix.getContainers();
 
         this.rect = new Graphics().rect(0, 0, this.tileSize, this.tileSize);
     }
@@ -58,7 +59,7 @@ class Particle{
     }
 
     addToStage(obj){
-        this.app.stage.addChild(obj);
+        this.containers.playArea.addChild(obj);
     }
 }
 

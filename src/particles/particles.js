@@ -31,6 +31,68 @@ class Stone extends StaticSolid {
     }
 }
 
+class Bedrock extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x323232, 0x3A3A3A, 0x404040, 0x464646, 0x4E4E4E]
+;
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class Ice extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0xB4FFFF, 0x82E6FF, 0x8CEBFF];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class Obsidian extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x1A1A1A, 0x181818, 0x161616];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class Tnt extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0xC80000, 0xDC0000, 0xFF0000, 0xFF1E1E, 0xFF3C3C];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class Wood extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x814012, 0x864313, 0x8B4513, 0x914815, 0x964B16];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+
 // Moveable Solids
 
 class Sand extends MoveableSolid {
@@ -57,6 +119,18 @@ class Dirt extends MoveableSolid {
     }
 }
 
+class Ash extends MoveableSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0xE6E6E6, 0xC8C8C8, 0xD7D7D7, 0xF0F0F0];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
 // Liquids
 
 class Water extends Liquid {
@@ -75,4 +149,4 @@ class Water extends Liquid {
 
 export default Sand;
 
-export { Sand, Dirt, Stone, Water };
+export { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice };

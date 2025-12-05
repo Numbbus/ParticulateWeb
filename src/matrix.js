@@ -54,6 +54,10 @@ class Matrix {
         }
     }
 
+    createMultipleParticles(x, y, a, ParticleClass){
+        
+    }
+
     swapParticles(x1, y1, x2, y2){
         let p1 = this.getParticle(x1, y1);
         let p2 = this.getParticle(x2, y2);
@@ -212,6 +216,8 @@ class Matrix {
     withinBounds(x, y){
         return ((x < this.getCols() && x >=0) && (y < this.getRows() && y >= 0));
     }
+
+    getContainers(){ return this.containers; }
 
 
     getParticle(x, y)
