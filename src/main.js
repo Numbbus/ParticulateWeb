@@ -1,4 +1,4 @@
-
+import { Application, EventSystem, Text, Container, Graphics } from "https://cdn.jsdelivr.net/npm/pixi.js@8/dist/esm/index.js";
 import Matrix from './matrix.js' ;
 
 import { Sand, Dirt, Stone, Water } from "./particles/particles.js";
