@@ -17,6 +17,11 @@ let previouseMouseY = null;
 
 let selectedParticle = Sand;
 
+let selectedMenu = "solidsMenu";
+
+let allMenuButtons = null;
+let allParticleButtons = null;
+
 (async () => {
     const app = new Application();
     await app.init({
@@ -95,6 +100,10 @@ let selectedParticle = Sand;
         mouseDown = false;
     });
 
+    app.stage.on('wheel', (event) => {
+        matrix.createParticle(mouseX, mouseY, selectedParticle);
+    });
+
     function addToStage(){
         for(let i = 0; i < arguments.length; i++){
             let child = arguments[i];
@@ -130,18 +139,22 @@ let selectedParticle = Sand;
         
     });
     
-    function createButton(label, width = 150, height = 50){
+    function createButton(label, width = 125, height = 40, bg = 0x999999, outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff){
         const container = new Container();
 
         const button = new Graphics()
-            .roundRect(0, 0, width, height, 10)
-            .fill(0x4a90e2);
+            .rect(0, 0, width, height, 10)
+            .fill(bg)
+            .stroke({
+                width: outlineThicknes,
+                color: outlineColor,
+            });
 
         container.addChild(button);
 
-        const text = new Text(label, {
+        let text = new Text(label, {
             fontSize: 20,
-            fill: 0xffffff,
+            fill: txtColor,
         })
 
         text.anchor.set(0.5);
@@ -152,47 +165,59 @@ let selectedParticle = Sand;
         container.cursor = 'pointer';
         container.eventMode = 'static';
 
-        container.on('pointerover', () => (button.scale.set(1.05)));
-        container.on('pointerout', () => (button.scale.set(1)));
+        container.on('pointerover', () => { button.clear().rect(0, 0, width, height, 10).fill(0x666666).stroke({ width: outlineThicknes, color: 0x000000}); text = new Text(label, { fontSize: 20, fill: 0x000000}) });
+        container.on('pointerout', () => {  button.clear().rect(0, 0, width, height, 10).fill(bg).stroke({ width: outlineThicknes, color: 0xffffff}); text = new Text(label, { fontSize: 20, fill: 0xffffff}) });
 
         return container;
     }
 
     function createMenu(){
-        let buttonY = 50;
+        let buttonY = 100;
         let buttonIndent = 50;
-        let buttonSpacing = 175;
+        let buttonSpacing = 127;
         
 
 
-        let allButtons = createButtons(buttonY, buttonSpacing, buttonIndent);
+        createButtons(buttonY, buttonSpacing, buttonIndent);
 
         //allButtons["staticSolidsButtons"]["stoneBtn"].visible = false;
     }
 
     function createButtons(buttonY, buttonSpacing, buttonIndent){
 
-        let allButtons = {
-            staticSolidsButtons: {
+        allMenuButtons = {
+            menuSelectButtons: {
+                solidsSelect: createButton("Solids", 150, 45).on('pointerdown', () => { selectedMenu = "solidsMenu"; updateMenu(); }),
+                liquidsSelect: createButton("Liquids", 150, 45).on('pointerdown', () => { selectedMenu = "liquidsMenu"; updateMenu(); }),
+                gasesSelect: createButton("Gases", 150, 45).on('pointerdown', () => { selectedMenu = "gasesMenu"; updateMenu(); }),
+                miscSelect: createButton("Misc", 150, 45).on('pointerdown', () => { selectedMenu = "miscMenu"; updateMenu(); }),
+                
+            }
+        };
+
+        allParticleButtons = {
+            solidsMenu: {
                 stoneBtn: createButton("Stone").on('pointerdown', () => { selectedParticle = Stone; }),
-            },
-            moveableSolidsButtons: {
                 sandBtn: createButton("Sand").on('pointerdown', () => { selectedParticle = Sand; }),
                 dirtBtn: createButton("Dirt").on('pointerdown', () => { selectedParticle = Dirt; }),
                 ashBtn: createButton("Ash").on('pointerdown', () => { selectedParticle = Ash }),
             },
-            liquidsButtons: {
+            liquidsMenu: {
                 waterBtn: createButton("Water").on('pointerdown', () => { selectedParticle = Water }),
             },
-            gasesButtons: {},
-            miscButtons: {
+            gasesMenu: {},
+            miscMenu: {
                 eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null }),
             },
-        }
+        };
 
-        let i = 0;
-        for(let btns in allButtons){
-            btns = allButtons[btns];
+        
+        for(let btns in allParticleButtons){
+
+            let menu = btns;
+            btns = allParticleButtons[btns];
+            let i = 0;
+
             for(let btn in btns){
 
                 let btnPos = buttonSpacing*i + buttonIndent;
@@ -212,13 +237,60 @@ let selectedParticle = Sand;
                 }
 
                 containers.menu.addChild(btns[btn]);
+        
+                btns[btn].visible = selectedMenu === menu;
+
+                i++;
+            }
+            
+        }
+
+        let menuY = buttonY / 2;
+        buttonSpacing = 152
+
+        for(let btns in allMenuButtons){
+
+            btns = allMenuButtons[btns];
+            let i = 0;
+
+            for(let btn in btns){
+
+                let btnPos = buttonSpacing*i + buttonIndent;
+                let row = 0;
+
+                if(btnPos + btns[btn].width >= app.screen.width){
+                    i = 0;
+                    row++;
+
+                    buttonY = (buttonY * row) + buttonIndent/2;
+                    btnPos = buttonSpacing*i + buttonIndent;
+                }
+                
+               
+                btns[btn].position.set(btnPos, menuY);
+                
+
+                containers.menu.addChild(btns[btn]);
+
                 i++;
             }
         }
 
+        return allParticleButtons;
 
-        return allButtons;
+    }
 
+    function updateMenu(){
+        for(let menu in allParticleButtons){
+            let btns = allParticleButtons[menu];
+
+            for(let btn in btns){
+                
+                btns[btn].visible = (selectedMenu === menu);
+
+            }
+
+        }
     }
 
     /*window.addEventListener('resize', () => {
