@@ -1,5 +1,5 @@
-import Liquid from "./liquids";
-import Particle from "./particle";
+import Liquid from "./liquids.js";
+import Particle from "./particle.js";
 
 
 class Solid extends Particle{

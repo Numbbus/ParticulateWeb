@@ -1,4 +1,4 @@
-import Particle from "./particle";
+import Particle from "./particle.js";
 
 class Liquid extends Particle{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)

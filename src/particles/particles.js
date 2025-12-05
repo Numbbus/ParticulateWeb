@@ -1,5 +1,5 @@
-import { MoveableSolid, StaticSolid } from "./solids";
-import { Liquid } from "./liquids";
+import { MoveableSolid, StaticSolid } from "./solids.js";
+import { Liquid } from "./liquids.js";
 
 // Teplate for easy copying
 /*
