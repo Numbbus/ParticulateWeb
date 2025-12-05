@@ -1,7 +1,7 @@
 
 import Matrix from './matrix.js' ;
 
-import { Sand, Dirt, Stone, Water, Ash } from "./particles/particles.js";
+import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt } from "./particles/particles.js";
 
 const { Application, EventSystem, Text, Container, Graphics } = PIXI;
 
@@ -201,6 +201,11 @@ let allParticleButtons = null;
                 sandBtn: createButton("Sand").on('pointerdown', () => { selectedParticle = Sand; }),
                 dirtBtn: createButton("Dirt").on('pointerdown', () => { selectedParticle = Dirt; }),
                 ashBtn: createButton("Ash").on('pointerdown', () => { selectedParticle = Ash }),
+                bedrockBtn: createButton("Bedrock").on('pointerdown', () => { selectedParticle = Bedrock }),
+                iceBtn: createButton("Ice").on('pointerdown', () => { selectedParticle = Ice }),
+                obsidianBtn: createButton("Obsidian").on('pointerdown', () => { selectedParticle = Obsidian }),
+                tntBtn: createButton("Tnt").on('pointerdown', () => { selectedParticle = Tnt }),
+                woodBtn: createButton("Wood").on('pointerdown', () => { selectedParticle = Wood }),
             },
             liquidsMenu: {
                 waterBtn: createButton("Water").on('pointerdown', () => { selectedParticle = Water }),
