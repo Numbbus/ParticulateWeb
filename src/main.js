@@ -5,8 +5,8 @@ import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt } from
 
 const { Application, EventSystem, Text, Container, Graphics } = PIXI;
 
-let maxWidth = 1800;
-let maxHeight = 1000;
+let maxWidth = 1500;
+let maxHeight = 700;
 
 let mouseDown = false;
 let mouseX = null;
@@ -29,9 +29,10 @@ let allParticleButtons = null;
         // set height and width only if window is smaller than max sizes
         width: window.innerWidth < maxWidth ? window.innerWidth : maxWidth,
         height: window.innerHeight < maxHeight ? window.innerHeight : maxHeight,
+        //resizeTo: document.getElementById("pixi-wrapper")
     });
 
-    document.body.appendChild(app.canvas);
+    document.querySelector("#pixi-wrapper").appendChild(app.canvas);
 
     const containers = {
         playArea: new Container(),
@@ -40,18 +41,18 @@ let allParticleButtons = null;
     };
 
     containers.menu.x = 0;
-    containers.menu.y = app.screen.height - 300;
+    containers.menu.y = app.screen.height - 200;
 
     addToStage(containers.playArea, containers.menu, containers.ui);
 
     // set background color and size of container
-    containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 300).fill(0x555555));
+    containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
     containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, 300).fill(0x333333))
 
 
     
 
-    const matrix = new Matrix(app, containers)
+    let matrix = new Matrix(app, containers)
 
   
 
@@ -307,9 +308,21 @@ let allParticleButtons = null;
         app.renderer.resize( newWidth, newHegiht);
 
         containers.playArea.width = newWidth;
+        matrix = new Matrix(app, containers)
         containers.menu.width = newWidth;
 
     })*/
+
+    // Disable scrolling when hovering over canvas
+    const elem = document.getElementById('pixi-wrapper');
+
+    elem.addEventListener('mouseover', () => {
+    document.body.style.overflow = 'hidden';
+    });
+
+    elem.addEventListener('mouseout', () => {
+    document.body.style.overflow = ''; // Resets to default (e.g., auto or initial)
+    });
 
 })();
 
