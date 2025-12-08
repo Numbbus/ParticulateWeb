@@ -22,7 +22,12 @@ let selectedMenu = "solidsMenu";
 let allMenuButtons = null;
 let allParticleButtons = null;
 
+let mouseOver = false;
+
+let paused = false;
+
 (async () => {
+    console.log( navigator.userAgent );
     const app = new Application();
     await app.init({
         view: document.querySelector("#pixi"),
@@ -60,7 +65,11 @@ let allParticleButtons = null;
     app.ticker.add(gameLoop);
 
     function gameLoop(){
-        matrix.updateGrid();
+
+        if( !paused ){
+            matrix.updateGrid();
+        }
+        
 
         if(mouseDown){
             matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
@@ -76,6 +85,14 @@ let allParticleButtons = null;
     app.renderer.events = new EventSystem(app.renderer);
     app.stage.eventMode = "static";
     app.stage.hitArea = app.screen;
+
+    app.stage.on("pointerover", (event) => {
+        mouseOver = true;
+    });
+    
+    app.stage.on("pointerout", (event) => {
+        mouseOver = false;
+    });
 
     app.stage.on("pointerdown", (event) => {
         previouseMouseX = mouseX;
@@ -103,6 +120,14 @@ let allParticleButtons = null;
 
     app.stage.on('wheel', (event) => {
         matrix.createParticle(mouseX, mouseY, selectedParticle);
+    });
+
+    window.addEventListener('keydown', (event) => {
+        if(mouseOver){
+            console.log(event.key); 
+            if(event.key == ' '){ paused = !paused; }
+        }
+        
     });
 
     function addToStage(){
@@ -313,16 +338,54 @@ let allParticleButtons = null;
 
     })*/
 
-    // Disable scrolling when hovering over canvas
+    /*window.onload = function () {
+        if( detectMob() ) {
+            console.log("Mobile");
+            containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0xffffff)); 
+            document.getElementById("pixi-wrapper").style.marginTop = "0px";
+        }
+
+    }*/
+
+    /*function detectMob() {
+        const toMatch = [
+            /Android/i,
+            /webOS/i,
+            /iPhone/i,
+            /iPad/i,
+            /iPod/i,
+            /BlackBerry/i,
+            /Windows Phone/i
+        ];
+
+        return toMatch.some((toMatchItem) => {
+            return navigator.userAgent.match(toMatchItem);
+        });
+    }
+
+    // Disable scrolling when hovering over canvas for everything but mobile users
     const elem = document.getElementById('pixi-wrapper');
 
     elem.addEventListener('mouseover', () => {
-    document.body.style.overflow = 'hidden';
+        if( ! detectMob() ){
+            document.body.style.overflow = 'hidden';
+            
+        }else { }
     });
 
     elem.addEventListener('mouseout', () => {
-    document.body.style.overflow = ''; // Resets to default (e.g., auto or initial)
+        if( ! detectMob() ){ document.body.style.overflow = ''; } // Resets to default (e.g., auto or initial)
+    });*/
+
+    const elem = document.getElementById('pixi-wrapper');
+
+    elem.addEventListener('mouseover', () => {
+        document.body.style.overflow = 'hidden';
     });
+
+    elem.addEventListener('mouseout', () => {
+        document.body.style.overflow = '';  // Resets to default (e.g., auto or initial)
+    })
 
 })();
 
