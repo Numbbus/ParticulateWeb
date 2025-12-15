@@ -1,7 +1,7 @@
 
 import Matrix from './matrix.js' ;
 
-import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam } from "./particles/particles.js";
+import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire } from "./particles/particles.js";
 
 const { Application, EventSystem, Text, Container, Graphics } = PIXI;
 
@@ -238,6 +238,7 @@ let paused = false;
             },
             gasesMenu: {
                 steamBtn: createButton("Steam").on('pointerdown', () => { selectedParticle = Steam }),
+                fireBtn: createButton("Fire").on('pointerdown', () => { selectedParticle = Fire }),
             },
             miscMenu: {
                 eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null }),
