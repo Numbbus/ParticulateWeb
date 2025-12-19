@@ -380,7 +380,7 @@ let paused = false;
         if( ! detectMob() ){ document.body.style.overflow = ''; } // Resets to default (e.g., auto or initial)
     });*/
 
-    const elem = document.getElementById('pixi-wrapper');
+    const elem = document.getElementById('pixi');
 
     elem.addEventListener('mouseover', () => {
         document.body.style.overflow = 'hidden';
