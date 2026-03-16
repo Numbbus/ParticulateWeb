@@ -28,16 +28,14 @@ let paused = false;
 
 (async () => {
     console.log( navigator.userAgent );
+    const margin = 20;
+
     const app = new Application();
     await app.init({
         view: document.querySelector("#pixi"),
-        // set height and width only if window is smaller than max sizes
-        width: window.innerWidth < maxWidth ? window.innerWidth : maxWidth,
-        height: window.innerHeight < maxHeight ? window.innerHeight : maxHeight,
-        //resizeTo: document.getElementById("pixi-wrapper")
+        width: Math.min(window.innerWidth - margin * 2, maxWidth),
+        height: Math.min(window.innerHeight - margin * 2, maxHeight)
     });
-
-    document.querySelector("#pixi-wrapper").appendChild(app.canvas);
 
     const containers = {
         playArea: new Container(),

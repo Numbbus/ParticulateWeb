@@ -12,3 +12,7 @@ html {
 body { 
     margin: 0;
 }
+
+#pixi{
+  border: 2px solid #444;
+}
