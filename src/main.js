@@ -1,9 +1,13 @@
 
 import Matrix from './matrix.js' ;
 
-import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire } from "./particles/particles.js";
+import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
+    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner } from "./particles/particles.js";
 
-const { Application, EventSystem, Text, Container, Graphics } = PIXI;
+import * as UI from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
+
+const { Application, EventSystem, Text, Container, Graphics, Button  } = PIXI;
+
 
 let maxWidth = 1500;
 let maxHeight = 700;
@@ -52,13 +56,7 @@ let paused = false;
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
     containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, 300).fill(0x333333))
 
-
-    
-
     let matrix = new Matrix(app, containers)
-
-  
-
 
     app.ticker.add(gameLoop);
 
@@ -214,6 +212,7 @@ let paused = false;
                 solidsSelect: createButton("Solids", 150, 45).on('pointerdown', () => { selectedMenu = "solidsMenu"; updateMenu(); }),
                 liquidsSelect: createButton("Liquids", 150, 45).on('pointerdown', () => { selectedMenu = "liquidsMenu"; updateMenu(); }),
                 gasesSelect: createButton("Gases", 150, 45).on('pointerdown', () => { selectedMenu = "gasesMenu"; updateMenu(); }),
+                spawnersSelect: createButton("Spawners", 150, 45).on('pointerdown', () => { selectedMenu = "spawnersMenu"; updateMenu(); }),
                 miscSelect: createButton("Misc", 150, 45).on('pointerdown', () => { selectedMenu = "miscMenu"; updateMenu(); }),
                 
             }
@@ -238,6 +237,14 @@ let paused = false;
                 steamBtn: createButton("Steam").on('pointerdown', () => { selectedParticle = Steam }),
                 fireBtn: createButton("Fire").on('pointerdown', () => { selectedParticle = Fire }),
             },
+            spawnersMenu: {
+                sandSpawnerBtn: createButton("Sand Spawner").on('pointerdown', () => { selectedParticle = SandSpawner }),
+                dirtSpawnerBtn: createButton("Dirt Spawner").on('pointerdown', () => { selectedParticle = DirtSpawner }),
+                ashSpawnerBtn: createButton("Ash Spawner").on('pointerdown', () => { selectedParticle = AshSpawner }),
+                waterSpawnerBtn: createButton("Water Spawner").on('pointerdown', () => { selectedParticle = WaterSpawner }),
+                steamSpawnerBtn: createButton("Steam Spawner").on('pointerdown', () => { selectedParticle = SteamSpawner }),
+                fireSpawnerBtn: createButton("Fire Spawner").on('pointerdown', () => { selectedParticle = FireSpawner }),
+            },
             miscMenu: {
                 eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null }),
             },
@@ -249,7 +256,7 @@ let paused = false;
             let menu = btns;
             btns = allParticleButtons[btns];
             let i = 0;
-
+  
             for(let btn in btns){
 
                 let btnPos = buttonSpacing*i + buttonIndent;

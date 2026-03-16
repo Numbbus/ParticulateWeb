@@ -1,4 +1,4 @@
-import { MoveableSolid, StaticSolid } from "./solids.js";
+import { MoveableSolid, StaticSolid, Spawner } from "./solids.js";
 import { Liquid } from "./liquids.js";
 import Gas from "./gas.js";
 
@@ -172,8 +172,82 @@ class Fire extends Gas {
     }
 }
 
+// Spawners
+
+class SandSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Sand)
+
+        let colors = [0xffffff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class DirtSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Dirt)
+
+        let colors = [0xffffff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class AshSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Ash)
+
+        let colors = [0xffffff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class WaterSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Water)
+
+        let colors = [0xffffff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class SteamSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Steam)
+
+        let colors = [0xffffff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class FireSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Fire)
+
+        let colors = [0xffffff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
 // Misc
 
 export default Sand;
 
-export { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire };
+export { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner };

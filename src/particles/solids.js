@@ -1,6 +1,6 @@
 import Liquid from "./liquids.js";
 import Particle from "./particle.js";
-
+import Gas from "./gas.js"
 
 class Solid extends Particle{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
@@ -12,6 +12,8 @@ class StaticSolid extends Solid{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
         super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
     }
+
+    action(){};
 }
 
 class MoveableSolid extends StaticSolid{
@@ -55,6 +57,30 @@ class MoveableSolid extends StaticSolid{
     }
 }
 
+class Spawner extends Solid{
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, spawnersParticle)
+    {
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix);
+        this.framesSinceLastUpdate = 0;
+        this.spawnersParticle = spawnersParticle;
+        console.log(this.spawnersParticle);
+    }
+
+    move(){};
+    
+    action(){
+        let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : undefined ;
+        let topTile = this.getY()-1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y-1) : undefined ;
+
+        if(this.spawnersParticle instanceof Gas && topTile === null){
+            this.matrix.createParticle(this.x, this.y-1, this.spawnersParticle);
+        }else if(bottomTile === null){
+            this.matrix.createParticle(this.x, this.y+1, this.spawnersParticle);
+        }
+    };
+
+}
+
 export default Solid;
 
-export { Solid, StaticSolid, MoveableSolid }
+export { Solid, StaticSolid, MoveableSolid, Spawner }

@@ -29,6 +29,7 @@ class Matrix {
             for(let c = this.cols-1; c >= 0; c--)
             {
                 if(this.getParticle(c, r) != null){
+                    this.matrix[r][c].action();
                     this.matrix[r][c].move();
                 }
             }
