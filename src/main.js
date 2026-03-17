@@ -4,9 +4,10 @@ import Matrix from './matrix.js' ;
 import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
     SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner } from "./particles/particles.js";
 
-import * as UI from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
+//import * as UI from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
+import { Button } from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 
-const { Application, EventSystem, Text, Container, Graphics, Button  } = PIXI;
+const { Application, EventSystem, Text, Container, Graphics  } = PIXI;
 
 
 let maxWidth = 1500;
@@ -79,18 +80,18 @@ let paused = false;
 
     // Mouse and keyboard inputs
     app.renderer.events = new EventSystem(app.renderer);
-    app.stage.eventMode = "static";
-    app.stage.hitArea = app.screen;
+    containers.playArea.eventMode = "static";
+    containers.playArea.hitArea = app.screen;
 
-    app.stage.on("pointerover", (event) => {
+    containers.playArea.on("pointerover", (event) => {
         mouseOver = true;
     });
     
-    app.stage.on("pointerout", (event) => {
+    containers.playArea.on("pointerout", (event) => {
         mouseOver = false;
     });
 
-    app.stage.on("pointerdown", (event) => {
+    containers.playArea.on("pointerdown", (event) => {
         previouseMouseX = mouseX;
         previouseMouseY = mouseY;
 
@@ -100,7 +101,7 @@ let paused = false;
     
     });
 
-    app.stage.on("pointermove", (event) => {
+    containers.playArea.on("pointermove", (event) => {
         previouseMouseX = mouseX;
         previouseMouseY = mouseY;
 
@@ -110,11 +111,11 @@ let paused = false;
         outline.position.set(mouseX * matrix.getTileSize(), mouseY * matrix.getTileSize());
     });
 
-    app.stage.on("pointerup", (event) => {
+    containers.playArea.on("pointerup", (event) => {
         mouseDown = false;
     });
 
-    app.stage.on('wheel', (event) => {
+    containers.playArea.on('wheel', (event) => {
         matrix.createParticle(mouseX, mouseY, selectedParticle);
     });
 
@@ -160,37 +161,43 @@ let paused = false;
         }
         
     });
-    
-    function createButton(label, width = 125, height = 40, bg = 0x999999, outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff){
-        const container = new Container();
 
-        const button = new Graphics()
-            .rect(0, 0, width, height, 10)
+    function createButton(txt, w = 125, h = 40, bg = 0x999999, outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff){
+        const defaultView = new Graphics()
+            .rect(0, 0, w, h)
             .fill(bg)
-            .stroke({
-                width: outlineThicknes,
-                color: outlineColor,
-            });
+            .stroke({ width: outlineThicknes, color: outlineColor});
 
-        container.addChild(button);
+        const btn = new Button(defaultView);
 
-        let text = new Text(label, {
+        btn.view.on('pointerover', () => {
+            defaultView.clear().rect(0, 0, w, h).fill(0x666666).stroke({ width: outlineThicknes, color: outlineColor});
+        });
+
+        btn.view.on('pointerout', () => {
+            defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
+        });
+
+        btn.view.on('pointerdown', () => {
+            defaultView.clear().rect(0, 0, w, h).fill(0x000000).stroke({ width: outlineThicknes, color: outlineColor});
+        });
+
+        btn.view.on('pointerup', () => {
+            defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
+        });
+
+        const label = new Text(txt, {
             fontSize: 20,
             fill: txtColor,
-        })
+        });
 
-        text.anchor.set(0.5);
-        text.position.set(width / 2, height / 2);
+        label.anchor.set(0.5);
+        label.position.set(w/2, h/2);
 
-        container.addChild(text);
-
-        container.cursor = 'pointer';
-        container.eventMode = 'static';
-
-        container.on('pointerover', () => { button.clear().rect(0, 0, width, height, 10).fill(0x666666).stroke({ width: outlineThicknes, color: 0x000000}); text = new Text(label, { fontSize: 20, fill: 0x000000}) });
-        container.on('pointerout', () => {  button.clear().rect(0, 0, width, height, 10).fill(bg).stroke({ width: outlineThicknes, color: 0xffffff}); text = new Text(label, { fontSize: 20, fill: 0xffffff}) });
-
-        return container;
+        // Add text ON TOP of the button view
+        btn.view.addChild(label);
+        
+        return btn.view;
     }
 
     function createMenu(){
@@ -277,6 +284,8 @@ let paused = false;
 
                 containers.menu.addChild(btns[btn]);
         
+                btns[btn].interactive = selectedMenu === menu;
+                btns[btn].buttonMode = selectedMenu === menu;
                 btns[btn].visible = selectedMenu === menu;
 
                 i++;
@@ -325,7 +334,9 @@ let paused = false;
 
             for(let btn in btns){
                 
-                btns[btn].visible = (selectedMenu === menu);
+                btns[btn].interactive = selectedMenu === menu;
+                btns[btn].buttonMode = selectedMenu === menu;
+                btns[btn].visible = selectedMenu === menu;
 
             }
 
