@@ -187,48 +187,50 @@ class Matrix {
 }
     */
 
-    traverseMatrixAndCreate(startX, startY, endX, endY, p){
+    traverseMatrixAndCreate(startX, startY, endX, endY, p, brushSize){
         
         let dx = endX - startX;
         let dy = endY - startY;
 
         if(dx == 0){this.createParticle(startX, startY, p);}
+        else{
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                // Iterate over x
+                if (startX > endX) {
+                    // Swap points to ensure increasing x
+                    let tempX = startX, tempY = startY;
+                    startX = endX; startY = endY;
+                    endX = tempX; endY = tempY;
+                    dx = endX - startX;
+                    dy = endY - startY;
+                }
 
-        if (Math.abs(dx) >= Math.abs(dy)) {
-            // Iterate over x
-            if (startX > endX) {
-                // Swap points to ensure increasing x
-                let tempX = startX, tempY = startY;
-                startX = endX; startY = endY;
-                endX = tempX; endY = tempY;
-                dx = endX - startX;
-                dy = endY - startY;
-            }
+                let slope =  dy / dx;
 
-            let slope =  dy / dx;
+                for (let x = startX; x <= endX; x++) {
+                    let y = startY + slope * (x - startX);
+                    this.createParticle(x, Math.round(y), p);
+                }
+            } else {
+                // Iterate over y
+                if (startY > endY) {
+                    // Swap points to ensure increasing y
+                    let tempX = startX, tempY = startY;
+                    startX = endX; startY = endY;
+                    endX = tempX; endY = tempY;
+                    dx = endX - startX;
+                    dy = endY - startY;
+                }
 
-            for (let x = startX; x <= endX; x++) {
-                let y = startY + slope * (x - startX);
-                this.createParticle(x, Math.round(y), p);
-            }
-        } else {
-            // Iterate over y
-            if (startY > endY) {
-                // Swap points to ensure increasing y
-                let tempX = startX, tempY = startY;
-                startX = endX; startY = endY;
-                endX = tempX; endY = tempY;
-                dx = endX - startX;
-                dy = endY - startY;
-            }
+                let invSlope = dx / dy;
 
-            let invSlope = dx / dy;
-
-            for (let y = startY; y <= endY; y++) {
-                let x = startX + invSlope * (y - startY);
-               this.createParticle(Math.round(x), y, p);
+                for (let y = startY; y <= endY; y++) {
+                    let x = startX + invSlope * (y - startY);
+                this.createParticle(Math.round(x), y, p);
+                }
             }
         }
+
     }
 
     resetMatrix(){

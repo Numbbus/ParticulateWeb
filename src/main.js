@@ -20,6 +20,8 @@ let mouseY = null;
 let previouseMouseX = null;
 let previouseMouseY = null;
 
+let brushSize = 1;
+
 let selectedParticle = Sand;
 
 let selectedMenu = "solidsMenu";
@@ -30,6 +32,8 @@ let allParticleButtons = null;
 let mouseOver = false;
 
 let paused = false;
+
+let tileSize = undefined;
 
 (async () => {
     console.log( navigator.userAgent );
@@ -59,13 +63,15 @@ let paused = false;
 
     let matrix = new Matrix(app, containers)
 
+    tileSize = matrix.getTileSize();
+
     app.ticker.add(gameLoop);
 
     function gameLoop(){
 
 
         if(mouseDown){
-            matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
+            matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle, brushSize);
         }
 
         if( !paused ){
@@ -75,7 +81,8 @@ let paused = false;
 
     }
 
-    const outline = new Graphics().rect(0,0, matrix.getTileSize(), matrix.getTileSize()).stroke({ width: 1, color: 0xff0000 });
+    let outline = new Graphics().rect(0,0, tileSize, tileSize).stroke({ width: 1, color: 0xff0000 });
+    outline.pivot.set(0, 0);
     containers.ui.addChild(outline);
 
     createMenu();
@@ -87,10 +94,12 @@ let paused = false;
 
     containers.playArea.on("pointerover", (event) => {
         mouseOver = true;
+        containers.playArea.cursor = 'none';
     });
     
     containers.playArea.on("pointerout", (event) => {
         mouseOver = false;
+        containers.playArea.cursor = 'auto';
     });
 
     containers.playArea.on("pointerdown", (event) => {
@@ -110,7 +119,10 @@ let paused = false;
         mouseX = Math.trunc(event.global.x / matrix.getTileSize());
         mouseY = Math.trunc(event.global.y / matrix.getTileSize());
 
-        outline.position.set(mouseX * matrix.getTileSize(), mouseY * matrix.getTileSize());
+        outline.clear();
+        outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
+        outline.pivot.set(0, 0);
+        containers.ui.addChild(outline);
     });
 
     containers.playArea.on("pointerup", (event) => {
@@ -118,8 +130,24 @@ let paused = false;
     });
 
     containers.playArea.on('wheel', (event) => {
-        matrix.createParticle(mouseX, mouseY, selectedParticle);
+        if(event.deltaY < 0){
+            brushSize++;
+        }else if(event.deltaY > 0 ){
+            brushSize = brushSize > 1 ? brushSize-1 : 1; 
+        }
+
+        outline.clear();
+        outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
+        outline.pivot.set(0, 0);
+        containers.ui.addChild(outline);
+
+        console.log(brushSize);
     });
+
+    containers.menu.on('pointerover', (event) => {
+        containers.playArea.cursor = 'auto';
+    });
+    
 
     window.addEventListener('keydown', (event) => {
         if(mouseOver){
