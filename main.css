@@ -18,8 +18,6 @@ body {
 }
 
 .scrollable-div {
-  height: 40vh;
-  border: 1px solid #ccc; /* Optional: adds a visible border */
+  height: 50vh;
   overflow-y: auto; /* or overflow: auto; or overflow-y: scroll; */
-  padding: 10px; /* Optional: adds internal spacing */
 }
