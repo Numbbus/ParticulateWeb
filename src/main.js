@@ -20,7 +20,7 @@ let mouseY = null;
 let previouseMouseX = null;
 let previouseMouseY = null;
 
-let selectedParticle = Water;
+let selectedParticle = Sand;
 
 let selectedMenu = "solidsMenu";
 
@@ -63,14 +63,16 @@ let paused = false;
 
     function gameLoop(){
 
+
+        if(mouseDown){
+            matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
+        }
+
         if( !paused ){
             matrix.updateGrid();
         }
         
 
-        if(mouseDown){
-            matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
-        }
     }
 
     const outline = new Graphics().rect(0,0, matrix.getTileSize(), matrix.getTileSize()).stroke({ width: 1, color: 0xff0000 });

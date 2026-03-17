@@ -139,9 +139,56 @@ class Matrix {
         return allCoords;
     }
 
+/*
+    public ArrayList<int[]> traceThroughGrid(int startX, int startY, int endX, int endY)
+{
+    ArrayList<int[]> allCoords = new ArrayList<>();
+
+    int dx = endX - startX;
+    int dy = endY - startY;
+
+    if (Math.abs(dx) >= Math.abs(dy)) {
+        // Iterate over x
+        if (startX > endX) {
+            // Swap points to ensure increasing x
+            int tempX = startX, tempY = startY;
+            startX = endX; startY = endY;
+            endX = tempX; endY = tempY;
+            dx = endX - startX;
+            dy = endY - startY;
+        }
+
+        double slope = (double) dy / dx;
+
+        for (int x = startX; x <= endX; x++) {
+            double y = startY + slope * (x - startX);
+            allCoords.add(new int[]{x, (int)Math.round(y)});
+        }
+    } else {
+        // Iterate over y
+        if (startY > endY) {
+            // Swap points to ensure increasing y
+            int tempX = startX, tempY = startY;
+            startX = endX; startY = endY;
+            endX = tempX; endY = tempY;
+            dx = endX - startX;
+            dy = endY - startY;
+        }
+
+        double invSlope = (double) dx / dy;
+
+        for (int y = startY; y <= endY; y++) {
+            double x = startX + invSlope * (y - startY);
+            allCoords.add(new int[]{(int)Math.round(x), y});
+        }
+    }
+
+    return allCoords;
+}
+    */
+
     traverseMatrixAndCreate(startX, startY, endX, endY, p){
         
-        // Distances between the points
         let dx = endX - startX;
         let dy = endY - startY;
 
@@ -149,41 +196,26 @@ class Matrix {
             // Iterate over x
             if (startX > endX) {
                 // Swap points to ensure increasing x
-                let tempX = startX
-                let tempY = startY;
-
-                startX = endX; 
-                startY = endY;
-
-                endX = tempX; 
-                endY = tempY;
-
+                let tempX = startX, tempY = startY;
+                startX = endX; startY = endY;
+                endX = tempX; endY = tempY;
                 dx = endX - startX;
                 dy = endY - startY;
             }
 
-            let s = dy / dx;
-            let slope = Number.isNaN(s) ? 0 : s;
-            
+            let slope =  dy / dx;
 
             for (let x = startX; x <= endX; x++) {
                 let y = startY + slope * (x - startX);
-
                 this.createParticle(x, Math.round(y), p);
             }
-        }else {
+        } else {
             // Iterate over y
             if (startY > endY) {
                 // Swap points to ensure increasing y
-                let tempX = startX
-                let tempY = startY;
-                
-                startX = endX; 
-                startY = endY;
-
-                endX = tempX; 
-                endY = tempY;
-
+                let tempX = startX, tempY = startY;
+                startX = endX; startY = endY;
+                endX = tempX; endY = tempY;
                 dx = endX - startX;
                 dy = endY - startY;
             }
@@ -192,7 +224,7 @@ class Matrix {
 
             for (let y = startY; y <= endY; y++) {
                 let x = startX + invSlope * (y - startY);
-                this.createParticle(x, Math.round(y), p);
+               this.createParticle(Math.round(x), y, p);
             }
         }
     }
