@@ -187,50 +187,61 @@ class Matrix {
 }
     */
 
-    traverseMatrixAndCreate(startX, startY, endX, endY, p, brushSize){
-        
+    traverseMatrixAndCreate(startX, startY, endX, endY, p){    
+        // Distances between the points
         let dx = endX - startX;
         let dy = endY - startY;
 
-        if(dx == 0){this.createParticle(startX, startY, p);}
-        else{
-            if (Math.abs(dx) >= Math.abs(dy)) {
-                // Iterate over x
-                if (startX > endX) {
-                    // Swap points to ensure increasing x
-                    let tempX = startX, tempY = startY;
-                    startX = endX; startY = endY;
-                    endX = tempX; endY = tempY;
-                    dx = endX - startX;
-                    dy = endY - startY;
-                }
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            // Iterate over x
+            if (startX > endX) {
+                // Swap points to ensure increasing x
+                let tempX = startX
+                let tempY = startY;
 
-                let slope =  dy / dx;
+                startX = endX; 
+                startY = endY;
 
-                for (let x = startX; x <= endX; x++) {
-                    let y = startY + slope * (x - startX);
-                    this.createParticle(x, Math.round(y), p);
-                }
-            } else {
-                // Iterate over y
-                if (startY > endY) {
-                    // Swap points to ensure increasing y
-                    let tempX = startX, tempY = startY;
-                    startX = endX; startY = endY;
-                    endX = tempX; endY = tempY;
-                    dx = endX - startX;
-                    dy = endY - startY;
-                }
+                endX = tempX; 
+                endY = tempY;
 
-                let invSlope = dx / dy;
+                dx = endX - startX;
+                dy = endY - startY;
+            }
 
-                for (let y = startY; y <= endY; y++) {
-                    let x = startX + invSlope * (y - startY);
+            let s = dy / dx;
+            let slope = Number.isNaN(s) ? 0 : s;
+            
+
+            for (let x = startX; x <= endX; x++) {
+                let y = startY + slope * (x - startX);
+
+                this.createParticle(x, Math.round(y), p);
+            }
+        }else {
+            // Iterate over y
+            if (startY > endY) {
+                // Swap points to ensure increasing y
+                let tempX = startX
+                let tempY = startY;
+                
+                startX = endX; 
+                startY = endY;
+
+                endX = tempX; 
+                endY = tempY;
+
+                dx = endX - startX;
+                dy = endY - startY;
+            }
+
+            let invSlope = dx / dy;
+
+            for (let y = startY; y <= endY; y++) {
+                let x = startX + invSlope * (y - startY);
                 this.createParticle(Math.round(x), y, p);
-                }
             }
         }
-
     }
 
     resetMatrix(){
