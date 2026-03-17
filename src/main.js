@@ -19,7 +19,7 @@ let mouseY = null;
 let previouseMouseX = null;
 let previouseMouseY = null;
 
-let selectedParticle = Sand;
+let selectedParticle = Water;
 
 let selectedMenu = "solidsMenu";
 
