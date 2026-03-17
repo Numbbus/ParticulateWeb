@@ -63,20 +63,18 @@ class Spawner extends Solid{
         super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix);
         this.framesSinceLastUpdate = 0;
         this.spawnersParticle = spawnersParticle;
-        console.log(this.spawnersParticle);
     }
 
     move(){};
     
     action(){
         let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : undefined ;
-        let topTile = this.getY()-1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y-1) : undefined ;
 
-        if(this.spawnersParticle instanceof Gas && topTile === null){
-            this.matrix.createParticle(this.x, this.y-1, this.spawnersParticle);
-        }else if(bottomTile === null){
+        if(bottomTile === null){
             this.matrix.createParticle(this.x, this.y+1, this.spawnersParticle);
         }
+        
+        
     };
 
 }
