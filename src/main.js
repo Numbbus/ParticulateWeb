@@ -153,6 +153,11 @@ let tileSize = undefined;
         if(mouseOver){
             console.log(event.key); 
             if(event.key == ' '){ paused = !paused; }
+            else if(event.key == 'r'){ 
+                matrix = new Matrix(app, containers); 
+                containers.playArea.removeChildren()
+                containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
+            }
         }
         
     });
