@@ -275,12 +275,12 @@ let tileSize = undefined;
                 fireBtn: createButton("Fire").on('pointerdown', () => { selectedParticle = Fire }),
             },
             spawnersMenu: {
-                sandSpawnerBtn: createButton("Sand Spawner").on('pointerdown', () => { selectedParticle = SandSpawner }),
-                dirtSpawnerBtn: createButton("Dirt Spawner").on('pointerdown', () => { selectedParticle = DirtSpawner }),
-                ashSpawnerBtn: createButton("Ash Spawner").on('pointerdown', () => { selectedParticle = AshSpawner }),
-                waterSpawnerBtn: createButton("Water Spawner").on('pointerdown', () => { selectedParticle = WaterSpawner }),
-                steamSpawnerBtn: createButton("Steam Spawner").on('pointerdown', () => { selectedParticle = SteamSpawner }),
-                fireSpawnerBtn: createButton("Fire Spawner").on('pointerdown', () => { selectedParticle = FireSpawner }),
+                sandSpawnerBtn: createButton("Sand Spawner", 150).on('pointerdown', () => { selectedParticle = SandSpawner }),
+                dirtSpawnerBtn: createButton("Dirt Spawner", 150).on('pointerdown', () => { selectedParticle = DirtSpawner }),
+                ashSpawnerBtn: createButton("Ash Spawner", 150).on('pointerdown', () => { selectedParticle = AshSpawner }),
+                waterSpawnerBtn: createButton("Water Spawner", 150).on('pointerdown', () => { selectedParticle = WaterSpawner }),
+                steamSpawnerBtn: createButton("Steam Spawner", 150).on('pointerdown', () => { selectedParticle = SteamSpawner }),
+                fireSpawnerBtn: createButton("Fire Spawner", 150).on('pointerdown', () => { selectedParticle = FireSpawner }),
             },
             miscMenu: {
                 eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null }),
@@ -296,7 +296,7 @@ let tileSize = undefined;
   
             for(let btn in btns){
 
-                let btnPos = buttonSpacing*i + buttonIndent;
+                let btnPos = btns[btn].width*i + buttonIndent;
                 let row = 1;
 
                 if(btnPos + btns[btn].width >= app.screen.width){
@@ -333,7 +333,7 @@ let tileSize = undefined;
 
             for(let btn in btns){
 
-                let btnPos = buttonSpacing*i + buttonIndent;
+                let btnPos = btns[btn].width*i + buttonIndent;
                 let row = 0;
 
                 if(btnPos + btns[btn].width >= app.screen.width){
@@ -341,7 +341,7 @@ let tileSize = undefined;
                     row++;
 
                     buttonY = (buttonY * row) + buttonIndent/2;
-                    btnPos = buttonSpacing*i + buttonIndent;
+                    btnPos = btns[btn].width*i + buttonIndent;
                 }
                 
                
