@@ -192,6 +192,8 @@ class Matrix {
         let dx = endX - startX;
         let dy = endY - startY;
 
+        if(dx == 0){this.createParticle(startX, startY, p);}
+
         if (Math.abs(dx) >= Math.abs(dy)) {
             // Iterate over x
             if (startX > endX) {
