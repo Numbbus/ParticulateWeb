@@ -37,7 +37,7 @@ let tileSize = undefined;
 
 (async () => {
     console.log( navigator.userAgent );
-    const margin = 20;
+    const margin = 30;
 
     const app = new Application();
     await app.init({
@@ -433,7 +433,7 @@ let tileSize = undefined;
     });
 
     elem.addEventListener('mouseout', () => {
-        document.body.style.overflow = '';  // Resets to default (e.g., auto or initial)
+        document.body.style.overflow = ''; 
     })
 
 })();
