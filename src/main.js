@@ -299,7 +299,7 @@ let selectedMenuButton = undefined;
             menuSelectButtons: {
                 solidsSelect: createButton("Solids", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "solidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
                 liquidsSelect: createButton("Liquids", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "liquidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-                gasesSelect: createButton("Gases", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "gasesMenu"; updateMenu(); }),
+                gasesSelect: createButton("Gases", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "gasesMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
                 spawnersSelect: createButton("Spawners", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "spawnersMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
                 voidsSelect: createButton("Void Blocks", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "voidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
                 miscSelect: createButton("Misc", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "miscMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
