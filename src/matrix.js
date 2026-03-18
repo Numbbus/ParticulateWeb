@@ -199,7 +199,6 @@ class Matrix {
         //const coords = this.traverseMatrix(startX, startY, endX, endY);
 
         for(let c = 0; c < coords.length; c++){
-
             this.drawBrush(coords[c][0], coords[c][1], coords[c][0]+brushSize, coords[c][1]+brushSize, p);
         }
 
@@ -225,7 +224,10 @@ class Matrix {
     }
 
     setParticle(x, y, p){
-        this.matrix
+        if(this.withinBounds(x, y)){
+            this.matrix[y][x] = p;
+        }
+        
     }
 
     withinBounds(x, y){
@@ -237,6 +239,7 @@ class Matrix {
 
     getParticle(x, y)
     { 
+
         return this.matrix[y][x]; 
     }
 
