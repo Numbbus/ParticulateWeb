@@ -25,6 +25,27 @@ class Particle{
     move(){}
     action(){}
 
+    getNeighbors(){
+        let neighbors = [];
+        
+        const directions = [
+            [-1, -1], [0, -1], [1, -1],
+            [-1, 0],          [1, 0],
+            [-1, 1], [0, 1], [1, 1]
+        ];
+
+        for (const [dx, dy] of directions) {
+            const nRow = this.y + dy;
+            const nCol = this.x + dx;
+
+                if(this.matrix.withinBounds(nCol, nRow)){
+                    neighbors.push(this.matrix.getParticle(nCol, nRow));
+                }
+        }
+
+        return neighbors;
+    }
+
     setColor(colors){
         let i = Math.floor(Math.random() * colors.length);
 

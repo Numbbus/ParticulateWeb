@@ -1,8 +1,11 @@
 
 import Matrix from './matrix.js' ;
 
-import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
-    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner } from "./particles/particles.js";
+import { 
+    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
+    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner,
+    VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock,
+} from "./particles/particles.js";
 
 import { Button } from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 
@@ -298,6 +301,7 @@ let selectedMenuButton = undefined;
                 liquidsSelect: createButton("Liquids", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "liquidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
                 gasesSelect: createButton("Gases", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "gasesMenu"; updateMenu(); }),
                 spawnersSelect: createButton("Spawners", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "spawnersMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
+                voidsSelect: createButton("Void Blocks", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "voidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
                 miscSelect: createButton("Misc", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "miscMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
             }
         };
@@ -328,6 +332,18 @@ let selectedMenuButton = undefined;
                 waterSpawnerBtn: createButton("Water Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = WaterSpawner; changeSelectedButton(e.currentTarget); }),
                 steamSpawnerBtn: createButton("Steam Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = SteamSpawner; changeSelectedButton(e.currentTarget); }),
                 fireSpawnerBtn: createButton("Fire Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = FireSpawner; changeSelectedButton(e.currentTarget); }),
+            },
+            voidsMenu: {
+                voidBlockBtn: createButton("Void Block", 175).view.on('pointerdown', (e) => { selectedParticle = VoidBlock; changeSelectedButton(e.currentTarget); }),
+                voidSolidsBtn: createButton("Void Solids Block", 175).view.on('pointerdown', (e) => { selectedParticle = VoidSolidsBlock; changeSelectedButton(e.currentTarget); }),
+                voidLiquidsBtn: createButton("Void Liquids Block", 175).view.on('pointerdown', (e) => { selectedParticle = VoidLiquidsBlock; changeSelectedButton(e.currentTarget); }),
+                voidGasBtn: createButton("Void Gases Block", 175).view.on('pointerdown', (e) => { selectedParticle = VoidGassesBlock; changeSelectedButton(e.currentTarget); }),
+                /*voidSandBtn: createButton("Void Sand Block", 175).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
+                voidDirtBtn: createButton("Void Dirt Block", 175).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
+                voidAshBtn: createButton("Void Ash Block", 175).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
+                voidWaterBtn: createButton("Void Water Block", 175).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
+                voidFireBtn: createButton("Void Fire Block", 175).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
+                voidSteamBtn: createButton("Void Steam Block", 175).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),*/
             },
             miscMenu: {
                 eraserBtn: createButton("Eraser").view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),

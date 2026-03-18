@@ -81,6 +81,34 @@ class Spawner extends Solid{
 
 }
 
+class Void extends Solid{
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, voidParticle)
+    {
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix);
+        this.framesSinceLastUpdate = 0;
+        this.voidParticle = voidParticle;
+    }
+
+    move(){};
+    
+    action(){
+        let neighbors = this.getNeighbors();
+        let neighbor = undefined;
+
+        //console.log(neighbors);
+
+        for(let i = 0; i < neighbors.length; i++){
+            neighbor = neighbors[i];
+            if(!(neighbor instanceof Void) && neighbor instanceof this.voidParticle){
+                neighbor.rect.clear();
+                this.matrix.setParticle(neighbor.getX(), neighbor.getY(), null);
+            }
+        }
+        
+    };
+
+}
+
 export default Solid;
 
-export { Solid, StaticSolid, MoveableSolid, Spawner }
+export { Solid, StaticSolid, MoveableSolid, Spawner, Void }

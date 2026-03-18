@@ -1,6 +1,7 @@
-import { MoveableSolid, StaticSolid, Spawner } from "./solids.js";
+import { Solid, MoveableSolid, StaticSolid, Spawner, Void } from "./solids.js";
 import { Liquid } from "./liquids.js";
 import Gas from "./gas.js";
+import Particle from "./particle.js";
 
 // Teplate for easy copying
 /*
@@ -246,8 +247,64 @@ class FireSpawner extends Spawner {
     }
 }
 
+// Void Blocks
+class VoidBlock extends Void {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Particle)
+
+        let colors = [0x0000ff];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+class VoidSolidsBlock extends Void {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Solid)
+
+        let colors = [0xB52300];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+
+class VoidLiquidsBlock extends Void {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Liquid)
+
+        let colors = [0x134A00];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+
+class VoidGassesBlock extends Void {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix, Gas)
+
+        let colors = [0x360034];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+
 // Misc
 
 export default Sand;
 
-export { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner };
+export { 
+    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, 
+    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner,
+    VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock
+};
