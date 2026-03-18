@@ -4,7 +4,6 @@ import Matrix from './matrix.js' ;
 import { Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
     SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner } from "./particles/particles.js";
 
-//import * as UI from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 import { Button } from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 
 const { Application, EventSystem, Text, Container, Graphics  } = PIXI;
@@ -34,6 +33,9 @@ let mouseOver = false;
 let paused = false;
 
 let tileSize = undefined;
+
+let selectedButton = undefined;
+let selectedMenuButton = undefined;
 
 (async () => {
     console.log( navigator.userAgent );
@@ -69,7 +71,9 @@ let tileSize = undefined;
 
     function gameLoop(){
 
-
+        if( !paused ){
+            matrix.updateGrid();
+        }
         if(mouseDown){
             if(brushSize == 1){
                 matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
@@ -79,9 +83,7 @@ let tileSize = undefined;
             }
         }
 
-        if( !paused ){
-            matrix.updateGrid();
-        }
+
         
 
     }
@@ -209,21 +211,25 @@ let tileSize = undefined;
             .stroke({ width: outlineThicknes, color: outlineColor});
 
         const btn = new Button(defaultView);
-
+        
+        btn.view._w = w;
+        btn.view._h = h;
+        
         btn.view.on('pointerover', () => {
-            defaultView.clear().rect(0, 0, w, h).fill(0x666666).stroke({ width: outlineThicknes, color: outlineColor});
+            if(selectedButton === btn.view || selectedMenuButton === btn.view){
+                defaultView.clear().rect(0, 0, w, h).fill(0x222222).stroke({ width: outlineThicknes, color: outlineColor});
+            }else{
+                defaultView.clear().rect(0, 0, w, h).fill(0x666666).stroke({ width: outlineThicknes, color: outlineColor});
+            }
+            
         });
 
         btn.view.on('pointerout', () => {
-            defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
-        });
-
-        btn.view.on('pointerdown', () => {
-            defaultView.clear().rect(0, 0, w, h).fill(0x000000).stroke({ width: outlineThicknes, color: outlineColor});
-        });
-
-        btn.view.on('pointerup', () => {
-            defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
+            if(selectedButton === btn.view  || selectedMenuButton === btn.view){
+                defaultView.clear().rect(0, 0, w, h).fill(0x000000).stroke({ width: outlineThicknes, color: outlineColor});
+            }else{
+                defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
+            }
         });
 
         const label = new Text(txt, {
@@ -237,7 +243,7 @@ let tileSize = undefined;
         // Add text ON TOP of the button view
         btn.view.addChild(label);
         
-        return btn.view;
+        return btn;
     }
 
     function createMenu(){
@@ -252,52 +258,89 @@ let tileSize = undefined;
         //allButtons["staticSolidsButtons"]["stoneBtn"].visible = false;
     }
 
+    function changeSelectedButton(btn) {
+        if (selectedButton) {
+            selectedButton.clear()
+                .rect(0, 0, selectedButton._w, selectedButton._h)
+                .fill(0x999999)
+                .stroke({ width: 2, color: 0xffffff });
+        }
+
+        selectedButton = btn;
+
+        selectedButton.clear()
+            .rect(0, 0, selectedButton._w, selectedButton._h)
+            .fill(0x000000)
+            .stroke({ width: 2, color: 0xffffff });
+    }
+
+    function changeSelectedMenuButton(btn) {
+        if (selectedMenuButton) {
+            selectedMenuButton.clear()
+                .rect(0, 0, selectedMenuButton._w, selectedMenuButton._h)
+                .fill(0x999999)
+                .stroke({ width: 2, color: 0xffffff });
+        }
+
+        selectedMenuButton = btn;
+
+        selectedMenuButton.clear()
+            .rect(0, 0, selectedMenuButton._w, selectedMenuButton._h)
+            .fill(0x000000)
+            .stroke({ width: 2, color: 0xffffff });
+    }
+
     function createButtons(buttonY, buttonSpacing, buttonIndent){
 
         allMenuButtons = {
             menuSelectButtons: {
-                solidsSelect: createButton("Solids", 150, 45).on('pointerdown', () => { selectedMenu = "solidsMenu"; updateMenu(); }),
-                liquidsSelect: createButton("Liquids", 150, 45).on('pointerdown', () => { selectedMenu = "liquidsMenu"; updateMenu(); }),
-                gasesSelect: createButton("Gases", 150, 45).on('pointerdown', () => { selectedMenu = "gasesMenu"; updateMenu(); }),
-                spawnersSelect: createButton("Spawners", 150, 45).on('pointerdown', () => { selectedMenu = "spawnersMenu"; updateMenu(); }),
-                miscSelect: createButton("Misc", 150, 45).on('pointerdown', () => { selectedMenu = "miscMenu"; updateMenu(); }),
-                
+                solidsSelect: createButton("Solids", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "solidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
+                liquidsSelect: createButton("Liquids", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "liquidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
+                gasesSelect: createButton("Gases", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "gasesMenu"; updateMenu(); }),
+                spawnersSelect: createButton("Spawners", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "spawnersMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
+                miscSelect: createButton("Misc", 150, 45).view.on('pointerdown', (e) => { selectedMenu = "miscMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
             }
         };
 
         allParticleButtons = {
             solidsMenu: {
-                stoneBtn: createButton("Stone").on('pointerdown', () => { selectedParticle = Stone; }),
-                sandBtn: createButton("Sand").on('pointerdown', () => { selectedParticle = Sand; }),
-                dirtBtn: createButton("Dirt").on('pointerdown', () => { selectedParticle = Dirt; }),
-                ashBtn: createButton("Ash").on('pointerdown', () => { selectedParticle = Ash }),
-                bedrockBtn: createButton("Bedrock").on('pointerdown', () => { selectedParticle = Bedrock }),
-                iceBtn: createButton("Ice").on('pointerdown', () => { selectedParticle = Ice }),
-                obsidianBtn: createButton("Obsidian").on('pointerdown', () => { selectedParticle = Obsidian }),
-                tntBtn: createButton("Tnt").on('pointerdown', () => { selectedParticle = Tnt }),
-                woodBtn: createButton("Wood").on('pointerdown', () => { selectedParticle = Wood }),
+                stoneBtn: createButton("Stone").view.on('pointerdown', (e) => { selectedParticle = Stone; changeSelectedButton(e.currentTarget); }),
+                sandBtn: createButton("Sand").view.on('pointerdown', (e) => { selectedParticle = Sand; changeSelectedButton(e.currentTarget); }),
+                dirtBtn: createButton("Dirt").view.on('pointerdown', (e) => { selectedParticle = Dirt; changeSelectedButton(e.currentTarget); }),
+                ashBtn: createButton("Ash").view.on('pointerdown', (e) => { selectedParticle = Ash; changeSelectedButton(e.currentTarget); }),
+                bedrockBtn: createButton("Bedrock").view.on('pointerdown', (e) => { selectedParticle = Bedrock; changeSelectedButton(e.currentTarget); }),
+                iceBtn: createButton("Ice").view.on('pointerdown', (e) => { selectedParticle = Ice; changeSelectedButton(e.currentTarget); }),
+                obsidianBtn: createButton("Obsidian").view.on('pointerdown', (e) => { selectedParticle = Obsidian; changeSelectedButton(e.currentTarget); }),
+                tntBtn: createButton("Tnt").view.on('pointerdown', (e) => { selectedParticle = Tnt; changeSelectedButton(e.currentTarget); }),
+                woodBtn: createButton("Wood").view.on('pointerdown', (e) => { selectedParticle = Wood; changeSelectedButton(e.currentTarget); }),
             },
             liquidsMenu: {
-                waterBtn: createButton("Water").on('pointerdown', () => { selectedParticle = Water }),
+                waterBtn: createButton("Water").view.on('pointerdown', (e) => { selectedParticle = Water; changeSelectedButton(e.currentTarget); }),
             },
             gasesMenu: {
-                steamBtn: createButton("Steam").on('pointerdown', () => { selectedParticle = Steam }),
-                fireBtn: createButton("Fire").on('pointerdown', () => { selectedParticle = Fire }),
+                steamBtn: createButton("Steam").view.on('pointerdown', (e) => { selectedParticle = Steam; changeSelectedButton(e.currentTarget); }),
+                fireBtn: createButton("Fire").view.on('pointerdown', (e) => { selectedParticle = Fire; changeSelectedButton(e.currentTarget); }),
             },
             spawnersMenu: {
-                sandSpawnerBtn: createButton("Sand Spawner", 150).on('pointerdown', () => { selectedParticle = SandSpawner }),
-                dirtSpawnerBtn: createButton("Dirt Spawner", 150).on('pointerdown', () => { selectedParticle = DirtSpawner }),
-                ashSpawnerBtn: createButton("Ash Spawner", 150).on('pointerdown', () => { selectedParticle = AshSpawner }),
-                waterSpawnerBtn: createButton("Water Spawner", 150).on('pointerdown', () => { selectedParticle = WaterSpawner }),
-                steamSpawnerBtn: createButton("Steam Spawner", 150).on('pointerdown', () => { selectedParticle = SteamSpawner }),
-                fireSpawnerBtn: createButton("Fire Spawner", 150).on('pointerdown', () => { selectedParticle = FireSpawner }),
+                sandSpawnerBtn: createButton("Sand Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = SandSpawner; changeSelectedButton(e.currentTarget); }),
+                dirtSpawnerBtn: createButton("Dirt Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = DirtSpawner; changeSelectedButton(e.currentTarget); }),
+                ashSpawnerBtn: createButton("Ash Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
+                waterSpawnerBtn: createButton("Water Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = WaterSpawner; changeSelectedButton(e.currentTarget); }),
+                steamSpawnerBtn: createButton("Steam Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = SteamSpawner; changeSelectedButton(e.currentTarget); }),
+                fireSpawnerBtn: createButton("Fire Spawner", 150).view.on('pointerdown', (e) => { selectedParticle = FireSpawner; changeSelectedButton(e.currentTarget); }),
             },
             miscMenu: {
-                eraserBtn: createButton("Eraser").on('pointerdown', () => { selectedParticle = null }),
+                eraserBtn: createButton("Eraser").view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),
             },
         };
 
-        
+
+        selectedButton = allParticleButtons.solidsMenu.sandBtn;
+        changeSelectedButton(selectedButton);
+
+        selectedMenuButton = allMenuButtons.menuSelectButtons.solidsSelect;
+        changeSelectedMenuButton(selectedMenuButton);
+
         for(let btns in allParticleButtons){
 
             let menu = btns;
