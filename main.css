@@ -19,6 +19,7 @@ body {
 }
 
 .scrollable-div {
+  min-height: 700px;
   height: 50vh;
   overflow-y: auto; /* or overflow: auto; or overflow-y: scroll; */
 }
