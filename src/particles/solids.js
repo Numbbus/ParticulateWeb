@@ -37,8 +37,10 @@ class MoveableSolid extends StaticSolid{
                 let right = this.matrix.getParticle(this.getX() + 1, this.getY());
                 let left = this.matrix.getParticle(this.getX() - 1, this.getY());
 
-                if((bottomLeft === null || bottomLeft instanceof Liquid) && (left === null || left instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()-1, this.getY()+1); }
-                else if((bottomRight === null || bottomRight instanceof Liquid) && (right === null || right instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()+1, this.getY()+1); }
+                let direction = Math.floor(Math.random()*2);
+
+                if(direction == 1 && (bottomLeft === null || bottomLeft instanceof Liquid) && (left === null || left instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()-1, this.getY()); }
+                else if(direction == 0 && (bottomRight === null || bottomRight instanceof Liquid) && (right === null || right instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()+1, this.getY()); }
             }
 
             this.framesSinceLastUpdate = 0;
