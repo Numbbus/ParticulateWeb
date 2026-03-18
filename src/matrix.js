@@ -76,7 +76,6 @@ class Matrix {
         }
     }
 
-
     traverseMatrix(startX, startY, endX, endY){
         
         // Distances between the points
@@ -139,55 +138,7 @@ class Matrix {
         return allCoords;
     }
 
-/*
-    public ArrayList<int[]> traceThroughGrid(int startX, int startY, int endX, int endY)
-{
-    ArrayList<int[]> allCoords = new ArrayList<>();
-
-    int dx = endX - startX;
-    int dy = endY - startY;
-
-    if (Math.abs(dx) >= Math.abs(dy)) {
-        // Iterate over x
-        if (startX > endX) {
-            // Swap points to ensure increasing x
-            int tempX = startX, tempY = startY;
-            startX = endX; startY = endY;
-            endX = tempX; endY = tempY;
-            dx = endX - startX;
-            dy = endY - startY;
-        }
-
-        double slope = (double) dy / dx;
-
-        for (int x = startX; x <= endX; x++) {
-            double y = startY + slope * (x - startX);
-            allCoords.add(new int[]{x, (int)Math.round(y)});
-        }
-    } else {
-        // Iterate over y
-        if (startY > endY) {
-            // Swap points to ensure increasing y
-            int tempX = startX, tempY = startY;
-            startX = endX; startY = endY;
-            endX = tempX; endY = tempY;
-            dx = endX - startX;
-            dy = endY - startY;
-        }
-
-        double invSlope = (double) dx / dy;
-
-        for (int y = startY; y <= endY; y++) {
-            double x = startX + invSlope * (y - startY);
-            allCoords.add(new int[]{(int)Math.round(x), y});
-        }
-    }
-
-    return allCoords;
-}
-    */
-
-    traverseMatrixAndCreate(startX, startY, endX, endY, p){    
+    traverseMatrixAndCreate(startX, startY, endX, endY, p,){    
         // Distances between the points
         let dx = endX - startX;
         let dy = endY - startY;
@@ -241,6 +192,22 @@ class Matrix {
                 let x = startX + invSlope * (y - startY);
                 this.createParticle(Math.round(x), y, p);
             }
+        }
+    }
+
+    fillBrushArea(p, brushSize, coords){
+        //const coords = this.traverseMatrix(startX, startY, endX, endY);
+
+        for(let c = 0; c < coords.length; c++){
+
+            this.drawBrush(coords[c][0], coords[c][1], coords[c][0]+brushSize, coords[c][1]+brushSize, p);
+        }
+
+    }
+
+    drawBrush(startX, startY, endX, endY, p){
+        for(let i = startY; i < endY; i++){
+            this.traverseMatrixAndCreate(startX, i, endX-1 , i   , p);
         }
     }
 

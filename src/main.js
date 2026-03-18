@@ -71,7 +71,12 @@ let tileSize = undefined;
 
 
         if(mouseDown){
-            matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle, brushSize);
+            if(brushSize == 1){
+                matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
+            }else{
+                const coords = matrix.traverseMatrix(previouseMouseX, previouseMouseY, mouseX, mouseY);
+                matrix.fillBrushArea(selectedParticle, brushSize, coords);
+            }
         }
 
         if( !paused ){
