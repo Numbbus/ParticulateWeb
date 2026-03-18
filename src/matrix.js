@@ -131,7 +131,7 @@ class Matrix {
 
             for (let y = startY; y <= endY; y++) {
                 let x = startX + invSlope * (y - startY);
-                allCoords.push([x, Math.round(y)])
+                allCoords.push([Math.round(x), y])
             }
         }
 
