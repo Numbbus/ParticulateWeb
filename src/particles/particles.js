@@ -252,7 +252,7 @@ class VoidBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Particle)
 
-        let colors = [0x0000ff];
+        let colors = [0xae34fa];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
