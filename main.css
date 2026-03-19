@@ -23,3 +23,13 @@ body {
   height: 50vh;
   overflow-y: auto; /* or overflow: auto; or overflow-y: scroll; */
 }
+
+
+.flip-horizontal {
+  transform: scaleX(-1);
+  /* Optional: Include vendor prefixes for broader compatibility with older browsers */
+  -webkit-transform: scaleX(-1); /* Safari and Chrome */
+  -moz-transform: scaleX(-1);    /* Firefox */
+  -o-transform: scaleX(-1);      /* Opera */
+  filter: FlipH;                 /* Old IE syntax */
+}
