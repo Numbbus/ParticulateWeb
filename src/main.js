@@ -369,45 +369,71 @@ let selectedMenuButton = undefined;
         selectedMenuButton = allMenuButtons.menuSelectButtons.solidsSelect;
         changeSelectedMenuButton(selectedMenuButton);
 
-        for(let btns in allParticleButtons){
+        let menuButtonOffset = 0;
 
+        for(let btns in allMenuButtons){
             let menu = btns;
-            btns = allParticleButtons[btns];
-            let i = 0;
-  
+            btns = allMenuButtons[menu];
+            
+            let btnX = buttonIndent;
+            let btnY = 50;
+            let row = 0;
+            let rowSpacing = 5;
+
             for(let btn in btns){
 
-                let btnPos = btns[btn].width*i + buttonIndent;
-                let row = 1;
-
-                if(btnPos + btns[btn].width >= app.screen.width){
-                    i = 0;
+                if(btnX + btns[btn]._w >= app.screen.width){
                     row++;
+                    btnX = buttonIndent;
+                    btnY = btnY + btns[btn]._h + rowSpacing;
+                    menuButtonOffset = menuButtonOffset + btns[btn]._h
+                }
 
-                    buttonY = (buttonY * row) + buttonIndent/2;
-                    btnPos = buttonSpacing*i + buttonIndent;
-                }
-                
-                if(i == 0){ btns[btn].position.set(buttonIndent, buttonY); }
-                else{
-                    btns[btn].position.set(btnPos, buttonY);
-                }
+                btns[btn].position.set(btnX, btnY)
+
+                btnX = btns[btn]._w + btnX + rowSpacing;
 
                 containers.menu.addChild(btns[btn]);
+
+
+            }
+        }
         
+
+        for(let btns in allParticleButtons){
+            let menu = btns;
+            btns = allParticleButtons[menu];
+            
+            let btnX = buttonIndent;
+            let btnY = 100 +menuButtonOffset;
+            let row = 0;
+            let rowSpacing = 5;
+
+            for(let btn in btns){
+
+                if(btnX + btns[btn]._w >= app.screen.width){
+                    row++;
+                    btnX = buttonIndent;
+                    btnY = btnY + btns[btn]._h + rowSpacing;
+                }
+
+                btns[btn].position.set(btnX, btnY)
+
+                btnX = btns[btn]._w + btnX + rowSpacing;
+
+                containers.menu.addChild(btns[btn]);
+
                 btns[btn].interactive = selectedMenu === menu;
                 btns[btn].buttonMode = selectedMenu === menu;
                 btns[btn].visible = selectedMenu === menu;
 
-                i++;
+
             }
-            
         }
 
-        let menuY = buttonY / 2;
-        buttonSpacing = 152
 
-        for(let btns in allMenuButtons){
+
+        /*for(let btns in allMenuButtons){
 
             btns = allMenuButtons[btns];
             let i = 0;
@@ -433,9 +459,9 @@ let selectedMenuButton = undefined;
 
                 i++;
             }
-        }
+        }*/
 
-        return allParticleButtons;
+
 
     }
 
