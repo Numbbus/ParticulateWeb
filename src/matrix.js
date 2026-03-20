@@ -242,8 +242,12 @@ class Matrix {
 
     getParticle(x, y)
     { 
+        if(this.withinBounds(x, y)){
+            return this.matrix[y][x]; 
+        }
 
-        return this.matrix[y][x]; 
+        return null;
+        
     }
 
     getTileSize(){ return this.tileSize; }

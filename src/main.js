@@ -82,7 +82,7 @@ let selectedMenuButton = undefined;
 
     // set background color and size of container
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
-    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - containers.menu.y + 200).fill(0x333333))
+    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y + 200).fill(0x333333))
 
     let matrix = new Matrix(app, containers)
 
@@ -108,6 +108,8 @@ let selectedMenuButton = undefined;
     let outline = new Graphics().rect(0,0, tileSize, tileSize).stroke({ width: 1, color: 0xff0000 });
     outline.pivot.set(0, 0);
     containers.ui.addChild(outline);
+
+    let topBarText = {};
 
     createMenu();
 
@@ -147,6 +149,10 @@ let selectedMenuButton = undefined;
         outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
         outline.pivot.set(0, 0);
         containers.ui.addChild(outline);
+
+        let hovered = matrix.getParticle(mouseX, mouseY);
+
+        topBarText.hoveredOverParticleText.text = `Hovered: ${hovered == null || hovered == undefined ? '' : hovered.constructor.name }`;
     });
 
     containers.playArea.on("pointerup", (event) => {
@@ -176,7 +182,7 @@ let selectedMenuButton = undefined;
     window.addEventListener('keydown', (event) => {
         if(mouseOver){
             console.log(event.key); 
-            if(event.key == ' '){ paused = !paused; }
+            if(event.key == ' '){ paused = !paused; topBarText.pausedText.visible = paused; }
             else if(event.key == 'r'){ 
                 matrix = new Matrix(app, containers); 
                 containers.playArea.removeChildren()
@@ -199,21 +205,11 @@ let selectedMenuButton = undefined;
         }
     }
 
-    // Create a Text object to display the FPS
-    const fpsText = new Text('FPS: 0', {
-        fontFamily: 'Arial',
-        fontSize: 24,
-        fill: 0xffffff,
-    });
-    fpsText.x = 10;
-    fpsText.y = 10;
-    containers.menu.addChild(fpsText);
-
     // Add a listener to the ticker to update the FPS display
     let updateFps = true;
     app.ticker.add(() => {
         if(updateFps){
-            fpsText.text = `FPS: ${app.ticker.FPS.toFixed(0)}`;
+            topBarText.fpsText.text = `FPS: ${app.ticker.FPS.toFixed(0)}`;
             updateFps = false;
         }else{
             updateFps = true;
@@ -281,15 +277,68 @@ let selectedMenuButton = undefined;
     }
 
     function createMenu(){
-        let buttonY = 100;
         let buttonIndent = 50;
-        let buttonSpacing = 127;
+
+        let topBarIndent = buttonIndent;
+        let topBarY = 10;
+
+        topBarText = {
+            fpsText: new Text('FPS: 0', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            selectedParticleText: new Text('Selected: Sand', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            hoveredOverParticleText: new Text('Hovered:', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            pausedText: new Text('Paused!', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            
+        }
+
+        topBarText.pausedText.visible = false;
         
 
+        let menuTxtOffset = 0;
+        let txtX = topBarIndent;
+        let txtY = topBarY;
+        let row = 0;
+        let rowSpacing = 5;
+        let colSpacing = 120;
 
-        createButtons(buttonY, buttonSpacing, buttonIndent);
+        for(let t in topBarText){
+            let txt = topBarText[t];
 
-        //allButtons["staticSolidsButtons"]["stoneBtn"].visible = false;
+
+
+            if(txtX + txt.width >= app.screen.width){
+                row++;
+                txtX = topBarIndent;
+                txtY = txtY + txt.height + rowSpacing;
+                menuTxtOffset = menuTxtOffset + txt.height
+            }
+
+            txt.position.x = txtX;
+            txt.position.y = txtY; 
+
+            txtX = txt.width + txtX + colSpacing;
+
+
+            containers.menu.addChild(txt);   
+        }
+
+
+        createButtons(buttonIndent, menuTxtOffset);
     }
 
     function changeSelectedButton(btn) {
@@ -306,6 +355,8 @@ let selectedMenuButton = undefined;
             .rect(0, 0, selectedButton._w, selectedButton._h)
             .fill(selectedButton._SelectedBg)
             .stroke({ width: 2, color: 0xffffff });
+
+        topBarText.selectedParticleText.text = `Selected: ${selectedParticle.name}`;
     }
 
     function changeSelectedMenuButton(btn) {
@@ -324,7 +375,7 @@ let selectedMenuButton = undefined;
             .stroke({ width: 2, color: 0xffffff });
     }
 
-    function createButtons(buttonY, buttonSpacing, buttonIndent){
+    function createButtons(buttonIndent, menuTxtOffset){
 
 
         allMenuButtons = {
@@ -337,6 +388,12 @@ let selectedMenuButton = undefined;
                 miscSelect: createButton("Misc", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "miscMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
             }
         };
+
+        /*allTopBarButtons = {
+            constrolsButtons: {
+
+            }
+        }*/
 
         allParticleButtons = {
             solidsMenu: {
@@ -383,14 +440,14 @@ let selectedMenuButton = undefined;
         selectedMenuButton = allMenuButtons.menuSelectButtons.solidsSelect;
         changeSelectedMenuButton(selectedMenuButton);
 
-        let menuButtonOffset = 0;
+        let menuButtonOffset = menuTxtOffset;
 
         for(let btns in allMenuButtons){
             let menu = btns;
             btns = allMenuButtons[menu];
             
             let btnX = buttonIndent;
-            let btnY = 50;
+            let btnY = 50 + menuTxtOffset;
             let row = 0;
             let rowSpacing = 5;
 
@@ -402,11 +459,11 @@ let selectedMenuButton = undefined;
                     btnY = btnY + btns[btn]._h + rowSpacing;
                     menuButtonOffset = menuButtonOffset + btns[btn]._h
 
-                    if(btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 50 + btns[btn]._h >= app.screen.height){
+                    if(btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100 + btns[btn]._h >= app.screen.height - 50){
                         app.renderer.resize( app.screen.width, btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100);
                         matrix = new Matrix(app, containers); 
                         containers.playArea.removeChildren()
-                        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
+                        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
                     }
 
                 }
@@ -428,7 +485,7 @@ let selectedMenuButton = undefined;
             btns = allParticleButtons[menu];
             
             let btnX = buttonIndent;
-            let btnY = 100 +menuButtonOffset;
+            let btnY = 100 + menuButtonOffset;
             let row = 0;
             let rowSpacing = 5;
 
