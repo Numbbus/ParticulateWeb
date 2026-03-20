@@ -166,12 +166,12 @@ let selectedMenuButton = undefined;
             brushSize = brushSize > 1 ? brushSize-1 : 1; 
         }
 
+        topBarText.brushSizeText.text = `Brush Size: ${brushSize}`;
+
         outline.clear();
         outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
         outline.pivot.set(0, 0);
         containers.ui.addChild(outline);
-
-        console.log(brushSize);
     });
 
     containers.menu.on('pointerover', (event) => {
@@ -284,6 +284,11 @@ let selectedMenuButton = undefined;
 
         topBarText = {
             fpsText: new Text('FPS: 0', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            brushSizeText: new Text('Brush Size: 1', {
                 fontFamily: 'Arial',
                 fontSize: 20,
                 fill: 0xffffff,
