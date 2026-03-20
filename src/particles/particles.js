@@ -179,7 +179,7 @@ class SandSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Sand)
 
-        let colors = [0xffffff];
+        let colors = [0xff0000];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -191,7 +191,7 @@ class DirtSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Dirt)
 
-        let colors = [0xffffff];
+        let colors = [0xFFFF00];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -203,7 +203,7 @@ class AshSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Ash)
 
-        let colors = [0xffffff];
+        let colors = [0x0F7D0F];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -215,7 +215,7 @@ class WaterSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Water)
 
-        let colors = [0xffffff];
+        let colors = [0x00FFFF];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -227,7 +227,7 @@ class SteamSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Steam)
 
-        let colors = [0xffffff];
+        let colors = [0xeeeeee];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -239,7 +239,7 @@ class FireSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix, Fire)
 
-        let colors = [0xffffff];
+        let colors = [0xFF00FF];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
