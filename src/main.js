@@ -66,7 +66,9 @@ let selectedMenuButton = undefined;
 
     hammer.on('pinchmove', (ev) => {
         // ev.scale is relative to pinchstart
-        brushSize = Math.floor(initialBrushSize * ev.scale);
+        let newBrushSize =  Math.floor(initialBrushSize * ev.scale);
+        brushSize = newBrushSize != 0 ? newBrushSize : 1;
+        topBarText.brushSizeText.text = `Brush Size: ${brushSize}`;
     });
 
     const containers = {
