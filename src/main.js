@@ -150,7 +150,7 @@ let selectedMenuButton = undefined;
         outline.pivot.set(0, 0);
         containers.ui.addChild(outline);
 
-        let hovered = matrix.getParticle(mouseX, mouseY);
+        let hovered = matrix.withinBounds(mouseX, mouseY) ? matrix.getParticle(mouseX, mouseY) : null;
 
         topBarText.hoveredOverParticleText.text = `Hovered: ${hovered == null || hovered == undefined ? '' : hovered.constructor.name }`;
     });

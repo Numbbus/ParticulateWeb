@@ -242,11 +242,7 @@ class Matrix {
 
     getParticle(x, y)
     { 
-        if(this.withinBounds(x, y)){
-            return this.matrix[y][x]; 
-        }
-
-        return null;
+        return this.matrix[y][x]; 
         
     }
 
