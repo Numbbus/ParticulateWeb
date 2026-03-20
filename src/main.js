@@ -118,6 +118,7 @@ let selectedMenuButton = undefined;
     containers.ui.addChild(outline);
 
     let topBarText = {};
+    let topBarButtons = {};
 
     createMenu();
 
@@ -140,8 +141,8 @@ let selectedMenuButton = undefined;
         previouseMouseX = mouseX;
         previouseMouseY = mouseY;
 
-        mouseX = Math.trunc(event.global.x / matrix.getTileSize()) + Math.floor(brushSize / 2);
-        mouseY = Math.trunc(event.global.y / matrix.getTileSize()) + Math.floor(brushSize / 2);
+        mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
+        mouseY = Math.trunc(event.global.y / matrix.getTileSize()) - Math.floor(brushSize / 2);
         mouseDown = true;
     
     });
@@ -150,8 +151,8 @@ let selectedMenuButton = undefined;
         previouseMouseX = mouseX;
         previouseMouseY = mouseY;
 
-        mouseX = Math.trunc(event.global.x / matrix.getTileSize());
-        mouseY = Math.trunc(event.global.y / matrix.getTileSize());
+        mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
+        mouseY = Math.trunc(event.global.y / matrix.getTileSize()) -  Math.floor(brushSize / 2);
 
         outline.clear();
         outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
@@ -191,11 +192,7 @@ let selectedMenuButton = undefined;
         if(mouseOver){
             console.log(event.key); 
             if(event.key == ' '){ paused = !paused; topBarText.pausedText.visible = paused; }
-            else if(event.key == 'r'){ 
-                matrix = new Matrix(app, containers); 
-                containers.playArea.removeChildren()
-                containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
-            }
+            else if(event.key == 'r'){ resetMatrix(); }
         }
         
     });
@@ -224,6 +221,12 @@ let selectedMenuButton = undefined;
         }
         
     });
+
+    function resetMatrix(){
+        matrix = new Matrix(app, containers); 
+        containers.playArea.removeChildren()
+        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
+    }
 
     function darken(hex, factor) { 
         let r = (hex >> 16) & 0xff;
@@ -320,6 +323,13 @@ let selectedMenuButton = undefined;
         }
 
         topBarText.pausedText.visible = false;
+
+        topBarButtons = {
+            eraserBtn: createButton("Eraser", {bg: 0xFF5CFA}).view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),
+            pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused;}),
+            resetBtn: createButton("Reset", {bg: 0xFF3333}).view.on('pointerdown', (e) => { resetMatrix(); }),
+
+        }
         
 
         let menuTxtOffset = 0;
@@ -327,7 +337,9 @@ let selectedMenuButton = undefined;
         let txtY = topBarY;
         let row = 0;
         let rowSpacing = 5;
-        let colSpacing = 120;
+        let colSpacing = 110;
+
+        let btnColSpacing = 5;
 
         for(let t in topBarText){
             let txt = topBarText[t];
@@ -348,6 +360,24 @@ let selectedMenuButton = undefined;
 
 
             containers.menu.addChild(txt);   
+        }
+
+        for(let b in topBarButtons){
+            let btn = topBarButtons[b];
+
+            if(txtX + btn._w >= app.screen.width){
+                row++;
+                txtX = topBarIndent;
+                txtY = txtY + btn._h + rowSpacing;
+                menuTxtOffset = menuTxtOffset + btn._h + 5;
+            }
+
+            btn.position.set(txtX, txtY);
+
+            txtX = btn._w + txtX + btnColSpacing;
+
+
+            containers.menu.addChild(btn);   
         }
 
 
@@ -442,7 +472,7 @@ let selectedMenuButton = undefined;
                 voidGasBtn: createButton("Void Gases Block", { w: 175, bg: 0x360034 }).view.on('pointerdown', (e) => { selectedParticle = VoidGassesBlock; changeSelectedButton(e.currentTarget); }),
             },
             miscMenu: {
-                eraserBtn: createButton("Eraser", {bg: 0xFF5CFA}).view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),
+                
             },
         };
 
@@ -474,9 +504,7 @@ let selectedMenuButton = undefined;
 
                     if(btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100 + btns[btn]._h >= app.screen.height - 50){
                         app.renderer.resize( app.screen.width, btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100);
-                        matrix = new Matrix(app, containers); 
-                        containers.playArea.removeChildren()
-                        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
+                        resetMatrix()
                     }
 
                 }
