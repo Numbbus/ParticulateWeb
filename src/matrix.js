@@ -139,6 +139,7 @@ class Matrix {
     }
 
     traverseMatrixAndCreate(startX, startY, endX, endY, p,){    
+
         // Distances between the points
         let dx = endX - startX;
         let dy = endY - startY;
@@ -193,6 +194,8 @@ class Matrix {
                 this.createParticle(Math.round(x), y, p);
             }
         }
+    
+
     }
 
     fillBrushArea(p, brushSize, coords){

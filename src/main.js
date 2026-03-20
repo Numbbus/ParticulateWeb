@@ -11,13 +11,14 @@ import { Button } from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 
 const { Application, EventSystem, Text, Container, Graphics  } = PIXI;
 
+import "https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"
 
 let maxWidth = 1500;
 let maxHeight = 700;
 
 let mouseDown = false;
-let mouseX = null;
-let mouseY = null;
+let mouseX = 0;
+let mouseY = 0;
 
 let previouseMouseX = null;
 let previouseMouseY = null;
@@ -40,6 +41,8 @@ let tileSize = undefined;
 let selectedButton = undefined;
 let selectedMenuButton = undefined;
 
+
+
 (async () => {
     console.log( navigator.userAgent );
     const margin = 30;
@@ -49,6 +52,21 @@ let selectedMenuButton = undefined;
         view: document.querySelector("#pixi"),
         width: Math.min(window.innerWidth - margin * 2, maxWidth),
         height: Math.min(window.innerHeight - margin * 2, maxHeight)
+    });
+
+    const hammer = new Hammer.Manager(app.view);
+    const pinch = new Hammer.Pinch();
+    hammer.add(pinch);
+
+    let initialBrushSize = brushSize;
+
+    hammer.on('pinchstart', (ev) => {
+        initialBrushSize = brushSize;
+    });
+
+    hammer.on('pinchmove', (ev) => {
+        // ev.scale is relative to pinchstart
+        brushSize = Math.floor(initialBrushSize * ev.scale);
     });
 
     const containers = {
@@ -63,8 +81,8 @@ let selectedMenuButton = undefined;
     addToStage(containers.playArea, containers.menu, containers.ui);
 
     // set background color and size of container
-    containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
-    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, 300).fill(0x333333))
+    containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
+    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - containers.menu.y + 200).fill(0x333333))
 
     let matrix = new Matrix(app, containers)
 
@@ -85,10 +103,6 @@ let selectedMenuButton = undefined;
                 matrix.fillBrushArea(selectedParticle, brushSize, coords);
             }
         }
-
-
-        
-
     }
 
     let outline = new Graphics().rect(0,0, tileSize, tileSize).stroke({ width: 1, color: 0xff0000 });
@@ -116,8 +130,8 @@ let selectedMenuButton = undefined;
         previouseMouseX = mouseX;
         previouseMouseY = mouseY;
 
-        mouseX = Math.trunc(event.global.x / matrix.getTileSize());
-        mouseY = Math.trunc(event.global.y / matrix.getTileSize());
+        mouseX = Math.trunc(event.global.x / matrix.getTileSize()) + Math.floor(brushSize / 2);
+        mouseY = Math.trunc(event.global.y / matrix.getTileSize()) + Math.floor(brushSize / 2);
         mouseDown = true;
     
     });
@@ -387,11 +401,20 @@ let selectedMenuButton = undefined;
                     btnX = buttonIndent;
                     btnY = btnY + btns[btn]._h + rowSpacing;
                     menuButtonOffset = menuButtonOffset + btns[btn]._h
+
+                    if(btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 50 + btns[btn]._h >= app.screen.height){
+                        app.renderer.resize( app.screen.width, btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100);
+                        matrix = new Matrix(app, containers); 
+                        containers.playArea.removeChildren()
+                        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0x555555));
+                    }
+
                 }
 
                 btns[btn].position.set(btnX, btnY)
 
                 btnX = btns[btn]._w + btnX + rowSpacing;
+
 
                 containers.menu.addChild(btns[btn]);
 
@@ -430,39 +453,6 @@ let selectedMenuButton = undefined;
 
             }
         }
-
-
-
-        /*for(let btns in allMenuButtons){
-
-            btns = allMenuButtons[btns];
-            let i = 0;
-
-            for(let btn in btns){
-
-                let btnPos = btns[btn].width*i + buttonIndent;
-                let row = 0;
-
-                if(btnPos + btns[btn].width >= app.screen.width){
-                    i = 0;
-                    row++;
-
-                    buttonY = (buttonY * row) + buttonIndent/2;
-                    btnPos = btns[btn].width*i + buttonIndent;
-                }
-                
-               
-                btns[btn].position.set(btnPos, menuY);
-                
-
-                containers.menu.addChild(btns[btn]);
-
-                i++;
-            }
-        }*/
-
-
-
     }
 
     function updateMenu(){
