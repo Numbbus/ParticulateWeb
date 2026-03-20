@@ -36,11 +36,14 @@ class Matrix {
         }
     }
 
-    createParticle(x, y, ParticleClass){
+    createParticle(x, y, ParticleClass, override){
         if(this.withinBounds(x, y)){
             if(ParticleClass === null){ this.deleteParticle(x, y) }
 
-            else if(this.matrix[y][x] === null){
+            else if(this.matrix[y][x] === null || override){
+                if(override){
+                    this.deleteParticle(x, y);
+                }
                 this.matrix[y][x] = new ParticleClass(x, y,this.app, this);
             }
         } 
@@ -55,9 +58,6 @@ class Matrix {
         }
     }
 
-    createMultipleParticles(x, y, a, ParticleClass){
-        
-    }
 
     swapParticles(x1, y1, x2, y2){
         let p1 = this.getParticle(x1, y1);
@@ -138,7 +138,7 @@ class Matrix {
         return allCoords;
     }
 
-    traverseMatrixAndCreate(startX, startY, endX, endY, p,){    
+    traverseMatrixAndCreate(startX, startY, endX, endY, p, override){    
 
         // Distances between the points
         let dx = endX - startX;
@@ -168,7 +168,7 @@ class Matrix {
             for (let x = startX; x <= endX; x++) {
                 let y = startY + slope * (x - startX);
 
-                this.createParticle(x, Math.round(y), p);
+                this.createParticle(x, Math.round(y), p, override);
             }
         }else {
             // Iterate over y
@@ -191,25 +191,25 @@ class Matrix {
 
             for (let y = startY; y <= endY; y++) {
                 let x = startX + invSlope * (y - startY);
-                this.createParticle(Math.round(x), y, p);
+                this.createParticle(Math.round(x), y, p, override);
             }
         }
     
 
     }
 
-    fillBrushArea(p, brushSize, coords){
+    fillBrushArea(p, brushSize, coords, override){
         //const coords = this.traverseMatrix(startX, startY, endX, endY);
 
         for(let c = 0; c < coords.length; c++){
-            this.drawBrush(coords[c][0], coords[c][1], coords[c][0]+brushSize, coords[c][1]+brushSize, p);
+            this.drawBrush(coords[c][0], coords[c][1], coords[c][0]+brushSize, coords[c][1]+brushSize, p, override);
         }
 
     }
 
-    drawBrush(startX, startY, endX, endY, p){
+    drawBrush(startX, startY, endX, endY, p, override){
         for(let i = startY; i < endY; i++){
-            this.traverseMatrixAndCreate(startX, i, endX-1 , i   , p);
+            this.traverseMatrixAndCreate(startX, i, endX-1 , i   , p, override);
         }
     }
 

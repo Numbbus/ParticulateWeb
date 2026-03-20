@@ -35,6 +35,7 @@ let allParticleButtons = null;
 let mouseOver = false;
 
 let paused = false;
+let override = false;
 
 let tileSize = undefined;
 
@@ -105,10 +106,10 @@ let selectedMenuButton = undefined;
         }
         if(mouseDown && !pinching){
             if(brushSize == 1){
-                matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
+                matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle, override);
             }else{
                 const coords = matrix.traverseMatrix(previouseMouseX, previouseMouseY, mouseX, mouseY);
-                matrix.fillBrushArea(selectedParticle, brushSize, coords);
+                matrix.fillBrushArea(selectedParticle, brushSize, coords, override);
             }
         }
     }
@@ -143,6 +144,9 @@ let selectedMenuButton = undefined;
 
         mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
         mouseY = Math.trunc(event.global.y / matrix.getTileSize()) - Math.floor(brushSize / 2);
+
+        topBarText.coordsText.text = `X: ${mouseX} Y: ${mouseY}`;
+
         mouseDown = true;
     
     });
@@ -153,6 +157,8 @@ let selectedMenuButton = undefined;
 
         mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
         mouseY = Math.trunc(event.global.y / matrix.getTileSize()) -  Math.floor(brushSize / 2);
+
+        topBarText.coordsText.text = `X: ${mouseX} Y: ${mouseY}`;
 
         outline.clear();
         outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
@@ -240,7 +246,7 @@ let selectedMenuButton = undefined;
         return (r << 16) | (g << 8) | b;
     }
 
-    function createButton(txt, {bg = 0xae34fa, w = 90, h = 30,  outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff} = {}){
+    function createButton(txt, {bg = 0xae34fa, w = 90, h = 25,  outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff} = {}){
         const defaultView = new Graphics()
             .rect(0, 0, w, h)
             .fill(bg)
@@ -255,9 +261,11 @@ let selectedMenuButton = undefined;
 
         btn.view._w = w;
         btn.view._h = h;
+
+        btn._toggled = false;
         
         btn.view.on('pointerover', () => {
-            if(selectedButton === btn.view || selectedMenuButton === btn.view){
+            if(selectedButton === btn.view || selectedMenuButton === btn.view || btn._toggled){
                 defaultView.clear().rect(0, 0, w, h).fill(btn.view._SelectedHoverBg).stroke({ width: outlineThicknes, color: outlineColor});
             }else{
                 defaultView.clear().rect(0, 0, w, h).fill(btn.view._HoverBg).stroke({ width: outlineThicknes, color: outlineColor});
@@ -266,11 +274,15 @@ let selectedMenuButton = undefined;
         });
 
         btn.view.on('pointerout', () => {
-            if(selectedButton === btn.view  || selectedMenuButton === btn.view){
+            if(selectedButton === btn.view  || selectedMenuButton === btn.view || btn._toggled){
                 defaultView.clear().rect(0, 0, w, h).fill(btn.view._SelectedBg).stroke({ width: outlineThicknes, color: outlineColor});
             }else{
                 defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
             }
+        });
+
+        btn.view.on('pointerdown', () => {
+            btn._toggled = !btn._toggled;
         });
 
         const label = new Text(txt, {
@@ -299,17 +311,12 @@ let selectedMenuButton = undefined;
                 fontSize: 20,
                 fill: 0xffffff,
             }),
+            coordsText: new Text('X: 000 Y: 000', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
             brushSizeText: new Text('Brush Size: 1', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            selectedParticleText: new Text('Selected: Sand', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            hoveredOverParticleText: new Text('Hovered:', {
                 fontFamily: 'Arial',
                 fontSize: 20,
                 fill: 0xffffff,
@@ -319,15 +326,33 @@ let selectedMenuButton = undefined;
                 fontSize: 20,
                 fill: 0xffffff,
             }),
+            overrideText: new Text('Override On!', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            selectedParticleText: new Text('Selected:                ', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+            hoveredOverParticleText: new Text('Hovered:                          ', {
+                fontFamily: 'Arial',
+                fontSize: 20,
+                fill: 0xffffff,
+            }),
+
             
         }
 
         topBarText.pausedText.visible = false;
+        topBarText.overrideText.visible = false;
 
         topBarButtons = {
             eraserBtn: createButton("Eraser", {bg: 0xFF5CFA}).view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),
-            pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused;}),
+            pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused; toggleButtonBg(e.currentTarget);}),
             resetBtn: createButton("Reset", {bg: 0xFF3333}).view.on('pointerdown', (e) => { resetMatrix(); }),
+            overrideBtn: createButton("Override", {bg: 0x7a3f6d}).view.on('pointerdown', (e) => { override = !override; toggleButtonBg(e.currentTarget); topBarText.overrideText.visible = override; }),
 
         }
         
@@ -337,7 +362,7 @@ let selectedMenuButton = undefined;
         let txtY = topBarY;
         let row = 0;
         let rowSpacing = 5;
-        let colSpacing = 110;
+        let colSpacing = 70;
 
         let btnColSpacing = 5;
 
@@ -382,6 +407,21 @@ let selectedMenuButton = undefined;
 
 
         createButtons(buttonIndent, menuTxtOffset);
+    }
+
+    function toggleButtonBg(btn){
+
+        if(btn._toggled){
+            btn.clear()
+                .rect(0, 0, btn._w, btn._h)
+                .fill(btn._bg)
+                .stroke({ width: 2, color: 0xffffff });
+        }else{
+            btn.clear()
+                .rect(0, 0, btn._w, btn._h)
+                .fill(btn._bg)
+                .stroke({ width: 2, color: 0xffffff });
+        }
     }
 
     function changeSelectedButton(btn) {
