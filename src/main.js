@@ -59,10 +59,16 @@ let selectedMenuButton = undefined;
     hammer.add(pinch);
 
     let initialBrushSize = brushSize;
+    let pinching = false;
 
     hammer.on('pinchstart', (ev) => {
         initialBrushSize = brushSize;
+        pinching = true;
     });
+
+    hammer.on('pinchend', (ev) => {
+        pinching = false;
+    })
 
     hammer.on('pinchmove', (ev) => {
         // ev.scale is relative to pinchstart
@@ -97,7 +103,7 @@ let selectedMenuButton = undefined;
         if( !paused ){
             matrix.updateGrid();
         }
-        if(mouseDown){
+        if(mouseDown && !pinching){
             if(brushSize == 1){
                 matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle);
             }else{
