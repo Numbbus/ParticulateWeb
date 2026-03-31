@@ -25,7 +25,7 @@ let previouseMouseY = null;
 
 let brushSize = 1;
 
-let selectedParticle = Sand;
+let selectedParticle = Fire;
 
 let selectedMenu = "solidsMenu";
 
@@ -161,9 +161,7 @@ let selectedMenuButton = undefined;
         topBarText.coordsText.text = `X: ${mouseX} Y: ${mouseY}`;
 
         outline.clear();
-        outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
-        outline.pivot.set(0, 0);
-        containers.ui.addChild(outline);
+        outline.rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 }); 
 
         let hovered = matrix.withinBounds(mouseX, mouseY) ? matrix.getParticle(mouseX, mouseY) : null;
 

@@ -28,7 +28,7 @@ class MoveableSolid extends StaticSolid{
             //console.log(`${this.getX()}, ${this.getY()}`);
             let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : undefined ;
 
-            if(bottomTile === null || bottomTile instanceof Liquid){
+            if(bottomTile === null || (bottomTile instanceof Liquid || bottomTile instanceof Gas)){
                 this.matrix.swapParticles(this.getX(), this.getY(), this.getX(), this.getY()+1);
             }else if(bottomTile instanceof Solid){
                 let bottomRight = this.matrix.getParticle(this.getX() + 1, this.getY() + 1);
@@ -39,8 +39,8 @@ class MoveableSolid extends StaticSolid{
 
                 let direction = Math.floor(Math.random()*2);
 
-                if(direction == 1 && (bottomLeft === null || bottomLeft instanceof Liquid) && (left === null || left instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()-1, this.getY()); }
-                else if(direction == 0 && (bottomRight === null || bottomRight instanceof Liquid) && (right === null || right instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()+1, this.getY()); }
+                if(direction == 1 && (bottomLeft === null || (bottomLeft instanceof Liquid || bottomLeft instanceof Gas)) && (left === null || left instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()-1, this.getY()); }
+                else if(direction == 0 && (bottomRight === null || (bottomRight instanceof Liquid || bottomRight instanceof Gas )) && (right === null || right instanceof Liquid )){ this.matrix.swapParticles(this.getX(), this.getY(), this.getX()+1, this.getY()); }
             }
 
             this.framesSinceLastUpdate = 0;

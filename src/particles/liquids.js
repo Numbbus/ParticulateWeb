@@ -1,3 +1,4 @@
+import Gas from "./gas.js";
 import Particle from "./particle.js";
 
 class Liquid extends Particle{
@@ -21,17 +22,17 @@ class Liquid extends Particle{
                 this.direction = 0; 
             }
 
-            if(bottom === null){ 
+            if(bottom === null || bottom instanceof Gas){ 
                 this.matrix.swapParticles(this.getX(), this.getY(), this.getX(), this.getY() + 1); 
             }
             else {
                 
-                if(left === null && this.direction==1){ 
+                if(left === null || left instanceof Gas && this.direction==1){ 
                     this.matrix.swapParticles(this.getX(), this.getY(), this.getX() - 1, this.getY()); 
                 }else if((left != null || left === undefined) && this.direction==1){
                     this.direction=0;
                 }else{
-                    if(right === null && this.direction==0){ 
+                    if(right === null || left instanceof Gas && this.direction==0){ 
                         this.matrix.swapParticles(this.getX(), this.getY(), this.getX() + 1, this.getY()); 
                     }else if((right != null || right === undefined) && this.direction==0){
                         this.direction=1;

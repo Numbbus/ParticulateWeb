@@ -74,11 +74,74 @@ class Tnt extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
+        this.triggers = ['Fire'];
+
+        this.fuseLength = 50; // in milliseconds
+        this.isExploding = false;
+        this.startTime = null;
+
+        this.radius = 8;
+        this.power = 10;
+
         let colors = [0xC80000, 0xDC0000, 0xFF0000, 0xFF1E1E, 0xFF3C3C];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+    }
+
+    action(){
+        const neighbors = this.getNeighbors();
+
+        neighbors.forEach((n, i) => {
+            if(n != null && this.triggers.includes(`${n.constructor.name}`)){ this.isExploding = true; }
+        })
+
+        if( this.isExploding ){
+            if(this.startTime == null){
+                this.startTime = performance.now();
+            }
+            this.explode();
+        }
+    }
+
+    explode(){
+        this.isExploding = true;
+
+        let elapsedTime = performance.now() - this.startTime;
+
+        console.log(elapsedTime);
+        
+        if( elapsedTime >= this.fuseLength){
+            console.log('Boom');
+            for(let r=this.y-this.radius; r < this.y+this.radius; r++){
+                for(let c = this.x-this.radius; c < this.x+this.radius; c++){
+                    let p = this.matrix.getParticle(c, r);
+
+                    if(p != null){
+                        if((Math.floor(Math.random() * 100) + 1) <= 100 - p.getToughness() + 50){
+
+                            let distance = Math.sqrt(Math.pow(c - this.x, 2) + Math.pow(r - this.y, 2));
+                            let innerRad = Math.floor(this.radius/4);
+
+                            if(distance <= innerRad){
+                                Math.floor(Math.random() * 100 + 1) <= 60 ? this.matrix.createParticle(c, r, Fire, true) : this.matrix.createParticle(c, r, Smoke, true);
+                            }
+                            else if(distance <= this.radius){
+                                let probability = Math.pow(1 - (distance / this.radius), 0.05);
+
+                                if(Math.random() < probability){
+                                    if( p instanceof Tnt ){ p.isExploding = true; continue; }
+                                    else{
+                                        Math.floor(Math.random() * 100 + 1) <= 60 ? this.matrix.createParticle(c, r, Fire, true) : this.matrix.createParticle(c, r, Smoke, true);
+                                    }
+                                }
+                            }
+                        }
+                    }else{ Math.floor(Math.random() * 100 + 1) <= 40 ? this.matrix.createParticle(c, r, Fire, true) : this.matrix.createParticle(c, r, Smoke, true); }
+                }
+            }
+        }
     }
 }
 
@@ -158,6 +221,15 @@ class Steam extends Gas {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.life = Math.floor(Math.random() * (500 - 400)) + 400;
+    }
+
+    action() { 
+        this.life--;
+        if(this.life <= 0){
+            this.matrix.createParticle(this.x, this.y, Water, true);
+        }
     }
 }
 
@@ -165,11 +237,43 @@ class Fire extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0xFF8700, 0xFF8E00, 0xFF9600, 0xFF9E00, 0xFFA500];
+        let colors = [0xF33C04, 0xFE650D, 0xFFC11F, 0xFFF75D];
 
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.life = Math.floor(Math.random() * (200 - 100)) + 100;
+    }
+
+    action() {
+        this.life--;
+
+        if(this.life <= 0){
+            this.matrix.deleteParticle(this.x, this.y);
+        }
+    }
+}
+
+class Smoke extends Gas {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x3B3B3B, 0x424242, 0x2E2E2E];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.life = Math.floor(Math.random() * (300 - 200)) + 200;
+    }
+
+    action() {
+        this.life--;
+
+        if(this.life <= 0){
+            this.matrix.deleteParticle(this.x, this.y);
+        }
     }
 }
 
@@ -244,6 +348,8 @@ class FireSpawner extends Spawner {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.life = 5;
     }
 }
 

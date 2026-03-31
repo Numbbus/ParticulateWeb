@@ -9,6 +9,8 @@ class Particle{
         this.toughness = toughness;
         this.movedThisFrame = false;
 
+        this.inertia = 0;
+
         this.speed = speed;
         this.framesSinceLastUpdate = 0;
 
@@ -65,6 +67,7 @@ class Particle{
     setRect(r){ this.rect = r; }
     getRect(){ return this.rect; }
 
+    getToughness(){ return this.toughness; }
 
     setX(n)
     { 

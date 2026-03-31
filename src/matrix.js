@@ -1,11 +1,11 @@
-
+import { Tnt, Stone } from "./particles/particles.js";
 class Matrix {
     constructor(app, containers){
 
         this.app = app;
         this.containers = containers;
 
-        this.tileSize = 5;
+        this.tileSize = 6;
 
         // Initialize matrix to size of the canvas with null values
         this.rows = Math.trunc(containers.playArea.height / this.tileSize);
@@ -21,6 +21,12 @@ class Matrix {
                 this.matrix[r][c] = null;
             }
         }
+
+        /*const coords = this.traverseMatrix(0, 0, this.cols, this.rows);
+        this.fillBrushArea(Stone, 100, coords, false);
+
+        this.createParticle(50, 20, Tnt, true);
+        this.deleteParticle(50, 21);*/
     }
 
     updateGrid(){
@@ -28,9 +34,10 @@ class Matrix {
         {
             for(let c = this.cols-1; c >= 0; c--)
             {
-                if(this.getParticle(c, r) != null){
-                    this.matrix[r][c].action();
-                    this.matrix[r][c].move();
+                let p = this.getParticle(c, r);
+                if(p != null){
+                    p.move();
+                    p.action();
                 }
             }
         }
@@ -50,12 +57,9 @@ class Matrix {
     }
 
     deleteParticle(x, y){
-        let p = this.matrix[y][x];
-
-        if(p != null){
-            p.getRect().destroy();
-            this.matrix[y][x] = null;
-        }
+        if(this.matrix[y][x] == null){ return; }
+        this.matrix[y][x].getRect().destroy();
+        this.matrix[y][x] = null;
     }
 
 
@@ -242,7 +246,11 @@ class Matrix {
 
     getParticle(x, y)
     { 
-        return this.matrix[y][x]; 
+        if(this.withinBounds(x, y) && this.matrix[y][x] != undefined){
+            return this.matrix[y][x]; 
+        }
+        
+        return null;
         
     }
 
