@@ -25,7 +25,7 @@ let previouseMouseY = null;
 
 let brushSize = 1;
 
-let selectedParticle = Fire;
+let selectedParticle = Sand;
 
 let selectedMenu = "solidsMenu";
 
