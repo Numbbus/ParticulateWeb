@@ -64,20 +64,23 @@ class Matrix {
 
 
     swapParticles(x1, y1, x2, y2){
-        let p1 = this.getParticle(x1, y1);
-        let p2 = this.getParticle(x2, y2);
+        if(this.withinBounds(x1, y1) && this.withinBounds(x2, y2)){
+            let p1 = this.getParticle(x1, y1);
+            let p2 = this.getParticle(x2, y2);
 
-        if(p2 == null){
-            this.matrix[y2][x2] = p1;
-            this.matrix[y1][x1] = null;
-            p1.setPosition(x2, y2);
-        }
-        else{
-            this.matrix[y2][x2] = p1;
-            this.matrix[y1][x1] = p2;
-            p1.setPosition(x2, y2);
-            p2.setPosition(x1, y1); 
-        }
+            if(p2 == null){
+                this.matrix[y2][x2] = p1;
+                this.matrix[y1][x1] = null;
+                p1.setPosition(x2, y2);
+            }
+            else{
+                this.matrix[y2][x2] = p1;
+                this.matrix[y1][x1] = p2;
+                p1.setPosition(x2, y2);
+                p2.setPosition(x1, y1); 
+            }
+            }
+
     }
 
     traverseMatrix(startX, startY, endX, endY){
@@ -246,7 +249,8 @@ class Matrix {
 
     getParticle(x, y)
     { 
-        if(this.withinBounds(x, y) && this.matrix[y][x] != undefined){
+        if(this.withinBounds(x, y)){
+            if(this.matrix[y][x] === undefined){ return undefined; }
             return this.matrix[y][x]; 
         }
         

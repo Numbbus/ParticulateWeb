@@ -26,7 +26,7 @@ class MoveableSolid extends StaticSolid{
     move(){
         if(this.framesSinceLastUpdate == this.speed && !(this.movedThisFrame)){
             //console.log(`${this.getX()}, ${this.getY()}`);
-            let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : undefined ;
+            let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : null ;
 
             if(bottomTile === null || (bottomTile instanceof Liquid || bottomTile instanceof Gas)){
                 this.matrix.swapParticles(this.getX(), this.getY(), this.getX(), this.getY()+1);
