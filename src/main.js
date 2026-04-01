@@ -197,6 +197,7 @@ let selectedMenuButton = undefined;
             console.log(event.key); 
             if(event.key == ' '){ paused = !paused; topBarText.pausedText.visible = paused; }
             else if(event.key == 'r'){ resetMatrix(); }
+            else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(); }
         }
         
     });
