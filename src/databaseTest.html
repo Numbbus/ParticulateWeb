@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Publish Document</title>
+</head>
+<body>
+
+    <button id="publishBtn">Publish Document</button>
+    <button id="readAllBtn">Read All Documents</button>
+    <button id="readBtn">Read All Documents With Certain Name</button>
+
+    <div id="data"></div>
+
+    <script type="module">
+        import { Database } from "./database.js";
+
+        const db = new Database();
+
+        async function publishDoc() {
+            const result = await db.createDoc('ParticulateSaves', 'name', 'Save1', 'val', [1,2,3,4,5]);
+
+            console.log(result);
+        }
+
+        const d = document.getElementById('data');
+
+        async function readAllDocs() {
+           
+            d.innerHTML = '';
+
+            const result = await db.readAllDocs('ParticulateSaves');
+
+            console.log(result);
+
+
+            result.forEach(element => {
+                d.innerHTML += `<h3> Id: ${element.id} <h3> <h3> Name: ${element.name} </h3> <h3> Value: [${element.val}] </h3> <hr>`;
+            });
+        }
+
+        async function readDocs() {
+           
+            d.innerHTML = '';
+
+            const result = await db.readDoc('ParticulateSaves', 'name', 'Save1');
+
+            console.log(result);
+
+
+            result.forEach(element => {
+                d.innerHTML += `<h3> Id: ${element.id} <h3> <h3> Name: ${element.name} </h3> <h3> Value: [${element.val}] </h3> <hr>`;
+            });
+        }
+        
+
+        document.getElementById("publishBtn").addEventListener("click", publishDoc);
+        document.getElementById("readAllBtn").addEventListener("click", readAllDocs);
+        document.getElementById("readBtn").addEventListener("click", readDocs);
+    </script>
+
+</body>
+</html>
