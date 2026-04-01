@@ -1,5 +1,5 @@
-
 import Matrix from './matrix.js' ;
+import { Database } from './database.js';
 
 import { 
     Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
@@ -42,7 +42,7 @@ let tileSize = undefined;
 let selectedButton = undefined;
 let selectedMenuButton = undefined;
 
-
+const database = new Database();
 
 (async () => {
     console.log( navigator.userAgent );
@@ -82,16 +82,45 @@ let selectedMenuButton = undefined;
         playArea: new Container(),
         menu: new Container(),
         ui: new Container(),
+        savesMenu: new Container(),
     };
+
+
 
     containers.menu.x = 0;
     containers.menu.y = app.screen.height - 200;
 
-    addToStage(containers.playArea, containers.menu, containers.ui);
+
+
+    addToStage(containers.playArea, containers.menu, containers.ui, containers.savesMenu);
 
     // set background color and size of container
+    
+    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x333333))
+    containers.savesMenu.addChild(new Graphics().rect(0, 0, 500, 600).fill(0x000000));
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
-    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y + 200).fill(0x333333))
+
+    containers.savesMenu.x = app.screen.width / 2;
+    containers.savesMenu.y = app.screen.height / 2;
+    containers.savesMenu.pivot.x = containers.savesMenu.width / 2;
+    containers.savesMenu.pivot.y = containers.savesMenu.height / 2;
+
+    containers.savesMenu.visible = false;
+
+    // Hide cursor when over play area
+    containers.playArea.cursor = 'none';
+    containers.playArea.interactive = true; // Make sure it's interactive
+    containers.playArea.on("pointerover", () => {
+        containers.playArea.cursor = 'none';
+    });
+
+    containers.playArea.on("pointerout", () => {
+        containers.playArea.cursor = 'none'; // stays none over play area
+    });
+
+    // Set cursor for menu
+    containers.menu.interactive = true;
+    containers.menu.cursor = 'auto'; // Cursor automatically switches over menu
 
     let matrix = new Matrix(app, containers)
 
@@ -130,12 +159,10 @@ let selectedMenuButton = undefined;
 
     containers.playArea.on("pointerover", (event) => {
         mouseOver = true;
-        containers.playArea.cursor = 'none';
     });
-    
+
     containers.playArea.on("pointerout", (event) => {
         mouseOver = false;
-        containers.playArea.cursor = 'auto';
     });
 
     containers.playArea.on("pointerdown", (event) => {
@@ -188,7 +215,7 @@ let selectedMenuButton = undefined;
     });
 
     containers.menu.on('pointerover', (event) => {
-        containers.playArea.cursor = 'auto';
+        mouseDown = false;
     });
     
 
