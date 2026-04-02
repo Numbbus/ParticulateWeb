@@ -33,3 +33,9 @@ body {
   -o-transform: scaleX(-1);      /* Opera */
   filter: FlipH;                 /* Old IE syntax */
 }
+
+input { 
+  background-color: #000;
+  color: #fff;
+  font-size: xx-large;
+}

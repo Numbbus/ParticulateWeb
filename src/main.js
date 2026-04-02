@@ -48,6 +48,9 @@ let selectedMenuButton = undefined;
 
 const database = new Database();
 
+let saveName = null;
+let username = null;
+
 registerAll(particles);
 
 (async () => {
@@ -91,29 +94,54 @@ registerAll(particles);
         savesMenu: new Container(),
     };
 
-
-
     containers.menu.x = 0;
     containers.menu.y = app.screen.height - 200;
-
-
 
     addToStage(containers.playArea, containers.menu, containers.ui, containers.savesMenu);
 
     // set background color and size of container
-    
     containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x333333))
-    containers.savesMenu.addChild(new Graphics().rect(0, 0, 500, 600).fill(0x000000));
+
+    containers.savesMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
+    containers.savesMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
+
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
 
-    containers.savesMenu.x = app.screen.width / 2;
-    containers.savesMenu.y = app.screen.height / 2;
-    containers.savesMenu.pivot.x = containers.savesMenu.width / 2;
-    containers.savesMenu.pivot.y = containers.savesMenu.height / 2;
-    containers.savesMenu.interactive = true;
-    containers.savesMenu.cursor = 'auto';
-    
-    containers.savesMenu.visible = false;
+    let titleText = new Text('Save Or Publish', {
+            fontFamily: 'Arial',
+            fontSize: 40,
+            fill: 0xffffff,
+        });
+
+    titleText.position.x = (containers.savesMenu.width / 2) - titleText.width / 2;
+    titleText.position.y = 20
+
+    containers.savesMenu.addChild(titleText);
+
+    let saveNameText = new Text('Save Name', {
+            fontFamily: 'Arial',
+            fontSize: 30,
+            fill: 0xffffff,
+        });
+
+    saveNameText.position.x = (containers.savesMenu.width / 2) - saveNameText.width / 2;
+    saveNameText.position.y = 110
+
+    containers.savesMenu.addChild(saveNameText);
+
+    let usernameText = new Text('Username', {
+            fontFamily: 'Arial',
+            fontSize: 30,
+            fill: 0xffffff,
+        });
+
+    usernameText.position.x = (containers.savesMenu.width / 2) - usernameText.width / 2;
+    usernameText.position.y = 210
+
+    containers.savesMenu.addChild(usernameText);
+
+    defineSavesMenu();
+
 
     // Hide cursor when over play area
     containers.playArea.cursor = 'none';
@@ -226,14 +254,13 @@ registerAll(particles);
         mouseDown = false;
     });
     
-
     window.addEventListener('keydown', (event) => {
         if(mouseOver){
-            console.log(event.key); 
+            //console.log(event.key); 
             if(event.key == ' '){ paused = !paused; topBarText.pausedText.visible = paused; }
             else if(event.key == 'r'){ resetMatrix(); }
             else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(); }
-            else if(event.key == 's'){ savePlayArea(); }
+            //else if(event.key == 's'){ savePlayArea(); }
         }
         
     });
@@ -269,33 +296,6 @@ registerAll(particles);
         containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
     }
 
-    function savePlayArea(){
-        let text = '';
-
-        for(let r=0; r < matrix.getRows(); r++){
-            for(let c = 0; c < matrix.getCols(); c++){
-                let p = matrix.getParticle(c, r);
-                if(p != null){
-                    text += `${p.constructor.name},${p.getX()},${p.getY()}\n`;
-                }
-                
-            }
-        }
-
-        const blob = new Blob([text], {type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = "savedPlayArea.txt";
-
-        document.body.appendChild(link);
-        link.click();
-
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }
-
     function darken(hex, factor) { 
         let r = (hex >> 16) & 0xff;
         let g = (hex >> 8) & 0xff;
@@ -308,7 +308,7 @@ registerAll(particles);
         return (r << 16) | (g << 8) | b;
     }
 
-    function createButton(txt, {bg = 0xae34fa, w = 90, h = 25,  outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff} = {}){
+    function createButton(txt, {bg = 0xae34fa, w = 90, h = 25,  outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff, toggleable = true } = {}){
         const defaultView = new Graphics()
             .rect(0, 0, w, h)
             .fill(bg)
@@ -344,7 +344,9 @@ registerAll(particles);
         });
 
         btn.view.on('pointerdown', () => {
-            btn._toggled = !btn._toggled;
+            if(toggleable){
+                btn._toggled = !btn._toggled;
+            }
         });
 
         const label = new Text(txt, {
@@ -413,9 +415,9 @@ registerAll(particles);
         topBarButtons = {
             eraserBtn: createButton("Eraser", {bg: 0xFF5CFA}).view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),
             pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused; toggleButtonBg(e.currentTarget);}),
-            resetBtn: createButton("Reset", {bg: 0xFF3333}).view.on('pointerdown', (e) => { resetMatrix(); }),
+            resetBtn: createButton("Reset", {bg: 0xFF3333, toggleable: false}).view.on('pointerdown', (e) => { resetMatrix(); }),
             overrideBtn: createButton("Override", {bg: 0x7a3f6d}).view.on('pointerdown', (e) => { override = !override; toggleButtonBg(e.currentTarget); topBarText.overrideText.visible = override; }),
-            saveBtn: createButton("Save", {bg: 0xf40c2}).view.on('pointerdown', (e) => { savePlayArea(); }),
+            saveBtn: createButton("Save", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateVisibilitOfSaveMenu(); paused = true; }),
         }
 
         let menuTxtOffset = 0;
@@ -682,8 +684,6 @@ registerAll(particles);
 
         if(!file){return;}
 
-        
-
         const reader = new FileReader();
         reader.readAsText(file);
 
@@ -712,7 +712,132 @@ registerAll(particles);
 
     elem.addEventListener('mouseout', () => {
         document.body.style.overflow = ''; 
-    })
+    });
+
+    function saveAndDownloadPlayArea(){
+        let text = '';
+
+        for(let r=0; r < matrix.getRows(); r++){
+            for(let c = 0; c < matrix.getCols(); c++){
+                let p = matrix.getParticle(c, r);
+                if(p != null){
+                    text += `${p.constructor.name},${p.getX()},${p.getY()}\n`;
+                }
+            }
+        }
+
+        const blob = new Blob([text], {type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${saveName}-${username}-save.txt`;
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    function saveAndPublishPlayArea(){
+        let text = '';
+
+        for(let r=0; r < matrix.getRows(); r++){
+            for(let c = 0; c < matrix.getCols(); c++){
+                let p = matrix.getParticle(c, r);
+                if(p != null){
+                    text += `${p.constructor.name},${p.getX()},${p.getY()}\n`;
+                }
+            }
+        }
+
+        database.createDoc('ParticulateSaves', 'name', saveName, 'username', username, 'save', text);
+    }
+
+
+
+    function defineSavesMenu() {
+        const savesMenu = containers.savesMenu;
+
+        // Center container
+        savesMenu.x = app.screen.width / 2;
+        savesMenu.y = app.screen.height / 3;
+        savesMenu.pivot.x = savesMenu.width / 2;
+        savesMenu.pivot.y = savesMenu.height / 2;
+        savesMenu.interactive = true;
+        savesMenu.cursor = 'auto';
+
+        // Create input
+        const saveNameInput = document.createElement("input");
+        saveNameInput.id = "saveNameInput";
+        saveNameInput.type = "text";
+        saveNameInput.style.position = "absolute";
+        saveNameInput.style.zIndex = 10;
+        document.body.appendChild(saveNameInput);
+
+        const usernameInput = document.createElement("input");
+        usernameInput.id = "usernameInput";
+        usernameInput.type = "text";
+        usernameInput.style.position = "absolute";
+        usernameInput.style.zIndex = 10;
+        document.body.appendChild(usernameInput);
+
+
+        const bounds = savesMenu.getBounds();
+        const canvasRect = app.view.getBoundingClientRect();
+
+        saveNameInput.style.left = (saveNameInput.offsetWidth / 4) + canvasRect.left + bounds.x + "px";
+        saveNameInput.style.top = 150 + canvasRect.top + bounds.y + "px";
+        saveNameInput.style.width = "300px";
+        saveNameInput.style.height = "50px";
+
+        usernameInput.style.left =  (usernameInput.offsetWidth / 4) + canvasRect.left + bounds.x + "px";
+        usernameInput.style.top = 250 + canvasRect.top + bounds.y + "px";
+        usernameInput.style.width = "300px";
+        usernameInput.style.height = "50px";
+
+        // Define buttons
+        let xButton = createButton('X', {bg: 0xff0000, w: 20, h: 20, toggleable: false});
+        xButton.view.on('pointerdown', (e) =>{ updateVisibilitOfSaveMenu(); paused = false; });
+        xButton.view.position.set(0, 0);
+        savesMenu.addChild(xButton.view);
+
+        let saveAndDownloadBtn = createButton('Save And Download', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
+        saveAndDownloadBtn.view.on('pointerdown', (e) =>{ saveAndDownloadPlayArea(); });
+        saveAndDownloadBtn.view.position.set(20, savesMenu.height - saveAndDownloadBtn.view.height * 2);
+        savesMenu.addChild(saveAndDownloadBtn.view);
+
+        let saveAndPublishBtn = createButton('Save And Publish', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
+        saveAndPublishBtn.view.on('pointerdown', (e) =>{ saveAndPublishPlayArea(); });
+        saveAndPublishBtn.view.position.set(280, savesMenu.height - saveAndPublishBtn.view.height * 2);
+        savesMenu.addChild(saveAndPublishBtn.view);
+
+        //updateVisibilitOfSaveMenu();
+
+    }
+
+    function updateVisibilitOfSaveMenu(){
+        let savesMenu = containers.savesMenu;
+
+        savesMenu.visible = !(savesMenu.visible);
+        titleText.visible = !(titleText.visible);
+        saveNameText.visible = !(saveNameText.visible);
+        usernameText.visible = !(usernameText.visible);
+
+        document.getElementById('saveNameInput').hidden = !(document.getElementById('saveNameInput').hidden);
+        document.getElementById('usernameInput').hidden = !(document.getElementById('usernameInput').hidden);
+    }
+
+
+    document.getElementById('saveNameInput').addEventListener('input', (event) => {
+        saveName = event.target.value;
+    });
+
+    document.getElementById('usernameInput').addEventListener('input', (event) => {
+        username = event.target.value;
+    });
+
 
 })();
 

@@ -25,9 +25,9 @@ class Database{
         this.db = getFirestore(this.app);
     }
 
-    async createDoc(collectionName, fieldName1, value1, fieldName2, value2){
+    async createDoc(collectionName, fieldName1, value1, fieldName2, value2, fieldName3, value3){
         try{
-            const docRef = await addDoc(collection(this.db, collectionName), {[fieldName1]: value1, [fieldName2]: value2} );
+            const docRef = await addDoc(collection(this.db, collectionName), {[fieldName1]: value1, [fieldName2]: value2, [fieldName3]: value3});
             console.log("Document successfully added: ", docRef.id);
             return docRef;
         } catch (error) {

@@ -65,7 +65,6 @@ class Matrix {
 
     swapParticles(x1, y1, x2, y2){         
         if(this.withinBounds(x1, y1) && this.withinBounds(x2, y2)){
-            console.log('within bounds');
             let p1 = this.getParticle(x1, y1);
             let p2 = this.getParticle(x2, y2);
 
