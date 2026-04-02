@@ -417,7 +417,7 @@ registerAll(particles);
             pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused; toggleButtonBg(e.currentTarget);}),
             resetBtn: createButton("Reset", {bg: 0xFF3333, toggleable: false}).view.on('pointerdown', (e) => { resetMatrix(); }),
             overrideBtn: createButton("Override", {bg: 0x7a3f6d}).view.on('pointerdown', (e) => { override = !override; toggleButtonBg(e.currentTarget); topBarText.overrideText.visible = override; }),
-            saveBtn: createButton("Save", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateVisibilitOfSaveMenu(); paused = true; }),
+            //saveBtn: createButton("Save", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateVisibilitOfSaveMenu(); paused = true; }),
         }
 
         let menuTxtOffset = 0;
@@ -813,7 +813,7 @@ registerAll(particles);
         saveAndPublishBtn.view.position.set(280, savesMenu.height - saveAndPublishBtn.view.height * 2);
         savesMenu.addChild(saveAndPublishBtn.view);
 
-        //updateVisibilitOfSaveMenu();
+        updateVisibilitOfSaveMenu();
 
     }
 
