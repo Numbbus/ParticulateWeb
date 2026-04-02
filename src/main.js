@@ -233,6 +233,7 @@ registerAll(particles);
             if(event.key == ' '){ paused = !paused; topBarText.pausedText.visible = paused; }
             else if(event.key == 'r'){ resetMatrix(); }
             else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(); }
+            else if(event.key == 's'){ savePlayArea(); }
         }
         
     });
@@ -694,10 +695,8 @@ registerAll(particles);
 
             lines.forEach(line => {
                 let data = line.split(',');
-                //console.log(data);
 
                 if(matrix.withinBounds(data[1], data[2])){
-                    console.log(data);
                     matrix.createParticle(Number(data[1]), Number(data[2]), get(data[0]), false);
                 } 
             });
