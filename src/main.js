@@ -7,11 +7,15 @@ import {
     VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock,
 } from "./particles/particles.js";
 
+import * as particles from "./particles/particles.js";
+
 import { Button } from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 
 const { Application, EventSystem, Text, Container, Graphics  } = PIXI;
 
 import "https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"
+
+import { registerAll, get } from './registry.js';
 
 let maxWidth = 1500;
 let maxHeight = 700;
@@ -43,6 +47,8 @@ let selectedButton = undefined;
 let selectedMenuButton = undefined;
 
 const database = new Database();
+
+registerAll(particles);
 
 (async () => {
     console.log( navigator.userAgent );
@@ -104,7 +110,9 @@ const database = new Database();
     containers.savesMenu.y = app.screen.height / 2;
     containers.savesMenu.pivot.x = containers.savesMenu.width / 2;
     containers.savesMenu.pivot.y = containers.savesMenu.height / 2;
-
+    containers.savesMenu.interactive = true;
+    containers.savesMenu.cursor = 'auto';
+    
     containers.savesMenu.visible = false;
 
     // Hide cursor when over play area
@@ -260,6 +268,33 @@ const database = new Database();
         containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
     }
 
+    function savePlayArea(){
+        let text = '';
+
+        for(let r=0; r < matrix.getRows(); r++){
+            for(let c = 0; c < matrix.getCols(); c++){
+                let p = matrix.getParticle(c, r);
+                if(p != null){
+                    text += `${p.constructor.name},${p.getX()},${p.getY()}\n`;
+                }
+                
+            }
+        }
+
+        const blob = new Blob([text], {type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = "savedPlayArea.txt";
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     function darken(hex, factor) { 
         let r = (hex >> 16) & 0xff;
         let g = (hex >> 8) & 0xff;
@@ -379,9 +414,8 @@ const database = new Database();
             pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused; toggleButtonBg(e.currentTarget);}),
             resetBtn: createButton("Reset", {bg: 0xFF3333}).view.on('pointerdown', (e) => { resetMatrix(); }),
             overrideBtn: createButton("Override", {bg: 0x7a3f6d}).view.on('pointerdown', (e) => { override = !override; toggleButtonBg(e.currentTarget); topBarText.overrideText.visible = override; }),
-
+            saveBtn: createButton("Save", {bg: 0xf40c2}).view.on('pointerdown', (e) => { savePlayArea(); }),
         }
-        
 
         let menuTxtOffset = 0;
         let txtX = topBarIndent;
@@ -634,61 +668,45 @@ const database = new Database();
         }
     }
 
-    /*window.addEventListener('resize', () => {
-        console.log('Resized!');
+    const dropArea = document.querySelector("#pixi");
 
-        let newWidth = window.innerWidth < maxWidth ? window.innerWidth : maxWidth;
-        let newHegiht = window.innerHeight < maxHeight ? window.innerHeight : maxHeight;
-
-        app.renderer.resize( newWidth, newHegiht);
-
-        containers.playArea.width = newWidth;
-        matrix = new Matrix(app, containers)
-        containers.menu.width = newWidth;
-
-    })*/
-
-    /*window.onload = function () {
-        if( detectMob() ) {
-            console.log("Mobile");
-            containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height - 200).fill(0xffffff)); 
-            document.getElementById("pixi-wrapper").style.marginTop = "0px";
-        }
-
-    }*/
-
-    /*function detectMob() {
-        const toMatch = [
-            /Android/i,
-            /webOS/i,
-            /iPhone/i,
-            /iPad/i,
-            /iPod/i,
-            /BlackBerry/i,
-            /Windows Phone/i
-        ];
-
-        return toMatch.some((toMatchItem) => {
-            return navigator.userAgent.match(toMatchItem);
-        });
-    }
-
-    // Disable scrolling when hovering over canvas for everything but mobile users
-    const elem = document.getElementById('pixi-wrapper');
-
-    elem.addEventListener('mouseover', () => {
-        if( ! detectMob() ){
-            document.body.style.overflow = 'hidden';
-            
-        }else { }
+    dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
     });
 
-    elem.addEventListener('mouseout', () => {
-        if( ! detectMob() ){ document.body.style.overflow = ''; } // Resets to default (e.g., auto or initial)
-    });*/
+    dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+
+        const file = e.dataTransfer.files[0];
+
+        if(!file){return;}
+
+        
+
+        const reader = new FileReader();
+        reader.readAsText(file);
+
+        reader.onload = function(event) {
+            matrix.resetMatrix();
+            const text = event.target.result;
+
+            const lines = text.split('\n');
+
+            lines.forEach(line => {
+                let data = line.split(',');
+                //console.log(data);
+
+                if(matrix.withinBounds(data[1], data[2])){
+                    console.log(data);
+                    matrix.createParticle(Number(data[1]), Number(data[2]), get(data[0]), false);
+                } 
+            });
+
+        }
+    })
 
     const elem = document.getElementById('pixi');
-
+ 
     elem.addEventListener('mouseover', () => {
         document.body.style.overflow = 'hidden';
     });

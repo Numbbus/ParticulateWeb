@@ -63,8 +63,9 @@ class Matrix {
     }
 
 
-    swapParticles(x1, y1, x2, y2){
+    swapParticles(x1, y1, x2, y2){         
         if(this.withinBounds(x1, y1) && this.withinBounds(x2, y2)){
+            console.log('within bounds');
             let p1 = this.getParticle(x1, y1);
             let p2 = this.getParticle(x2, y2);
 
@@ -79,7 +80,7 @@ class Matrix {
                 p1.setPosition(x2, y2);
                 p2.setPosition(x1, y1); 
             }
-            }
+        }
 
     }
 
@@ -221,14 +222,11 @@ class Matrix {
     }
 
     resetMatrix(){
-        this.matrix = []
-
         for (let r = 0; r < this.rows; r++)
         {
-            this.matrix[r] = [];
             for(let c = 0; c < this.cols; c++)
             {
-                this.matrix[r][c] = null;
+                this.deleteParticle(c, r);
             }
         }
     }
@@ -250,13 +248,15 @@ class Matrix {
     getParticle(x, y)
     { 
         if(this.withinBounds(x, y)){
-            if(this.matrix[y][x] === undefined){ return undefined; }
+            try{ if(this.matrix[y][x] === undefined){ return undefined; } } catch(e){ return undefined; }
             return this.matrix[y][x]; 
         }
         
         return null;
         
     }
+
+    getGrid(){ return this.matrix; }
 
     getTileSize(){ return this.tileSize; }
 

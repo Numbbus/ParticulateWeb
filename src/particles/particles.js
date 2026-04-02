@@ -80,8 +80,8 @@ class Tnt extends StaticSolid {
         this.isExploding = false;
         this.startTime = null;
 
-        this.radius = 8;
-        this.power = 10;
+        this.radius = 50;
+        this.power = 100;
 
         let colors = [0xC80000, 0xDC0000, 0xFF0000, 0xFF1E1E, 0xFF3C3C];
 
@@ -109,11 +109,8 @@ class Tnt extends StaticSolid {
         this.isExploding = true;
 
         let elapsedTime = performance.now() - this.startTime;
-
-        console.log(elapsedTime);
         
         if( elapsedTime >= this.fuseLength){
-            console.log('Boom');
             for(let r=this.y-this.radius; r < this.y+this.radius; r++){
                 for(let c = this.x-this.radius; c < this.x+this.radius; c++){
                     let p = this.matrix.getParticle(c, r);
