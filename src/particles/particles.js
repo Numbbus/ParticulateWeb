@@ -80,8 +80,8 @@ class Tnt extends StaticSolid {
         this.isExploding = false;
         this.startTime = null;
 
-        this.radius = 50;
-        this.power = 100;
+        this.radius = 10;
+        this.power = 90;
 
         let colors = [0xC80000, 0xDC0000, 0xFF0000, 0xFF1E1E, 0xFF3C3C];
 
