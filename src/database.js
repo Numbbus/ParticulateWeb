@@ -5,7 +5,7 @@ import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.11.0/firebas
 
 // Add Firebase products that you want to use
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js'
-import { getFirestore, collection, getDocs, addDoc, query, where, } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'
+import { getFirestore, collection, getDocs, addDoc, query, where, doc, getDoc} from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'
 
 
 
@@ -66,6 +66,19 @@ class Database{
 
         return docs;
 
+    }
+
+    async readDocById(collection, id){
+        const docRef = doc(this.db, collection, id);
+
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            return(docSnap.data());
+        } else {
+            console.log("No such document!");
+            return null
+        }
     }
 
     async updateDoc() {

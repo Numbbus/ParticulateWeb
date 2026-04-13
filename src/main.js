@@ -92,18 +92,22 @@ registerAll(particles);
         menu: new Container(),
         ui: new Container(),
         savesMenu: new Container(),
+        loadMenu: new Container(),
     };
 
     containers.menu.x = 0;
     containers.menu.y = app.screen.height - 200;
 
-    addToStage(containers.playArea, containers.menu, containers.ui, containers.savesMenu);
+    addToStage(containers.playArea, containers.menu, containers.ui, containers.savesMenu, containers.loadMenu);
 
     // set background color and size of container
     containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x333333))
 
     containers.savesMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
     containers.savesMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
+
+    containers.loadMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
+    containers.loadMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
 
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
 
@@ -141,6 +145,8 @@ registerAll(particles);
     containers.savesMenu.addChild(usernameText);
 
     defineSavesMenu();
+
+    defineLoadMenu();
 
 
     // Hide cursor when over play area
@@ -417,7 +423,8 @@ registerAll(particles);
             pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused; toggleButtonBg(e.currentTarget);}),
             resetBtn: createButton("Reset", {bg: 0xFF3333, toggleable: false}).view.on('pointerdown', (e) => { resetMatrix(); }),
             overrideBtn: createButton("Override", {bg: 0x7a3f6d}).view.on('pointerdown', (e) => { override = !override; toggleButtonBg(e.currentTarget); topBarText.overrideText.visible = override; }),
-            //saveBtn: createButton("Save", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateVisibilitOfSaveMenu(); paused = true; }),
+            saveBtn: createButton("Save", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateVisibilitOfSaveMenu(); paused = true; }),
+            loadBtn: createButton("Load", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateLoadMenu(); paused = true; }),
         }
 
         let menuTxtOffset = 0;
@@ -740,6 +747,25 @@ registerAll(particles);
         URL.revokeObjectURL(url);
     }
 
+    async function downloadAndApplyPlayArea(id){
+        matrix.resetMatrix();
+        const doc = await database.readDocById('ParticulateSaves', id);
+        
+        const text = doc.save;
+
+        const lines = text.split('\n');
+
+        lines.forEach(line => {
+            let data = line.split(',');
+
+            if(matrix.withinBounds(data[1], data[2])){
+                matrix.createParticle(Number(data[1]), Number(data[2]), get(data[0]), false);
+            } 
+        });
+
+        updateVisibilityOfLoadMenu();
+    }
+
     function saveAndPublishPlayArea(){
         let text = '';
 
@@ -804,12 +830,12 @@ registerAll(particles);
         savesMenu.addChild(xButton.view);
 
         let saveAndDownloadBtn = createButton('Save And Download', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
-        saveAndDownloadBtn.view.on('pointerdown', (e) =>{ saveAndDownloadPlayArea(); });
+        saveAndDownloadBtn.view.on('pointerdown', (e) =>{ saveAndDownloadPlayArea(); updateVisibilitOfSaveMenu(); });
         saveAndDownloadBtn.view.position.set(20, savesMenu.height - saveAndDownloadBtn.view.height * 2);
         savesMenu.addChild(saveAndDownloadBtn.view);
 
         let saveAndPublishBtn = createButton('Save And Publish', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
-        saveAndPublishBtn.view.on('pointerdown', (e) =>{ saveAndPublishPlayArea(); });
+        saveAndPublishBtn.view.on('pointerdown', (e) =>{ saveAndPublishPlayArea(); updateVisibilitOfSaveMenu(); });
         saveAndPublishBtn.view.position.set(280, savesMenu.height - saveAndPublishBtn.view.height * 2);
         savesMenu.addChild(saveAndPublishBtn.view);
 
@@ -829,6 +855,94 @@ registerAll(particles);
         document.getElementById('usernameInput').hidden = !(document.getElementById('usernameInput').hidden);
     }
 
+    async function defineLoadMenu(){
+        let loadMenu = containers.loadMenu;
+        const bounds = loadMenu.getBounds();
+        const canvasRect = app.view.getBoundingClientRect();
+
+        let xButton = createButton('X', {bg: 0xff0000, w: 20, h: 20, toggleable: false});
+        xButton.view.on('pointerdown', (e) =>{ updateVisibilityOfLoadMenu(); paused = false; });
+        xButton.view.position.set(0, 0);
+        loadMenu.addChild(xButton.view);
+
+        // Center container
+        loadMenu.x = app.screen.width / 2;
+        loadMenu.y = app.screen.height / 3;
+        loadMenu.pivot.x = loadMenu.width / 2;
+        loadMenu.pivot.y = loadMenu.height / 2;
+        loadMenu.interactive = true;
+        loadMenu.cursor = 'auto';
+
+
+        const parentDiv = document.createElement("div");
+        parentDiv.id = 'parentDiv';
+        //parentDiv.style.backgroundColor = "white";
+        parentDiv.classList.add('scrollable-div');
+        parentDiv.style.position = "absolute";
+        parentDiv.style.zIndex = 10;
+
+        parentDiv.style.width = bounds.width + "px";
+        parentDiv.style.height = bounds.height - 20 +"px";
+        parentDiv.style.left = loadMenu.getGlobalPosition().x - 99 + "px";
+        parentDiv.style.top = loadMenu.getGlobalPosition().y - 50 + "px";
+
+        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
+
+        const allSaves = await database.readAllDocs('ParticulateSaves');
+
+        parentDiv.innerHTML = '';
+        
+        allSaves.forEach( save => {
+            parentDiv.innerHTML += 
+            `<div class="row fs-5"> 
+                <div class='col-lg-6 ps-5'> 
+                    <p class="p-2"> ${save.name} by: ${save.username} </p> 
+                </div> 
+                <div class="col-lg-6 ps-5"> 
+                    <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                </div> 
+                <hr />
+            </div>`;
+        })
+
+        document.body.appendChild(parentDiv);
+
+        updateVisibilityOfLoadMenu();
+    }
+
+
+    function updateVisibilityOfLoadMenu(){
+        let loadMenu = containers.loadMenu;
+
+        loadMenu.visible = !(loadMenu.visible);
+
+        document.getElementById('parentDiv').hidden = !(document.getElementById('parentDiv').hidden);
+    }
+    
+
+    async function updateLoadMenu(){
+        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
+
+        const allSaves = await database.readAllDocs('ParticulateSaves');
+
+        parentDiv.innerHTML = '';
+        
+        allSaves.forEach( save => {
+            parentDiv.innerHTML += 
+            `<div class="row fs-5"> 
+                <div class='col-lg-6 ps-5'> 
+                    <p class="p-2"> ${save.name} by: ${save.username} </p> 
+                </div> 
+                <div class="col-lg-6 ps-5"> 
+                    <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                </div> 
+                <hr />
+            </div>`;
+        })
+
+        updateVisibilityOfLoadMenu();
+    }
+
 
     document.getElementById('saveNameInput').addEventListener('input', (event) => {
         saveName = event.target.value;
@@ -838,6 +952,10 @@ registerAll(particles);
         username = event.target.value;
     });
 
+    window.downloadAndApplyPlayArea = function(id) {
+        console.log(id);
+        downloadAndApplyPlayArea(id);
+    };
 
 })();
 
