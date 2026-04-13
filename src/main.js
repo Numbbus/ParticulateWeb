@@ -2,7 +2,7 @@ import Matrix from './matrix.js' ;
 import { Database } from './database.js';
 
 import { 
-    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, 
+    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, Smoke,
     SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner,
     VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock,
 } from "./particles/particles.js";

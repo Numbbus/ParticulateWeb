@@ -421,7 +421,7 @@ class VoidGassesBlock extends Void {
 export default Sand;
 
 export { 
-    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, 
+    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, Smoke,
     SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner,
     VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock
 };
