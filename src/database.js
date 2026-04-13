@@ -51,18 +51,16 @@ class Database{
         }
     };
 
-    async readDoc(collectionName, fieldName, fieldValue){ 
+    async findAllWith(collectionName, fieldName, fieldValue){ 
         const q = query(
-            collection(this.db, collectionName),
-            where(fieldName, "==", fieldValue)
+            collection(this.db, collectionName)
         );
 
         const querySnapshot = await getDocs(q);
 
-        const docs = querySnapshot.docs.map( doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        const docs = querySnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(doc => doc[fieldName].includes(fieldValue));
 
         return docs;
 

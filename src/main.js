@@ -873,6 +873,18 @@ registerAll(particles);
         loadMenu.interactive = true;
         loadMenu.cursor = 'auto';
 
+        // Search Bar
+        const searchBar = document.createElement("input");
+        searchBar.id = "searchBar";
+        searchBar.type = "text";
+        searchBar.style.position = "absolute";
+        searchBar.style.zIndex = 10;
+        document.body.appendChild(searchBar);
+
+        searchBar.style.left = loadMenu.getGlobalPosition().x + "px";
+        searchBar.style.top = loadMenu.getGlobalPosition().y -50 + "px";
+        searchBar.style.width = "300px";
+        searchBar.style.height = "50px";
 
         const parentDiv = document.createElement("div");
         parentDiv.id = 'parentDiv';
@@ -882,9 +894,9 @@ registerAll(particles);
         parentDiv.style.zIndex = 10;
 
         parentDiv.style.width = bounds.width + "px";
-        parentDiv.style.height = bounds.height - 20 +"px";
+        parentDiv.style.height = bounds.height - 80 +"px";
         parentDiv.style.left = loadMenu.getGlobalPosition().x - 99 + "px";
-        parentDiv.style.top = loadMenu.getGlobalPosition().y - 50 + "px";
+        parentDiv.style.top = loadMenu.getGlobalPosition().y + "px";
 
         parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
 
@@ -907,16 +919,19 @@ registerAll(particles);
 
         document.body.appendChild(parentDiv);
 
-        updateVisibilityOfLoadMenu();
+        //updateVisibilityOfLoadMenu();
     }
 
 
     function updateVisibilityOfLoadMenu(){
         let loadMenu = containers.loadMenu;
+        let parentDiv = document.getElementById('parentDiv');
+        let searchBar = document.getElementById('searchBar');
 
         loadMenu.visible = !(loadMenu.visible);
 
-        document.getElementById('parentDiv').hidden = !(document.getElementById('parentDiv').hidden);
+        parentDiv.hidden = !(parentDiv.hidden);
+        searchBar.hidden = !(searchBar.hidden);
     }
     
 
@@ -950,6 +965,31 @@ registerAll(particles);
 
     document.getElementById('usernameInput').addEventListener('input', (event) => {
         username = event.target.value;
+    });
+
+    document.getElementById('searchBar').addEventListener('input', async (event) => {
+        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
+
+        const allSaves = await database.findAllWith('ParticulateSaves', 'name', event.target.value);
+
+
+        parentDiv.innerHTML = '';
+        
+        allSaves.forEach( save => {
+            parentDiv.innerHTML += 
+            `<div class="row fs-5"> 
+                <div class='col-lg-6 ps-5'> 
+                    <p class="p-2"> ${save.name} by: ${save.username} </p> 
+                </div> 
+                <div class="col-lg-6 ps-5"> 
+                    <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                </div> 
+                <hr />
+            </div>`;
+        })
+        
+
+
     });
 
     window.downloadAndApplyPlayArea = function(id) {
