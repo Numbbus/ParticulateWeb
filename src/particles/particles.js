@@ -327,15 +327,7 @@ class WaterSpawner extends Spawner {
         this.addToStage(this.rect);
     }
 
-    action(){
-        const neighbors = this.getNeighbors();
 
-        neighbors.forEach((n, i) => {
-            if(n != null && n instanceof Fire){
-                this.matrix.deleteParticle(n.getX(), n.getY());
-            }
-        });
-    }
 }
 
 class SteamSpawner extends Spawner {
