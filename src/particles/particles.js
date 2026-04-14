@@ -101,11 +101,11 @@ class Tnt extends StaticSolid {
             if(this.startTime == null){
                 this.startTime = performance.now();
             }
-            this.explode();
+            this.explode(this.matrix);
         }
     }
 
-    explode(){
+    explode(matrix){
         this.isExploding = true;
 
         let elapsedTime = performance.now() - this.startTime;
@@ -113,7 +113,7 @@ class Tnt extends StaticSolid {
         if( elapsedTime >= this.fuseLength){
             for(let r=this.y-this.radius; r < this.y+this.radius; r++){
                 for(let c = this.x-this.radius; c < this.x+this.radius; c++){
-                    let p = this.matrix.getParticle(c, r);
+                    let p = matrix.getParticle(c, r);
 
                     if(p != null){
                         if((Math.floor(Math.random() * 100) + 1) <= 100 - p.getToughness() + 50){
@@ -122,7 +122,7 @@ class Tnt extends StaticSolid {
                             let innerRad = Math.floor(this.radius/4);
 
                             if(distance <= innerRad){
-                                Math.floor(Math.random() * 100 + 1) <= 60 ? this.matrix.createParticle(c, r, Fire, true) : this.matrix.createParticle(c, r, Smoke, true);
+                                Math.floor(Math.random() * 100 + 1) <= 60 ? matrix.createParticle(c, r, Fire, true) : matrix.createParticle(c, r, Smoke, true);
                             }
                             else if(distance <= this.radius){
                                 let probability = Math.pow(1 - (distance / this.radius), 0.05);
@@ -130,12 +130,12 @@ class Tnt extends StaticSolid {
                                 if(Math.random() < probability){
                                     if( p instanceof Tnt ){ p.isExploding = true; continue; }
                                     else{
-                                        Math.floor(Math.random() * 100 + 1) <= 50 ? this.matrix.createParticle(c, r, Fire, true) : this.matrix.createParticle(c, r, Smoke, true);
+                                        Math.floor(Math.random() * 100 + 1) <= 50 ? matrix.createParticle(c, r, Fire, true) : matrix.createParticle(c, r, Smoke, true);
                                     }
                                 }
                             }
                         }
-                    }else{ Math.floor(Math.random() * 100 + 1) <= 30 ? this.matrix.createParticle(c, r, Fire, true) : this.matrix.createParticle(c, r, Smoke, true); }
+                    }else{ Math.floor(Math.random() * 100 + 1) <= 30 ? matrix.createParticle(c, r, Fire, true) : matrix.createParticle(c, r, Smoke, true); }
                 }
             }
         }
