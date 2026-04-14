@@ -251,7 +251,8 @@ registerAll(particles);
         topBarText.brushSizeText.text = `Brush Size: ${brushSize}`;
 
         outline.clear();
-        outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
+        //outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
+        outline.rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
         outline.pivot.set(0, 0);
         containers.ui.addChild(outline);
     });
@@ -297,9 +298,9 @@ registerAll(particles);
     });
 
     function resetMatrix(){
-        matrix = new Matrix(app, containers); 
-        containers.playArea.removeChildren()
+        containers.playArea.removeChildren().forEach(child => child.destroy({ children: true }));
         containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
+        matrix = new Matrix(app, containers); 
     }
 
     function darken(hex, factor) { 
@@ -900,7 +901,7 @@ registerAll(particles);
 
         parentDiv.style.width = bounds.width + "px";
         parentDiv.style.height = bounds.height - 90 +"px";
-        console.log(globalPos.x, globalPos.y);
+
         parentDiv.style.left = canvasRect.left + globalPos.x + "px";
         parentDiv.style.top = canvasRect.top + globalPos.y + 80 + "px";
 
