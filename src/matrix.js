@@ -57,8 +57,10 @@ class Matrix {
     }
 
     deleteParticle(x, y){
-        if(this.matrix[y][x] == null){ return; }
-        this.matrix[y][x].getRect().destroy();
+        const p = this.matrix[y][x];
+        if (!p) return;
+
+        p.destroyParticle(); 
         this.matrix[y][x] = null;
     }
 
