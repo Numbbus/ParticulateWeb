@@ -11,7 +11,7 @@ import * as particles from "./particles/particles.js";
 
 import { Button } from "https://cdn.jsdelivr.net/npm/@pixi/ui@2.3.2/+esm";
 
-const { Application, EventSystem, Text, Container, Graphics  } = PIXI;
+const { Application, EventSystem, Text, Container, Graphics, Point  } = PIXI;
 
 import "https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"
 
@@ -873,6 +873,8 @@ registerAll(particles);
         loadMenu.interactive = true;
         loadMenu.cursor = 'auto';
 
+        const globalPos = loadMenu.toGlobal(new Point(0, 0));
+
         // Search Bar
         const searchBar = document.createElement("input");
         searchBar.id = "searchBar";
@@ -881,22 +883,26 @@ registerAll(particles);
         searchBar.style.zIndex = 10;
         document.body.appendChild(searchBar);
 
-        searchBar.style.left = loadMenu.getGlobalPosition().x + "px";
-        searchBar.style.top = loadMenu.getGlobalPosition().y -50 + "px";
+        searchBar.style.left = canvasRect.left + globalPos.x + (searchBar.offsetWidth / 4) + "px";
+        searchBar.style.top = canvasRect.top + globalPos.y + (searchBar.offsetHeight / 4) + "px";
+
         searchBar.style.width = "300px";
         searchBar.style.height = "50px";
 
+        
+
         const parentDiv = document.createElement("div");
         parentDiv.id = 'parentDiv';
-        //parentDiv.style.backgroundColor = "white";
+
         parentDiv.classList.add('scrollable-div');
         parentDiv.style.position = "absolute";
         parentDiv.style.zIndex = 10;
 
         parentDiv.style.width = bounds.width + "px";
-        parentDiv.style.height = bounds.height - 80 +"px";
-        parentDiv.style.left = loadMenu.getGlobalPosition().x - 99 + "px";
-        parentDiv.style.top = loadMenu.getGlobalPosition().y + "px";
+        parentDiv.style.height = bounds.height - 90 +"px";
+        console.log(globalPos.x, globalPos.y);
+        parentDiv.style.left = canvasRect.left + globalPos.x + "px";
+        parentDiv.style.top = canvasRect.top + globalPos.y + 80 + "px";
 
         parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
 
@@ -919,7 +925,7 @@ registerAll(particles);
 
         document.body.appendChild(parentDiv);
 
-        //updateVisibilityOfLoadMenu();
+        updateVisibilityOfLoadMenu();
     }
 
 
@@ -996,6 +1002,7 @@ registerAll(particles);
         console.log(id);
         downloadAndApplyPlayArea(id);
     };
+
 
 })();
 
