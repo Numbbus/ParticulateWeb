@@ -21,12 +21,6 @@ class Matrix {
                 this.matrix[r][c] = null;
             }
         }
-
-        /*const coords = this.traverseMatrix(0, 0, this.cols, this.rows);
-        this.fillBrushArea(Stone, 100, coords, false);
-
-        this.createParticle(50, 20, Tnt, true);
-        this.deleteParticle(50, 21);*/
     }
 
     updateGrid(){
@@ -47,11 +41,15 @@ class Matrix {
         if(this.withinBounds(x, y)){
             if(ParticleClass === null){ this.deleteParticle(x, y) }
 
-            else if(this.matrix[y][x] === null || override){
-                if(override){
-                    this.deleteParticle(x, y);
+            else if (override) {
+                const existing = this.matrix[y][x];
+
+                if (existing && existing.constructor === ParticleClass) {
+                    return; // skip identical particle
                 }
-                this.matrix[y][x] = new ParticleClass(x, y,this.app, this);
+
+                this.deleteParticle(x, y);
+                this.matrix[y][x] = new ParticleClass(x, y, this.app, this);
             }
         } 
     }
