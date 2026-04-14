@@ -54,6 +54,19 @@ class Particle{
         this.rect.fill(colors[i]);
     }
 
+    destroyParticle(){
+        if (this.rect) {
+            if (this.rect.parent) {
+                this.rect.parent.removeChild(this.rect);
+            }
+            this.rect.destroy();
+            this.rect = null;
+        }
+
+        this.matrix = null;
+        this.app = null;
+    }
+
     getX(){ return this.x; }
     getY(){ return this.y; }
 
