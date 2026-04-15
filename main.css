@@ -43,3 +43,10 @@ input {
   color: #fff;
   font-size: xx-large;
 }
+
+* {
+  font-family: "Jersey 10", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.05em;
+}
