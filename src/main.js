@@ -18,7 +18,7 @@ import "https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"
 import { registerAll, get } from './registry.js';
 
 let maxWidth = 1500;
-let maxHeight = 700;
+let maxHeight = 500;
 
 let mouseDown = false;
 let mouseX = 0;
@@ -31,7 +31,7 @@ let brushSize = 1;
 
 let selectedParticle = Sand;
 
-let selectedMenu = "solidsMenu";
+let selectedCategory = "solidsMenu";
 
 let mouseOver = false;
 
@@ -39,9 +39,6 @@ let paused = false;
 let override = false;
 
 let tileSize = undefined;
-
-let selectedButton = undefined;
-let selectedMenuButton = undefined;
 
 const database = new Database();
 
@@ -286,107 +283,6 @@ registerAll(particles);
         matrix = new Matrix(app, containers); 
     }
 
-    function darken(hex, factor) { 
-        let r = (hex >> 16) & 0xff;
-        let g = (hex >> 8) & 0xff;
-        let b = hex & 0xff;
-
-        r = Math.floor(r * factor);
-        g = Math.floor(g * factor);
-        b = Math.floor(b * factor);
-
-        return (r << 16) | (g << 8) | b;
-    }
-
-    function createButton(txt, {bg = 0xae34fa, w = 90, h = 25,  outline = true, outlineColor = 0xffffff, outlineThicknes = 2, txtColor = 0xffffff, toggleable = true } = {}){
-        const defaultView = new Graphics()
-            .rect(0, 0, w, h)
-            .fill(bg)
-            .stroke({ width: outlineThicknes, color: outlineColor});
-
-        const btn = new Button(defaultView);
-
-        btn.view._bg = bg;
-        btn.view._HoverBg = darken(bg, 0.8);
-        btn.view._SelectedBg = darken(bg, 0.6);
-        btn.view._SelectedHoverBg = darken(btn.view._SelectedBg, 1.3);
-
-        btn.view._w = w;
-        btn.view._h = h;
-
-        btn._toggled = false;
-        
-        btn.view.on('pointerover', () => {
-            if(selectedButton === btn.view || selectedMenuButton === btn.view || btn._toggled){
-                defaultView.clear().rect(0, 0, w, h).fill(btn.view._SelectedHoverBg).stroke({ width: outlineThicknes, color: outlineColor});
-            }else{
-                defaultView.clear().rect(0, 0, w, h).fill(btn.view._HoverBg).stroke({ width: outlineThicknes, color: outlineColor});
-            }
-            
-        });
-
-        btn.view.on('pointerout', () => {
-            if(selectedButton === btn.view  || selectedMenuButton === btn.view || btn._toggled){
-                defaultView.clear().rect(0, 0, w, h).fill(btn.view._SelectedBg).stroke({ width: outlineThicknes, color: outlineColor});
-            }else{
-                defaultView.clear().rect(0, 0, w, h).fill(bg).stroke({ width: outlineThicknes, color: outlineColor});
-            }
-        });
-
-        btn.view.on('pointerdown', () => {
-            if(toggleable){
-                btn._toggled = !btn._toggled;
-            }
-        });
-
-        const label = new Text(txt, {
-            fontSize: 20,
-            fill: txtColor,
-        });
-
-        label.anchor.set(0.5);
-        label.position.set(w/2, h/2);
-
-        // Add text ON TOP of the button view
-        btn.view.addChild(label);
-        
-        return btn;
-    }
-
-    function changeSelectedButton(btn) {
-        if (selectedButton) {
-            selectedButton.clear()
-                .rect(0, 0, selectedButton._w, selectedButton._h)
-                .fill(selectedButton._bg)
-                .stroke({ width: 2, color: 0xffffff });
-        }
-
-        selectedButton = btn;
-
-        selectedButton.clear()
-            .rect(0, 0, selectedButton._w, selectedButton._h)
-            .fill(selectedButton._SelectedBg)
-            .stroke({ width: 2, color: 0xffffff });
-
-        document.getElementById('selectedParticleDiv').innerText = `Selected: ${selectedParticle.name}`;
-    }
-
-    function changeSelectedMenuButton(btn) {
-        if (selectedMenuButton) {
-            selectedMenuButton.clear()
-                .rect(0, 0, selectedMenuButton._w, selectedMenuButton._h)
-                .fill(selectedMenuButton._bg)
-                .stroke({ width: 2, color: 0xffffff });
-        }
-
-        selectedMenuButton = btn;
-
-        selectedMenuButton.clear()
-            .rect(0, 0, selectedMenuButton._w, selectedMenuButton._h)
-            .fill(selectedMenuButton._SelectedBg)
-            .stroke({ width: 2, color: 0xffffff });
-    }
-
     function updateCatagories(){
         const particlesContainer = document.getElementById('particlesContainer');
 
@@ -395,7 +291,15 @@ registerAll(particles);
             selectedCatagory.classList.remove('selectedCategoryButton');
         }
 
-        //document.querySelector('').classList.add('selectedCategoryButton');
+        const selectedMenu = selectedCategory;
+
+        const categoryButtons = document.querySelectorAll('.categoryButton');
+        for (const btn of categoryButtons) {
+            if (btn.onclick && btn.onclick.toString().includes(`"${selectedCategory}"`)) {
+            btn.classList.add('selectedCategoryButton');
+            break;
+            }
+        }
 
         for( const child of particlesContainer.children){
             child.style.display = child.dataset.menu === selectedMenu ? 'block' : 'none';
@@ -545,27 +449,28 @@ registerAll(particles);
         usernameInput.style.width = "300px";
         usernameInput.style.height = "50px";
 
+        /*
         // Define buttons
         let xButton = createButton('X', {bg: 0xff0000, w: 20, h: 20, toggleable: false});
-        xButton.view.on('pointerdown', (e) =>{ updateVisibilitOfSaveMenu(); paused = false; });
+        xButton.view.on('pointerdown', (e) =>{ updateVisibilityOfSaveMenu(); paused = false; });
         xButton.view.position.set(0, 0);
         savesMenu.addChild(xButton.view);
 
         let saveAndDownloadBtn = createButton('Save And Download', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
-        saveAndDownloadBtn.view.on('pointerdown', (e) =>{ saveAndDownloadPlayArea(); updateVisibilitOfSaveMenu(); });
+        saveAndDownloadBtn.view.on('pointerdown', (e) =>{ saveAndDownloadPlayArea(); updateVisibilityOfSaveMenu(); });
         saveAndDownloadBtn.view.position.set(20, savesMenu.height - saveAndDownloadBtn.view.height * 2);
         savesMenu.addChild(saveAndDownloadBtn.view);
 
         let saveAndPublishBtn = createButton('Save And Publish', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
-        saveAndPublishBtn.view.on('pointerdown', (e) =>{ saveAndPublishPlayArea(); updateVisibilitOfSaveMenu(); });
+        saveAndPublishBtn.view.on('pointerdown', (e) =>{ saveAndPublishPlayArea(); updateVisibilityOfSaveMenu(); });
         saveAndPublishBtn.view.position.set(280, savesMenu.height - saveAndPublishBtn.view.height * 2);
-        savesMenu.addChild(saveAndPublishBtn.view);
+        savesMenu.addChild(saveAndPublishBtn.view);*/
 
-        updateVisibilitOfSaveMenu();
+        updateVisibilityOfSaveMenu();
 
     }
 
-    function updateVisibilitOfSaveMenu(){
+    function updateVisibilityOfSaveMenu(){
         let savesMenu = containers.savesMenu;
 
         savesMenu.visible = !(savesMenu.visible);
@@ -578,14 +483,16 @@ registerAll(particles);
     }
 
     async function defineLoadMenu(){
+        
         let loadMenu = containers.loadMenu;
         const bounds = loadMenu.getBounds();
         const canvasRect = app.view.getBoundingClientRect();
 
+        /*
         let xButton = createButton('X', {bg: 0xff0000, w: 20, h: 20, toggleable: false});
         xButton.view.on('pointerdown', (e) =>{ updateVisibilityOfLoadMenu(); paused = false; });
         xButton.view.position.set(0, 0);
-        loadMenu.addChild(xButton.view);
+        loadMenu.addChild(xButton.view);*/
 
         // Center container
         loadMenu.x = app.screen.width / 2;
@@ -651,6 +558,7 @@ registerAll(particles);
     }
 
     function updateVisibilityOfLoadMenu(){
+        
         let loadMenu = containers.loadMenu;
         let parentDiv = document.getElementById('parentDiv');
         let searchBar = document.getElementById('searchBar');
@@ -764,12 +672,12 @@ registerAll(particles);
         };
 
         const catagoriesConfig = {
-            solids: { text: 'Solids', class: 'categoryButton', classes: ['categoryButton', 'selectedCategoryButton'], onclick: () => { selectedMenu = "solidsMenu"; updateCatagories(); } },
-            liquids: { text: 'Liquids', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedMenu = "liquidsMenu"; updateCatagories(); } },
-            gases: { text: 'Gases', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedMenu = "gasesMenu"; updateCatagories(); } },
-            spawners: { text: 'Spawners', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedMenu = "spawnersMenu"; updateCatagories(); } },
-            voids: { text: 'Void Blocks', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedMenu = "voidsMenu"; updateCatagories(); } },
-            misc: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedMenu = "miscMenu"; updateCatagories(); } },
+            solids: { text: 'Solids', class: 'categoryButton', classes: ['categoryButton', 'selectedCategoryButton'], onclick: () => { selectedCategory = "solidsMenu"; updateCatagories(); } },
+            liquids: { text: 'Liquids', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "liquidsMenu"; updateCatagories(); } },
+            gases: { text: 'Gases', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "gasesMenu"; updateCatagories(); } },
+            spawners: { text: 'Spawners', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "spawnersMenu"; updateCatagories(); } },
+            voids: { text: 'Void Blocks', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "voidsMenu"; updateCatagories(); } },
+            misc: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
         };
 
         const allParticleButtons = {
@@ -841,7 +749,7 @@ registerAll(particles);
             
             if(menuName) {
                 section.setAttribute('data-menu', menuName);
-                section.style.display = menuName === selectedMenu ? 'flex' : 'none';
+                section.style.display = menuName === selectedCategory ? 'flex' : 'none';
                 section.style.position = 'relative';
                 section.style.width = '100%';
             }
