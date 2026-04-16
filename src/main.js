@@ -18,7 +18,7 @@ import "https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"
 import { registerAll, get } from './registry.js';
 
 let maxWidth = 1500;
-let maxHeight = 700;
+let maxHeight = 500;
 
 let mouseDown = false;
 let mouseX = 0;
@@ -52,6 +52,8 @@ let saveName = null;
 let username = null;
 
 registerAll(particles);
+
+
 
 (async () => {
     console.log( navigator.userAgent );
@@ -89,19 +91,16 @@ registerAll(particles);
 
     const containers = {
         playArea: new Container(),
-        menu: new Container(),
         ui: new Container(),
         savesMenu: new Container(),
         loadMenu: new Container(),
     };
 
-    containers.menu.x = 0;
-    containers.menu.y = app.screen.height - 200;
 
-    addToStage(containers.playArea, containers.menu, containers.ui, containers.savesMenu, containers.loadMenu);
+    addToStage(containers.playArea, containers.ui, containers.savesMenu, containers.loadMenu);
 
     // set background color and size of container
-    containers.menu.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x333333))
+    console.log(app.screen.width, app.screen.height);
 
     containers.savesMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
     containers.savesMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
@@ -109,7 +108,7 @@ registerAll(particles);
     containers.loadMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
     containers.loadMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
 
-    containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
+    containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x555555));
 
     let titleText = new Text('Save Or Publish', {
             fontFamily: 'Arial',
@@ -148,7 +147,6 @@ registerAll(particles);
 
     defineLoadMenu();
 
-
     // Hide cursor when over play area
     containers.playArea.cursor = 'none';
     containers.playArea.interactive = true; // Make sure it's interactive
@@ -159,10 +157,6 @@ registerAll(particles);
     containers.playArea.on("pointerout", () => {
         containers.playArea.cursor = 'none'; // stays none over play area
     });
-
-    // Set cursor for menu
-    containers.menu.interactive = true;
-    containers.menu.cursor = 'auto'; // Cursor automatically switches over menu
 
     let matrix = new Matrix(app, containers)
 
@@ -189,10 +183,7 @@ registerAll(particles);
     outline.pivot.set(0, 0);
     containers.ui.addChild(outline);
 
-    let topBarText = {};
-    let topBarButtons = {};
-
-    createMenu();
+    createNewMenu();
 
     // Mouse and keyboard inputs
     app.renderer.events = new EventSystem(app.renderer);
@@ -214,7 +205,7 @@ registerAll(particles);
         mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
         mouseY = Math.trunc(event.global.y / matrix.getTileSize()) - Math.floor(brushSize / 2);
 
-        topBarText.coordsText.text = `X: ${mouseX} Y: ${mouseY}`;
+        document.getElementById('mouseCoordsDiv').innerText = `X: ${mouseX} Y: ${mouseY}`;
 
         mouseDown = true;
     
@@ -227,14 +218,14 @@ registerAll(particles);
         mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
         mouseY = Math.trunc(event.global.y / matrix.getTileSize()) -  Math.floor(brushSize / 2);
 
-        topBarText.coordsText.text = `X: ${mouseX} Y: ${mouseY}`;
+        document.getElementById('mouseCoordsDiv').innerText = `X: ${mouseX} Y: ${mouseY}`;
 
         outline.clear();
         outline.rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 }); 
 
         let hovered = matrix.withinBounds(mouseX, mouseY) ? matrix.getParticle(mouseX, mouseY) : null;
 
-        topBarText.hoveredOverParticleText.text = `Hovered: ${hovered == null || hovered == undefined ? '' : hovered.constructor.name }`;
+        document.getElementById('hoveredParticleDiv').innerText = `Hovered: ${hovered == null || hovered == undefined ? 'None' : hovered.constructor.name }`;
     });
 
     containers.playArea.on("pointerup", (event) => {
@@ -248,17 +239,12 @@ registerAll(particles);
             brushSize = brushSize > 1 ? brushSize-1 : 1; 
         }
 
-        topBarText.brushSizeText.text = `Brush Size: ${brushSize}`;
+        document.getElementById('brushSizeDiv').innerText = `Brush Size: ${brushSize}`;
 
         outline.clear();
-        //outline = new Graphics().rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
         outline.rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
         outline.pivot.set(0, 0);
         containers.ui.addChild(outline);
-    });
-
-    containers.menu.on('pointerover', (event) => {
-        mouseDown = false;
     });
     
     window.addEventListener('keydown', (event) => {
@@ -289,7 +275,7 @@ registerAll(particles);
     let updateFps = true;
     app.ticker.add(() => {
         if(updateFps){
-            topBarText.fpsText.text = `FPS: ${app.ticker.FPS.toFixed(0)}`;
+            document.getElementById('fpsDiv').innerText = `FPS: ${app.ticker.FPS.toFixed(0)}`;
             updateFps = false;
         }else{
             updateFps = true;
@@ -299,7 +285,7 @@ registerAll(particles);
 
     function resetMatrix(){
         containers.playArea.removeChildren().forEach(child => child.destroy({ children: true }));
-        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, containers.menu.y).fill(0x555555));
+        containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x555555));
         matrix = new Matrix(app, containers); 
     }
 
@@ -370,131 +356,6 @@ registerAll(particles);
         return btn;
     }
 
-    function createMenu(){
-        let buttonIndent = 50;
-
-        let topBarIndent = buttonIndent;
-        let topBarY = 10;
-
-        topBarText = {
-            fpsText: new Text('FPS: 0', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            coordsText: new Text('X: 000 Y: 000', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            brushSizeText: new Text('Brush Size: 1', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            pausedText: new Text('Paused!', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            overrideText: new Text('Override On!', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            selectedParticleText: new Text('Selected:                ', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-            hoveredOverParticleText: new Text('Hovered:                          ', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                fill: 0xffffff,
-            }),
-
-            
-        }
-
-        topBarText.pausedText.visible = false;
-        topBarText.overrideText.visible = false;
-
-        topBarButtons = {
-            eraserBtn: createButton("Eraser", {bg: 0xFF5CFA}).view.on('pointerdown', (e) => { selectedParticle = null; changeSelectedButton(e.currentTarget); }),
-            pauseBtn: createButton("Pause").view.on('pointerdown', (e) => { paused = !paused; topBarText.pausedText.visible = paused; toggleButtonBg(e.currentTarget);}),
-            resetBtn: createButton("Reset", {bg: 0xFF3333, toggleable: false}).view.on('pointerdown', (e) => { resetMatrix(); }),
-            overrideBtn: createButton("Override", {bg: 0x7a3f6d}).view.on('pointerdown', (e) => { override = !override; toggleButtonBg(e.currentTarget); topBarText.overrideText.visible = override; }),
-            saveBtn: createButton("Save", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateVisibilitOfSaveMenu(); paused = true; }),
-            loadBtn: createButton("Load", {bg: 0xf40c2, toggleable: false}).view.on('pointerdown', (e) => { updateLoadMenu(); paused = true; }),
-        }
-
-        let menuTxtOffset = 0;
-        let txtX = topBarIndent;
-        let txtY = topBarY;
-        let row = 0;
-        let rowSpacing = 5;
-        let colSpacing = 70;
-
-        let btnColSpacing = 5;
-
-        for(let t in topBarText){
-            let txt = topBarText[t];
-
-
-
-            if(txtX + txt.width >= app.screen.width){
-                row++;
-                txtX = topBarIndent;
-                txtY = txtY + txt.height + rowSpacing;
-                menuTxtOffset = menuTxtOffset + txt.height
-            }
-
-            txt.position.x = txtX;
-            txt.position.y = txtY; 
-
-            txtX = txt.width + txtX + colSpacing;
-
-
-            containers.menu.addChild(txt);   
-        }
-
-        for(let b in topBarButtons){
-            let btn = topBarButtons[b];
-
-            if(txtX + btn._w >= app.screen.width){
-                row++;
-                txtX = topBarIndent;
-                txtY = txtY + btn._h + rowSpacing;
-                menuTxtOffset = menuTxtOffset + btn._h + 5;
-            }
-
-            btn.position.set(txtX, txtY);
-
-            txtX = btn._w + txtX + btnColSpacing;
-
-
-            containers.menu.addChild(btn);   
-        }
-
-
-        createButtons(buttonIndent, menuTxtOffset);
-    }
-
-    function toggleButtonBg(btn){
-
-        if(btn._toggled){
-            btn.clear()
-                .rect(0, 0, btn._w, btn._h)
-                .fill(btn._bg)
-                .stroke({ width: 2, color: 0xffffff });
-        }else{
-            btn.clear()
-                .rect(0, 0, btn._w, btn._h)
-                .fill(btn._bg)
-                .stroke({ width: 2, color: 0xffffff });
-        }
-    }
-
     function changeSelectedButton(btn) {
         if (selectedButton) {
             selectedButton.clear()
@@ -510,7 +371,7 @@ registerAll(particles);
             .fill(selectedButton._SelectedBg)
             .stroke({ width: 2, color: 0xffffff });
 
-        topBarText.selectedParticleText.text = `Selected: ${selectedParticle.name}`;
+        document.getElementById('selectedParticleDiv').innerText = `Selected: ${selectedParticle.name}`;
     }
 
     function changeSelectedMenuButton(btn) {
@@ -529,153 +390,11 @@ registerAll(particles);
             .stroke({ width: 2, color: 0xffffff });
     }
 
-    function createButtons(buttonIndent, menuTxtOffset){
-
-
-        allMenuButtons = {
-            menuSelectButtons: {
-                solidsSelect: createButton("Solids", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "solidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-                liquidsSelect: createButton("Liquids", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "liquidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-                gasesSelect: createButton("Gases", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "gasesMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-                spawnersSelect: createButton("Spawners", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "spawnersMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-                voidsSelect: createButton("Void Blocks", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "voidsMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-                miscSelect: createButton("Misc", { bg: 0x999999, w: 125, h: 30 }).view.on('pointerdown', (e) => { selectedMenu = "miscMenu"; updateMenu(); changeSelectedMenuButton(e.currentTarget); }),
-            }
-        };
-
-        /*allTopBarButtons = {
-            constrolsButtons: {
-
-            }
-        }*/
-
-        allParticleButtons = {
-            solidsMenu: {
-                stoneBtn: createButton("Stone", { bg: 0x8C8C8C }).view.on('pointerdown', (e) => { selectedParticle = Stone; changeSelectedButton(e.currentTarget); }),
-                sandBtn: createButton("Sand", { bg: 0xDBD49D }).view.on('pointerdown', (e) => { selectedParticle = Sand; changeSelectedButton(e.currentTarget); }),
-                dirtBtn: createButton("Dirt", { bg: 0x964B00 }).view.on('pointerdown', (e) => { selectedParticle = Dirt; changeSelectedButton(e.currentTarget); }),
-                ashBtn: createButton("Ash", { bg: 0xC8C8C8 }).view.on('pointerdown', (e) => { selectedParticle = Ash; changeSelectedButton(e.currentTarget); }),
-                bedrockBtn: createButton("Bedrock", { bg: 0x3A3A3A }).view.on('pointerdown', (e) => { selectedParticle = Bedrock; changeSelectedButton(e.currentTarget); }),
-                iceBtn: createButton("Ice", { bg: 0xB4FFFF, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = Ice; changeSelectedButton(e.currentTarget); }),
-                obsidianBtn: createButton("Obsidian", { bg: 0x181818 }).view.on('pointerdown', (e) => { selectedParticle = Obsidian; changeSelectedButton(e.currentTarget); }),
-                tntBtn: createButton("Tnt", { bg: 0xFF1E1E }).view.on('pointerdown', (e) => { selectedParticle = Tnt; changeSelectedButton(e.currentTarget); }),
-                woodBtn: createButton("Wood", { bg: 0x914815 }).view.on('pointerdown', (e) => { selectedParticle = Wood; changeSelectedButton(e.currentTarget); }),
-            },
-            liquidsMenu: {
-                waterBtn: createButton("Water", { bg: 0x0A0AFF }).view.on('pointerdown', (e) => { selectedParticle = Water; changeSelectedButton(e.currentTarget); }),
-            },
-            gasesMenu: {
-                steamBtn: createButton("Steam", { bg: 0xffffff, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = Steam; changeSelectedButton(e.currentTarget); }),
-                fireBtn: createButton("Fire", { bg: 0xFFA500 }).view.on('pointerdown', (e) => { selectedParticle = Fire; changeSelectedButton(e.currentTarget); }),
-            },
-            spawnersMenu: {
-                sandSpawnerBtn: createButton("Sand Spawner", { w: 150, bg: 0xff0000, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = SandSpawner; changeSelectedButton(e.currentTarget); }),
-                dirtSpawnerBtn: createButton("Dirt Spawner", { w: 150, bg: 0xFFFF00, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = DirtSpawner; changeSelectedButton(e.currentTarget); }),
-                ashSpawnerBtn: createButton("Ash Spawner", { w: 150, bg: 0x0F7D0F, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = AshSpawner; changeSelectedButton(e.currentTarget); }),
-                waterSpawnerBtn: createButton("Water Spawner", { w: 150, bg: 0x00FFFF, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = WaterSpawner; changeSelectedButton(e.currentTarget); }),
-                steamSpawnerBtn: createButton("Steam Spawner", { w: 150, bg: 0xffffff, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = SteamSpawner; changeSelectedButton(e.currentTarget); }),
-                fireSpawnerBtn: createButton("Fire Spawner", { w: 150, bg: 0xFF00FF, txtColor: 0x000000 }).view.on('pointerdown', (e) => { selectedParticle = FireSpawner; changeSelectedButton(e.currentTarget); }),
-            },
-            voidsMenu: {
-                voidBlockBtn: createButton("Void Block", { w: 175, bg: 0xae34fa }).view.on('pointerdown', (e) => { selectedParticle = VoidBlock; changeSelectedButton(e.currentTarget); }),
-                voidSolidsBtn: createButton("Void Solids Block", { w: 175, bg: 0xB52300 }).view.on('pointerdown', (e) => { selectedParticle = VoidSolidsBlock; changeSelectedButton(e.currentTarget); }),
-                voidLiquidsBtn: createButton("Void Liquids Block", { w: 175, bg: 0x134A00 }).view.on('pointerdown', (e) => { selectedParticle = VoidLiquidsBlock; changeSelectedButton(e.currentTarget); }),
-                voidGasBtn: createButton("Void Gases Block", { w: 175, bg: 0x360034 }).view.on('pointerdown', (e) => { selectedParticle = VoidGassesBlock; changeSelectedButton(e.currentTarget); }),
-            },
-            miscMenu: {
-                
-            },
-        };
-
-
-        selectedButton = allParticleButtons.solidsMenu.sandBtn;
-        changeSelectedButton(selectedButton);
-
-        selectedMenuButton = allMenuButtons.menuSelectButtons.solidsSelect;
-        changeSelectedMenuButton(selectedMenuButton);
-
-        let menuButtonOffset = menuTxtOffset;
-
-        for(let btns in allMenuButtons){
-            let menu = btns;
-            btns = allMenuButtons[menu];
-            
-            let btnX = buttonIndent;
-            let btnY = 50 + menuTxtOffset;
-            let row = 0;
-            let rowSpacing = 5;
-
-            for(let btn in btns){
-
-                if(btnX + btns[btn]._w >= app.screen.width){
-                    row++;
-                    btnX = buttonIndent;
-                    btnY = btnY + btns[btn]._h + rowSpacing;
-                    menuButtonOffset = menuButtonOffset + btns[btn]._h
-
-                    if(btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100 + btns[btn]._h >= app.screen.height - 50){
-                        app.renderer.resize( app.screen.width, btnY + containers.menu.y + btns[btn].y + menuButtonOffset + 100);
-                        resetMatrix()
-                    }
-
-                }
-
-                btns[btn].position.set(btnX, btnY)
-
-                btnX = btns[btn]._w + btnX + rowSpacing;
-
-
-                containers.menu.addChild(btns[btn]);
-
-
-            }
-        }
-        
-
-        for(let btns in allParticleButtons){
-            let menu = btns;
-            btns = allParticleButtons[menu];
-            
-            let btnX = buttonIndent;
-            let btnY = 100 + menuButtonOffset;
-            let row = 0;
-            let rowSpacing = 5;
-
-            for(let btn in btns){
-
-                if(btnX + btns[btn]._w >= app.screen.width){
-                    row++;
-                    btnX = buttonIndent;
-                    btnY = btnY + btns[btn]._h + rowSpacing;
-                }
-
-                btns[btn].position.set(btnX, btnY)
-
-                btnX = btns[btn]._w + btnX + rowSpacing;
-
-                containers.menu.addChild(btns[btn]);
-
-                btns[btn].interactive = selectedMenu === menu;
-                btns[btn].buttonMode = selectedMenu === menu;
-                btns[btn].visible = selectedMenu === menu;
-
-
-            }
-        }
-    }
-
     function updateMenu(){
-        for(let menu in allParticleButtons){
-            let btns = allParticleButtons[menu];
+        const particlesContainer = document.getElementById('particlesContainer');
 
-            for(let btn in btns){
-                
-                btns[btn].interactive = selectedMenu === menu;
-                btns[btn].buttonMode = selectedMenu === menu;
-                btns[btn].visible = selectedMenu === menu;
-
-            }
-
+        for( const child of particlesContainer.children){
+            child.style.display = child.dataset.menu === selectedMenu ? 'block' : 'none';
         }
     }
 
@@ -781,8 +500,6 @@ registerAll(particles);
 
         database.createDoc('ParticulateSaves', 'name', saveName, 'username', username, 'save', text);
     }
-
-
 
     function defineSavesMenu() {
         const savesMenu = containers.savesMenu;
@@ -905,7 +622,7 @@ registerAll(particles);
         parentDiv.style.left = canvasRect.left + globalPos.x + "px";
         parentDiv.style.top = canvasRect.top + globalPos.y + 80 + "px";
 
-        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
+        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
 
         const allSaves = await database.readAllDocs('ParticulateSaves');
 
@@ -929,7 +646,6 @@ registerAll(particles);
         updateVisibilityOfLoadMenu();
     }
 
-
     function updateVisibilityOfLoadMenu(){
         let loadMenu = containers.loadMenu;
         let parentDiv = document.getElementById('parentDiv');
@@ -941,7 +657,6 @@ registerAll(particles);
         searchBar.hidden = !(searchBar.hidden);
     }
     
-
     async function updateLoadMenu(){
         parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
 
@@ -965,7 +680,6 @@ registerAll(particles);
         updateVisibilityOfLoadMenu();
     }
 
-
     document.getElementById('saveNameInput').addEventListener('input', (event) => {
         saveName = event.target.value;
     });
@@ -978,7 +692,6 @@ registerAll(particles);
         parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
 
         const allSaves = await database.findAllWith('ParticulateSaves', 'name', event.target.value);
-
 
         parentDiv.innerHTML = '';
         
@@ -994,15 +707,171 @@ registerAll(particles);
                 <hr />
             </div>`;
         })
-        
-
-
     });
 
     window.downloadAndApplyPlayArea = function(id) {
         console.log(id);
         downloadAndApplyPlayArea(id);
     };
+
+    window.addEventListener('resize', () => {
+        //console.log(`Width: ${window.innerWidth}, Height: ${window.innerHeight}`);
+        createNewMenu();
+    });
+
+    function createNewMenu(){
+        const canvasRect = app.view.getBoundingClientRect();
+
+        let menuDiv = document.getElementById('menuDiv');
+
+        if(!menuDiv){
+            menuDiv = document.createElement("div");
+            menuDiv.id = 'menuDiv';
+            menuDiv.classList.add('menuBorder');
+            menuDiv.style.position = "absolute";
+            menuDiv.style.zIndex = 10;
+            document.getElementById('menuContainer').appendChild(menuDiv);
+            
+        }
+
+        menuDiv.style.width = app.screen.width + 8 + "px";
+        menuDiv.style.left = canvasRect.left + "px";
+        menuDiv.style.top = (canvasRect.top + app.screen.height) + 8 + "px";
+        menuDiv.style.backgroundColor = "rgb(0,0,0)";
+
+        const statsConfig = {
+            fpsDiv: { id: 'fpsDiv', label: 'FPS', initialText: () => `FPS: ${app.ticker.FPS.toFixed(0)}` },
+            mouseCoordsDiv: { id: 'mouseCoordsDiv', label: 'Coords', initialText: 'x: 000 y: 000' },
+            brushSizeDiv: { id: 'brushSizeDiv', label: 'Brush', initialText: 'Brush Size: 1' },
+            selectedParticleDiv: { id: 'selectedParticleDiv', label: 'Selected', initialText: 'Selected: Sand', noWrap: true },
+            hoveredParticleDiv: { id: 'hoveredParticleDiv', label: 'Hovered', initialText: 'Hovered: None', noWrap: true },
+        };
+
+        const controlsConfig = {
+            pause: { text: 'Pause', class: 'controlsButton', bg: '#CCCCCC',  onclick: () => { paused = !paused; } },
+            reset: { text: 'Reset', class: 'controlsButton', bg: '#FF3333', onclick: () => { resetMatrix(); } },
+            override: { text: 'Override', class: 'controlsButton', bg: '#7a3f6d', txtColor: '#FFFFFF', onclick: () => { override = !override; } },
+        };
+
+        const toolsConfig = {
+            eraser: { text: 'Eraser', class: 'toolsButton', bg: '#FF5CFA', onclick: () => { selectedParticle = null; } },
+            save: { text: 'Save', class: 'toolsButton', bg: '#00FF00', onclick: () => { updateVisibilityOfSaveMenu(); paused = true; } },
+            load: { text: 'Load', class: 'toolsButton', bg: '#00FFFF', onclick: () => { updateVisibilityOfLoadMenu(); paused = true; } },
+        };
+
+        const catagoriesConfig = {
+            solids: { text: 'Solids', class: 'categoryButton', bg: '#8C8C8C', onclick: () => { selectedMenu = "solidsMenu"; updateMenu(); } },
+            liquids: { text: 'Liquids', class: 'categoryButton', bg: '#0000FF', txtColor: '#FFFFFF', onclick: () => { selectedMenu = "liquidsMenu"; updateMenu(); } },
+            gases: { text: 'Gases', class: 'categoryButton', bg: '#FFFFFF', onclick: () => { selectedMenu = "gasesMenu"; updateMenu(); } },
+            spawners: { text: 'Spawners', class: 'categoryButton', bg: '#FF0000', txtColor: '#FFFFFF', onclick: () => { selectedMenu = "spawnersMenu"; updateMenu(); } },
+            voids: { text: 'Void Blocks', class: 'categoryButton', bg: '#000000', txtColor: '#FFFFFF', onclick: () => { selectedMenu = "voidsMenu"; updateMenu(); } },
+            misc: { text: 'Misc', class: 'categoryButton', bg: '#A9A9A9', onclick: () => { selectedMenu = "miscMenu"; updateMenu(); } },
+        };
+
+        const allParticleButtons = {
+            solidsMenu: {
+                sand: { text: 'Sand', class: 'particleButton', bg: '#DBD49D', onclick: () => { selectedParticle = Sand; } },
+                dirt: { text: 'Dirt', class: 'particleButton', bg: '#964B00', onclick: () => { selectedParticle = Dirt; } },
+                stone: { text: 'Stone', class: 'particleButton', bg: '#808080', onclick: () => { selectedParticle = Stone; } },
+                ash: { text: 'Ash', class: 'particleButton', bg: '#C8C8C8', onclick: () => { selectedParticle = Ash; } },
+                bedrock: { text: 'Bedrock', class: 'particleButton', bg: '#3A3A3A', txtColor: '#FFFFFF', onclick: () => { selectedParticle = Bedrock; } },
+                obsidian: { text: 'Obsidian', class: 'particleButton', bg: '#181818', txtColor: '#FFFFFF', onclick: () => { selectedParticle = Obsidian; } },
+                ice: { text: 'Ice', class: 'particleButton', bg: '#B4FFFF', onclick: () => { selectedParticle = Ice; } },
+                wood: { text: 'Wood', class: 'particleButton', bg: '#914815', txtColor: '#FFFFFF', onclick: () => { selectedParticle = Wood; } },
+                tnt: { text: 'TNT', class: 'particleButton', bg: '#FF1E1E', txtColor: '#FFFFFF', onclick: () => { selectedParticle = Tnt; } },
+            },
+            liquidsMenu: {
+                water: { text: 'Water', class: 'particleButton', bg: '#045AFF', onclick: () => { selectedParticle = Water; } },
+            },
+            gasesMenu: {
+                steam: { text: 'Steam', class: 'particleButton', bg: '#FFFFFF', onclick: () => { selectedParticle = Steam; } },
+                fire: { text: 'Fire', class: 'particleButton', bg: '#FF4500', onclick: () => { selectedParticle = Fire; } },
+                smoke: { text: 'Smoke', class: 'particleButton', bg: '#A9A9A9', onclick: () => { selectedParticle = Smoke; } },
+            },
+            spawnersMenu: {
+                sandSpawner: { text: 'Sand Spawner', class: 'particleButton', bg: '#D2B48C', onclick: () => { selectedParticle = SandSpawner; } },
+                dirtSpawner: { text: 'Dirt Spawner', class: 'particleButton', bg: '#8B4513', onclick: () => { selectedParticle = DirtSpawner; } },
+                ashSpawner: { text: 'Ash Spawner', class: 'particleButton', bg: '#000000', onclick: () => { selectedParticle = AshSpawner; } },
+                waterSpawner: { text: 'Water Spawner', class: 'particleButton', bg: '#0000FF', onclick: () => { selectedParticle = WaterSpawner; } },
+                steamSpawner: { text: 'Steam Spawner', class: 'particleButton', bg: '#FFFFFF', onclick: () => { selectedParticle = SteamSpawner; } },
+                fireSpawner: { text: 'Fire Spawner', class: 'particleButton', bg: '#FF4500', onclick: () => { selectedParticle = FireSpawner; } },
+            },
+            voidsMenu: {
+                voidBlock: { text: 'Void Block', class: 'particleButton', bg: '#000000', onclick: () => { selectedParticle = VoidBlock; } },
+                voidSolidsBlock: { text: 'Void Solids Block', class: 'particleButton', bg: '#808080', onclick: () => { selectedParticle = VoidSolidsBlock; } },
+                voidLiquidsBlock: { text: 'Void Liquids Block', class: 'particleButton', bg: '#0000FF', onclick: () => { selectedParticle = VoidLiquidsBlock; } },
+                voidGassesBlock: { text: 'Void Gases Block', class: 'particleButton', bg: '#FFFFFF', onclick: () => { selectedParticle = VoidGassesBlock; } },
+            },
+        };
+
+        createSection(menuDiv, 'statsDiv', statsConfig, true);
+        createSection(menuDiv, 'controlsDiv', controlsConfig, false);
+        createSection(menuDiv, 'toolsDiv', toolsConfig, false);
+        createSection(menuDiv, 'catagoriesDiv', catagoriesConfig, false);
+        
+        const particlesContainer = document.getElementById('particlesContainer') || document.createElement('div');
+        particlesContainer.id = 'particlesContainer';
+        particlesContainer.style.position = 'relative';
+        if(!document.getElementById('particlesContainer')) menuDiv.appendChild(particlesContainer);
+
+        Object.keys(allParticleButtons).forEach(menu => {
+            createSection(particlesContainer, `${menu}Div`, allParticleButtons[menu], false, menu);
+        });
+
+        let container = document.getElementById('container');
+
+        container.style.marginTop = menuDiv.getBoundingClientRect().height+ 20 + "px";
+    }
+
+    function createSection(parent, sectionId, config, isStats, menuName){
+        let section = document.getElementById(sectionId);
+        
+        if(!section){
+            section = document.createElement("div");
+            section.id = sectionId;
+            section.classList.add('border', 'fs-5');
+            section.style.display = 'flex';
+            section.style.flexWrap = 'wrap';
+            section.style.zIndex = 10;
+            
+            if(menuName) {
+                section.setAttribute('data-menu', menuName);
+                section.style.display = menuName === selectedMenu ? 'flex' : 'none';
+                section.style.position = 'relative';
+                section.style.width = '100%';
+            }
+
+            if(isStats){
+                Object.values(config).forEach(item => {
+                    const div = document.createElement("div");
+                    div.id = item.id;
+                    div.style.flex = '1';
+                    div.style.minWidth = '150px'; 
+                    if(item.noWrap) { div.style.whiteSpace = "nowrap"; }
+                    div.innerText = typeof item.initialText === 'function' ? item.initialText() : item.initialText;
+                    section.appendChild(div);
+                });
+            } else {
+                const buttonsCol = document.createElement("div");
+                buttonsCol.classList.add('fs-3');
+
+                Object.values(config).forEach(item => {
+                    const btn = document.createElement("button");
+                    btn.innerText = item.text;
+                    btn.style.backgroundColor = item.bg;
+                    btn.onclick = item.onclick;
+                    btn.classList.add(item.class, 'button');
+                    //btn.style.color = item.txtColor || '#000000';
+                    buttonsCol.appendChild(btn);
+                });
+
+                section.appendChild(buttonsCol);
+            }
+
+            parent.appendChild(section);
+
+        }
+    }
 
 
 })();
