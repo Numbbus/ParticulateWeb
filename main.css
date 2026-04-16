@@ -61,27 +61,28 @@ input {
   -webkit-text-stroke: 1px black; 
   color: white; /* inside color of the text */
   border-radius: 6px;
-  border-width: 3px;
+  border-width: 4px;
   border-style: solid;
-  padding: 0px 10px;
+  padding: 0px 10px;    
   line-height: 1;
   display: inline-block;
 }
 
-.controlsButton{
+.button.controlsButton {
   border-style: solid;
   border-width: 3px;
-  border-color: white;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
 }
 
-.controlsButton:hover {
-  border-color: #FF0000;
-  color: #FF0000;
+.button.controlsButton:hover {
+  border-color: #FF0000 !important;
+  color: #FF0000 !important;
 }
 
-.controlsButton:active {
-  border-color: #FF4500;
-  color: #FF4500;
+.button.controlsButton:active {
+  border-color: #FF4500 !important;
+  color: #FF4500 !important;
 }
 
 .toolsButton { 
@@ -121,3 +122,5 @@ input {
 #fpsDiv{
   margin-left:2%;
 }
+
+

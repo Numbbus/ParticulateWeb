@@ -292,7 +292,7 @@ registerAll(particles);
         }
 
         const selectedMenu = selectedCategory;
-
+ 
         const categoryButtons = document.querySelectorAll('.categoryButton');
         for (const btn of categoryButtons) {
             if (btn.onclick && btn.onclick.toString().includes(`"${selectedCategory}"`)) {
@@ -660,15 +660,15 @@ registerAll(particles);
         };
 
         const controlsConfig = {
-            pause: { text: 'Pause', class: 'controlsButton', bg: '#000', classes: ['controlsButton'], onclick: () => { paused = !paused; } },
-            reset: { text: 'Reset', class: 'controlsButton', bg: '#000', classes: ['controlsButton'], onclick: () => { resetMatrix(); } },
-            override: { text: 'Override', class: 'controlsButton', bg: '#000', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: () => { override = !override; } },
+            pause: { text: 'Pause', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: () => { paused = !paused; } },
+            reset: { text: 'Reset', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: () => { resetMatrix(); } },
+            override: { text: 'Override', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: () => { override = !override; } },
         };
 
         const toolsConfig = {
-            eraser: { text: 'Eraser', class: 'toolsButton', bg: '#FF5CFA', classes: ['toolsButton'], onclick: () => { selectedParticle = null; } },
-            save: { text: 'Save', class: 'toolsButton', bg: '#00FF00', classes: ['toolsButton'], onclick: () => { updateVisibilityOfSaveMenu(); paused = true; } },
-            load: { text: 'Load', class: 'toolsButton', bg: '#00FFFF', classes: ['toolsButton'], onclick: () => { updateVisibilityOfLoadMenu(); paused = true; } },
+            eraser: { text: 'Eraser', class: 'toolsButton', bg: '#FF5CFA', borderColor: '#a50da0ff', classes: ['toolsButton'], onclick: () => { selectedParticle = null; } },
+            save: { text: 'Save', class: 'toolsButton', bg: '#00FF00', borderColor: '#008800ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfSaveMenu(); paused = true; } },
+            load: { text: 'Load', class: 'toolsButton', bg: '#00FFFF', borderColor: '#007272ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfLoadMenu(); paused = true; } },
         };
 
         const catagoriesConfig = {
@@ -682,37 +682,37 @@ registerAll(particles);
 
         const allParticleButtons = {
             solidsMenu: {
-                sand: { text: 'Sand', class: 'particleButton', bg: '#DBD49D', classes: ['particleButton'], onclick: () => { selectedParticle = Sand; } },
-                dirt: { text: 'Dirt', class: 'particleButton', bg: '#964B00', classes: ['particleButton'], onclick: () => { selectedParticle = Dirt; } },
-                stone: { text: 'Stone', class: 'particleButton', bg: '#808080', classes: ['particleButton'], onclick: () => { selectedParticle = Stone; } },
-                ash: { text: 'Ash', class: 'particleButton', bg: '#C8C8C8', classes: ['particleButton'], onclick: () => { selectedParticle = Ash; } },
-                bedrock: { text: 'Bedrock', class: 'particleButton', bg: '#3A3A3A', txtColor: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = Bedrock; } },
-                obsidian: { text: 'Obsidian', class: 'particleButton', bg: '#181818', txtColor: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = Obsidian; } },
-                ice: { text: 'Ice', class: 'particleButton', bg: '#B4FFFF', classes: ['particleButton'], onclick: () => { selectedParticle = Ice; } },
-                wood: { text: 'Wood', class: 'particleButton', bg: '#914815', txtColor: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = Wood; } },
-                tnt: { text: 'TNT', class: 'particleButton', bg: '#FF1E1E', txtColor: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = Tnt; } },
+                sand: { text: 'Sand', class: 'particleButton', bg: '#DBD49D', borderColor: '#817c54ff', classes: ['particleButton'], onclick: () => { selectedParticle = Sand; } },
+                dirt: { text: 'Dirt', class: 'particleButton', bg: '#964B00', borderColor: '#4e2700ff', classes: ['particleButton'], onclick: () => { selectedParticle = Dirt; } },
+                stone: { text: 'Stone', class: 'particleButton', bg: '#808080', borderColor: '#474747ff', classes: ['particleButton'], onclick: () => { selectedParticle = Stone; } },
+                ash: { text: 'Ash', class: 'particleButton', bg: '#C8C8C8', borderColor: '#727272ff', classes: ['particleButton'], onclick: () => { selectedParticle = Ash; } },
+                bedrock: { text: 'Bedrock', class: 'particleButton', bg: '#3A3A3A', txtColor: '#FFFFFF', borderColor: '#6b6b6bff', classes: ['particleButton'], onclick: () => { selectedParticle = Bedrock; } },
+                obsidian: { text: 'Obsidian', class: 'particleButton', bg: '#181818', txtColor: '#FFFFFF', borderColor: '#3d3d3dff', classes: ['particleButton'], onclick: () => { selectedParticle = Obsidian; } },
+                ice: { text: 'Ice', class: 'particleButton', bg: '#B4FFFF', borderColor: '#4f7575ff', classes: ['particleButton'], onclick: () => { selectedParticle = Ice; } },
+                wood: { text: 'Wood', class: 'particleButton', bg: '#914815', txtColor: '#FFFFFF', borderColor: '#532a0cff', classes: ['particleButton'], onclick: () => { selectedParticle = Wood; } },
+                tnt: { text: 'TNT', class: 'particleButton', bg: '#FF1E1E', txtColor: '#FFFFFF', borderColor: '#7e1e1eff', classes: ['particleButton'], onclick: () => { selectedParticle = Tnt; } },
             },
             liquidsMenu: {
-                water: { text: 'Water', class: 'particleButton', bg: '#045AFF', classes: ['particleButton'], onclick: () => { selectedParticle = Water; } },
+                water: { text: 'Water', class: 'particleButton', bg: '#045AFF', borderColor: '#002e83ff', classes: ['particleButton'], onclick: () => { selectedParticle = Water; } },
             },
             gasesMenu: {
-                steam: { text: 'Steam', class: 'particleButton', bg: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = Steam; } },
-                fire: { text: 'Fire', class: 'particleButton', bg: '#FF4500', classes: ['particleButton'], onclick: () => { selectedParticle = Fire; } },
-                smoke: { text: 'Smoke', class: 'particleButton', bg: '#A9A9A9', classes: ['particleButton'], onclick: () => { selectedParticle = Smoke; } },
+                steam: { text: 'Steam', class: 'particleButton', bg: '#FFFFFF', borderColor: '#adadadff', classes: ['particleButton'], onclick: () => { selectedParticle = Steam; } },
+                fire: { text: 'Fire', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton'], onclick: () => { selectedParticle = Fire; } },
+                smoke: { text: 'Smoke', class: 'particleButton', bg: '#A9A9A9', borderColor: '#696969ff', classes: ['particleButton'], onclick: () => { selectedParticle = Smoke; } },
             },
             spawnersMenu: {
-                sandSpawner: { text: 'Sand Spawner', class: 'particleButton', bg: '#D2B48C', classes: ['particleButton'], onclick: () => { selectedParticle = SandSpawner; } },
-                dirtSpawner: { text: 'Dirt Spawner', class: 'particleButton', bg: '#8B4513', classes: ['particleButton'], onclick: () => { selectedParticle = DirtSpawner; } },
-                ashSpawner: { text: 'Ash Spawner', class: 'particleButton', bg: '#000000', classes: ['particleButton'], onclick: () => { selectedParticle = AshSpawner; } },
-                waterSpawner: { text: 'Water Spawner', class: 'particleButton', bg: '#0000FF', classes: ['particleButton'], onclick: () => { selectedParticle = WaterSpawner; } },
-                steamSpawner: { text: 'Steam Spawner', class: 'particleButton', bg: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = SteamSpawner; } },
-                fireSpawner: { text: 'Fire Spawner', class: 'particleButton', bg: '#FF4500', classes: ['particleButton'], onclick: () => { selectedParticle = FireSpawner; } },
+                sandSpawner: { text: 'Sand Spawner', class: 'particleButton', bg: '#D2B48C', borderColor: '#817c54ff', classes: ['particleButton'], onclick: () => { selectedParticle = SandSpawner; } },
+                dirtSpawner: { text: 'Dirt Spawner', class: 'particleButton', bg: '#8B4513', borderColor: '#4e2700ff', classes: ['particleButton'], onclick: () => { selectedParticle = DirtSpawner; } },
+                ashSpawner: { text: 'Ash Spawner', class: 'particleButton', bg: '#C8C8C8', borderColor: '#727272ff', classes: ['particleButton'], onclick: () => { selectedParticle = AshSpawner; } },
+                waterSpawner: { text: 'Water Spawner', class: 'particleButton', bg: '#045AFF', borderColor: '#002e83ff', classes: ['particleButton'], onclick: () => { selectedParticle = WaterSpawner; } },
+                steamSpawner: { text: 'Steam Spawner', class: 'particleButton', bg: '#FFFFFF', borderColor: '#adadadff', classes: ['particleButton'], onclick: () => { selectedParticle = SteamSpawner; } },
+                fireSpawner: { text: 'Fire Spawner', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton'], onclick: () => { selectedParticle = FireSpawner; } },
             },
             voidsMenu: {
-                voidBlock: { text: 'Void Block', class: 'particleButton', bg: '#000000', classes: ['particleButton'], onclick: () => { selectedParticle = VoidBlock; } },
-                voidSolidsBlock: { text: 'Void Solids Block', class: 'particleButton', bg: '#808080', classes: ['particleButton'], onclick: () => { selectedParticle = VoidSolidsBlock; } },
-                voidLiquidsBlock: { text: 'Void Liquids Block', class: 'particleButton', bg: '#0000FF', classes: ['particleButton'], onclick: () => { selectedParticle = VoidLiquidsBlock; } },
-                voidGassesBlock: { text: 'Void Gases Block', class: 'particleButton', bg: '#FFFFFF', classes: ['particleButton'], onclick: () => { selectedParticle = VoidGassesBlock; } },
+                voidBlock: { text: 'Void Block', class: 'particleButton', bg: '#000000', borderColor: '#464646ff', classes: ['particleButton'], onclick: () => { selectedParticle = VoidBlock; } },
+                voidSolidsBlock: { text: 'Void Solids Block', class: 'particleButton', bg: '#808080', borderColor: 'rgba(71, 71, 71, 1)080', classes: ['particleButton'], onclick: () => { selectedParticle = VoidSolidsBlock; } },
+                voidLiquidsBlock: { text: 'Void Liquids Block', class: 'particleButton', bg: '#0000FF', borderColor: '#000094ff', classes: ['particleButton'], onclick: () => { selectedParticle = VoidLiquidsBlock; } },
+                voidGassesBlock: { text: 'Void Gases Block', class: 'particleButton', bg: '#FFFFFF', borderColor: '#777777ff', classes: ['particleButton'], onclick: () => { selectedParticle = VoidGassesBlock; } },
             },
         };
 
@@ -760,6 +760,7 @@ registerAll(particles);
                     div.id = item.id;
                     div.style.flex = '1';
                     div.style.minWidth = '150px'; 
+                    div.classList.add('fs-4');
                     if(item.noWrap) { div.style.whiteSpace = "nowrap"; }
                     div.innerText = typeof item.initialText === 'function' ? item.initialText() : item.initialText;
                     section.appendChild(div);
@@ -775,6 +776,7 @@ registerAll(particles);
                     btn.onclick = item.onclick;
                     btn.classList.add(item.class, 'button');
                     item.classes.forEach(cls => btn.classList.add(cls));
+                    btn.style.borderColor = `${item.borderColor}` || '#ffffff';
                     buttonsCol.appendChild(btn);
                 });
 
