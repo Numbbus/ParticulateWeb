@@ -65,17 +65,28 @@ class Spawner extends Solid{
         super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix);
         this.framesSinceLastUpdate = 0;
         this.spawnersParticle = spawnersParticle;
+
+        this.direction = 1;
     }
 
     move(){};
     
     action(){
-        let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : undefined ;
+        if(this.direction == -1){
+            let topTile = this.getY()-1 >= 0 ? this.matrix.getParticle(this.x, this.y-1) : undefined ;
 
-        if(bottomTile === null){
-            this.matrix.createParticle(this.x, this.y+1, this.spawnersParticle);
-        }
+            if(topTile === null){
+                this.matrix.createParticle(this.x, this.y-1, this.spawnersParticle);
+            }
+        }else{
+            let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : undefined ;
+
+            if(bottomTile === null){
+                this.matrix.createParticle(this.x, this.y+1, this.spawnersParticle);
+            }
         
+        }
+
         
     };
 

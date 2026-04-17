@@ -339,6 +339,8 @@ class SteamSpawner extends Spawner {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.direction = -1;
     }
 }
 
@@ -353,6 +355,7 @@ class FireSpawner extends Spawner {
         this.addToStage(this.rect);
 
         this.life = 5;
+        this.direction = -1;
     }
 }
 
@@ -367,6 +370,7 @@ class SmokeSpawner extends Spawner {
         this.addToStage(this.rect);
 
         this.life = 5;
+        this.direction = -1;
     }
 }
 
