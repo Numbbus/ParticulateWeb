@@ -153,7 +153,7 @@ input {
 }
 
 .popupButton {
-  font-size: x-large;
+  font-size: 2em;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   -webkit-text-stroke: 1px black; 
   color: white; /* inside color of the text */
