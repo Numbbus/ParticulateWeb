@@ -86,56 +86,19 @@ registerAll(particles);
     const containers = {
         playArea: new Container(),
         ui: new Container(),
-        savesMenu: new Container(),
         loadMenu: new Container(),
     };
 
 
-    addToStage(containers.playArea, containers.ui, containers.savesMenu, containers.loadMenu);
+    addToStage(containers.playArea, containers.ui, containers.loadMenu);
 
     // set background color and size of container
     console.log(app.screen.width, app.screen.height);
-
-    containers.savesMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
-    containers.savesMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
 
     containers.loadMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
     containers.loadMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
 
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x555555));
-
-    let titleText = new Text('Save Or Publish', {
-            fontFamily: 'Arial',
-            fontSize: 40,
-            fill: 0xffffff,
-        });
-
-    titleText.position.x = (containers.savesMenu.width / 2) - titleText.width / 2;
-    titleText.position.y = 20
-
-    containers.savesMenu.addChild(titleText);
-
-    let saveNameText = new Text('Save Name', {
-            fontFamily: 'Arial',
-            fontSize: 30,
-            fill: 0xffffff,
-        });
-
-    saveNameText.position.x = (containers.savesMenu.width / 2) - saveNameText.width / 2;
-    saveNameText.position.y = 110
-
-    containers.savesMenu.addChild(saveNameText);
-
-    let usernameText = new Text('Username', {
-            fontFamily: 'Arial',
-            fontSize: 30,
-            fill: 0xffffff,
-        });
-
-    usernameText.position.x = (containers.savesMenu.width / 2) - usernameText.width / 2;
-    usernameText.position.y = 210
-
-    containers.savesMenu.addChild(usernameText);
 
     defineSavesMenu();
 
@@ -315,9 +278,10 @@ registerAll(particles);
                 selectedParticle.classList.remove('selectedParticleButton');
             }
             btn.classList.add('selectedParticleButton');
+            document.querySelector('#selectedParticleDiv').innerText = `Selected: ${btn.innerText}`;
         }
 
-        document.querySelector('#selectedParticleDiv').innerText = `Selected: ${btn.innerText}`;
+        
 
     }
 
@@ -437,76 +401,115 @@ registerAll(particles);
     }
 
     function defineSavesMenu() {
-        const savesMenu = containers.savesMenu;
+        const canvasRect = app.view.getBoundingClientRect();
+        
+        const parentDiv = document.createElement("div");
+        parentDiv.id = 'saveMenu';
+        parentDiv.style.left = canvasRect.left + canvasRect.width / 2 - 250 + "px";
+        parentDiv.style.top = canvasRect.top + canvasRect.height / 2 - 200 + "px";
+        parentDiv.style.width = "500px";
+        parentDiv.style.height = "400px";
 
-        // Center container
-        savesMenu.x = app.screen.width / 2;
-        savesMenu.y = app.screen.height / 3;
-        savesMenu.pivot.x = savesMenu.width / 2;
-        savesMenu.pivot.y = savesMenu.height / 2;
-        savesMenu.interactive = true;
-        savesMenu.cursor = 'auto';
+        parentDiv.style.pointerEvents = 'auto';
+
+        parentDiv.addEventListener('pointerenter', () => {
+            // Disable PIXI playArea interaction so the canvas doesn't respond while hovering the menu
+            containers.playArea.interactive = false;
+            containers.playArea.eventMode = "none";
+
+            // Make sure the canvas cursor is not forcing "hidden" while the menu is hovered
+            containers.playArea.cursor = 'auto';
+            app.view.style.cursor = 'auto';
+        });
+
+        parentDiv.addEventListener('pointerleave', () => {
+            // Re-enable PIXI playArea interaction when leaving the menu (if the menu is visible)
+            containers.playArea.interactive = true;
+            containers.playArea.eventMode = "static";
+
+            // Restore the hidden cursor behavior over the play area
+            containers.playArea.cursor = 'none';
+            app.view.style.cursor = 'none';
+        });
+
+        parentDiv.classList.add('popupMenu');
+
+        let title = document.createElement('h2');
+        title.textContent = 'Save Menu';
+        title.style.textAlign = 'center';
+        title.classList.add('popupMenuTitle');
+        parentDiv.appendChild(title);
+
+        let saveText = document.createElement('h3');
+        saveText.classList.add('text-center');
+        saveText.textContent = 'Save Name';
+
+        let usernameText = document.createElement('h3');
+        usernameText.classList.add('text-center');
+        usernameText.textContent = 'Username';
+        
 
         // Create input
         const saveNameInput = document.createElement("input");
         saveNameInput.id = "saveNameInput";
         saveNameInput.type = "text";
-        saveNameInput.style.position = "absolute";
         saveNameInput.style.zIndex = 10;
-        document.body.appendChild(saveNameInput);
 
         const usernameInput = document.createElement("input");
         usernameInput.id = "usernameInput";
         usernameInput.type = "text";
-        usernameInput.style.position = "absolute";
         usernameInput.style.zIndex = 10;
-        document.body.appendChild(usernameInput);
 
-
-        const bounds = savesMenu.getBounds();
-        const canvasRect = app.view.getBoundingClientRect();
-
-        saveNameInput.style.left = (saveNameInput.offsetWidth / 4) + canvasRect.left + bounds.x + "px";
-        saveNameInput.style.top = 150 + canvasRect.top + bounds.y + "px";
+        saveNameInput.style.left = 0 + "px";
+        saveNameInput.style.top = 0 + "px";
         saveNameInput.style.width = "300px";
         saveNameInput.style.height = "50px";
+        saveNameInput.style.marginBottom = "20px";
+        saveNameInput.classList.add('mx-auto', 'd-block');
 
-        usernameInput.style.left =  (usernameInput.offsetWidth / 4) + canvasRect.left + bounds.x + "px";
-        usernameInput.style.top = 250 + canvasRect.top + bounds.y + "px";
+        usernameInput.style.left =  0 + "px";
+        usernameInput.style.top = 0 + "px";
         usernameInput.style.width = "300px";
         usernameInput.style.height = "50px";
+        usernameInput.style.marginBottom = "20px";
+        usernameInput.classList.add('mx-auto', 'd-block');
 
-        /*
-        // Define buttons
-        let xButton = createButton('X', {bg: 0xff0000, w: 20, h: 20, toggleable: false});
-        xButton.view.on('pointerdown', (e) =>{ updateVisibilityOfSaveMenu(); paused = false; });
-        xButton.view.position.set(0, 0);
-        savesMenu.addChild(xButton.view);
+        // Create buttons
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.justifyContent = "center";
 
-        let saveAndDownloadBtn = createButton('Save And Download', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
-        saveAndDownloadBtn.view.on('pointerdown', (e) =>{ saveAndDownloadPlayArea(); updateVisibilityOfSaveMenu(); });
-        saveAndDownloadBtn.view.position.set(20, savesMenu.height - saveAndDownloadBtn.view.height * 2);
-        savesMenu.addChild(saveAndDownloadBtn.view);
+        const saveButton = document.createElement("button");
+        saveButton.textContent = "Save";
+        saveButton.classList.add('button', 'popupButton');
+        saveButton.style.marginRight = "10%";
+        saveButton.onclick = saveAndDownloadPlayArea;
 
-        let saveAndPublishBtn = createButton('Save And Publish', {bg: 0xff0000, w: 200, h: 30, toggleable: false});
-        saveAndPublishBtn.view.on('pointerdown', (e) =>{ saveAndPublishPlayArea(); updateVisibilityOfSaveMenu(); });
-        saveAndPublishBtn.view.position.set(280, savesMenu.height - saveAndPublishBtn.view.height * 2);
-        savesMenu.addChild(saveAndPublishBtn.view);*/
+        const publishButton = document.createElement("button");
+        publishButton.textContent = "Publish";
+        publishButton.classList.add('button', 'popupButton');
+        publishButton.style.marginLeft = "10%";
+        publishButton.onclick = saveAndPublishPlayArea;
+
+        parentDiv.appendChild(saveText);
+        parentDiv.appendChild(saveNameInput);
+
+        parentDiv.appendChild(usernameText);
+        parentDiv.appendChild(usernameInput);
+
+        buttonContainer.appendChild(saveButton);
+        buttonContainer.appendChild(publishButton);
+
+        parentDiv.appendChild(buttonContainer);
+
+        document.body.appendChild(parentDiv);
 
         updateVisibilityOfSaveMenu();
 
     }
 
     function updateVisibilityOfSaveMenu(){
-        let savesMenu = containers.savesMenu;
-
-        savesMenu.visible = !(savesMenu.visible);
-        titleText.visible = !(titleText.visible);
-        saveNameText.visible = !(saveNameText.visible);
-        usernameText.visible = !(usernameText.visible);
-
-        document.getElementById('saveNameInput').hidden = !(document.getElementById('saveNameInput').hidden);
-        document.getElementById('usernameInput').hidden = !(document.getElementById('usernameInput').hidden);
+        document.getElementById('saveMenu').hidden = !(document.getElementById('saveMenu').hidden);
     }
 
     async function defineLoadMenu(){
@@ -702,7 +705,9 @@ registerAll(particles);
             pause: { text: 'Pause', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { paused = !paused; updateControlButton(event.currentTarget || event.target); } },
             reset: { text: 'Reset', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { resetMatrix(); } },
             override: { text: 'Override', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { override = !override; updateControlButton(event.currentTarget || event.target);} },
+            stepFrame: { text: '>', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { matrix.updateGrid(); } },
         };
+
 
         const toolsConfig = {
             eraser: { text: 'Eraser', class: 'toolsButton', bg: '#FF5CFA', borderColor: '#a50da0ff', classes: ['toolsButton', 'selectableParticleButton'], onclick: () => { selectedParticle = null; } },
