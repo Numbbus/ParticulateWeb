@@ -356,6 +356,20 @@ class FireSpawner extends Spawner {
     }
 }
 
+class SmokeSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix, Smoke)
+
+        let colors = [0xA9A9A9];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.life = 5;
+    }
+}
+
 // Void Blocks
 class VoidBlock extends Void {
     constructor(x, y, app, matrix){
@@ -414,6 +428,6 @@ export default Sand;
 
 export { 
     Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, Smoke,
-    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner,
+    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner, SmokeSpawner,
     VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock
 };

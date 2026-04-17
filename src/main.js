@@ -3,7 +3,7 @@ import { Database } from './database.js';
 
 import { 
     Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Ice, Wood, Tnt, Steam, Fire, Smoke,
-    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner,
+    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner, SmokeSpawner,
     VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock,
 } from "./particles/particles.js";
 
@@ -758,6 +758,7 @@ registerAll(particles);
                 waterSpawner: { text: 'Water Spawner', class: 'particleButton', bg: '#045AFF', borderColor: '#002e83ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = WaterSpawner; } },
                 steamSpawner: { text: 'Steam Spawner', class: 'particleButton', bg: '#FFFFFF', borderColor: '#adadadff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = SteamSpawner; } },
                 fireSpawner: { text: 'Fire Spawner', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = FireSpawner; } },
+                smokeSpawner: { text: 'Smoke Spawner', class: 'particleButton', bg: '#A9A9A9', borderColor: '#696969ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = SmokeSpawner; } },
             },
             voidsMenu: {
                 voidBlock: { text: 'Void Block', class: 'particleButton', bg: '#000000', borderColor: '#464646ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = VoidBlock; } },
