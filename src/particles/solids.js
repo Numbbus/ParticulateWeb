@@ -59,6 +59,37 @@ class MoveableSolid extends StaticSolid{
     }
 }
 
+class StiffSolid extends MoveableSolid{
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    {
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    }
+
+    move(){
+        if(this.framesSinceLastUpdate == this.speed && !(this.movedThisFrame)){
+
+            let bottomTile = this.getY()+1 < this.matrix.getRows() ? this.matrix.getParticle(this.x, this.y+1) : null ;
+
+            if(bottomTile === null || (bottomTile instanceof Liquid || bottomTile instanceof Gas)){
+                this.matrix.swapParticles(this.getX(), this.getY(), this.getX(), this.getY()+1);
+            }
+
+            this.framesSinceLastUpdate = 0;
+            this.movedThisFrame = true;
+
+        }else if(this.movedThisFrame){
+            this.movedThisFrame = false;
+
+        }else{
+            this.framesSinceLastUpdate++;
+        }
+    }
+
+    action(){
+
+    }
+}
+
 class Spawner extends Solid{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, spawnersParticle)
     {
@@ -122,4 +153,4 @@ class Void extends Solid{
 
 export default Solid;
 
-export { Solid, StaticSolid, MoveableSolid, Spawner, Void }
+export { Solid, StaticSolid, MoveableSolid, StiffSolid, Spawner, Void }

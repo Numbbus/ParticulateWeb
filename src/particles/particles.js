@@ -1,11 +1,11 @@
-import { Solid, MoveableSolid, StaticSolid, Spawner, Void } from "./solids.js";
+import { Solid, MoveableSolid, StaticSolid, Spawner, Void, StiffSolid } from "./solids.js";
 import { Liquid } from "./liquids.js";
 import Gas from "./gas.js";
 import Particle from "./particle.js";
 
 // Teplate for easy copying
 /*
-class Class extends Class {
+export class Class extends Class {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
@@ -21,7 +21,7 @@ class Class extends Class {
 
 // Solids
 
-class Stone extends StaticSolid {
+export class Stone extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 70, 0, app, matrix)
 
@@ -33,7 +33,7 @@ class Stone extends StaticSolid {
     }
 }
 
-class Bedrock extends StaticSolid {
+export class Bedrock extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 90, 0, app, matrix)
 
@@ -46,7 +46,7 @@ class Bedrock extends StaticSolid {
     }
 }
 
-class Ice extends StaticSolid {
+export class Ice extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 40, 0, app, matrix)
 
@@ -58,7 +58,7 @@ class Ice extends StaticSolid {
     }
 }
 
-class Obsidian extends StaticSolid {
+export class Obsidian extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 60, 0, app, matrix)
 
@@ -70,7 +70,7 @@ class Obsidian extends StaticSolid {
     }
 }
 
-class Tnt extends StaticSolid {
+export class Tnt extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 30, 0, app, matrix)
 
@@ -142,7 +142,7 @@ class Tnt extends StaticSolid {
     }
 }
 
-class Wood extends StaticSolid {
+export class Wood extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 40, 0, app, matrix)
 
@@ -154,10 +154,22 @@ class Wood extends StaticSolid {
     }
 }
 
+export class MudWall extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
 
 // Moveable Solids
 
-class Sand extends MoveableSolid {
+export class Sand extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 20, 0, app, matrix)
 
@@ -169,7 +181,7 @@ class Sand extends MoveableSolid {
     }
 }
 
-class Dirt extends MoveableSolid {
+export class Dirt extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 25, 0, app, matrix)
 
@@ -181,7 +193,7 @@ class Dirt extends MoveableSolid {
     }
 }
 
-class Ash extends MoveableSolid {
+export class Ash extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 10, 0, app, matrix)
 
@@ -193,9 +205,47 @@ class Ash extends MoveableSolid {
     }
 }
 
+export class Gravel extends MoveableSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 10, 0, app, matrix)
+
+        let colors = [0x8B8B8B, 0xA3A3A3, 0x6E6E6E, 0x5E5E5E, 0xBFBFBF];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+// Stiff Solids
+
+export class Mud extends StiffSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class WetSand extends StiffSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0xB8B17F, 0xA9A274, 0xC2BB88, 0x9F996B, 0xD0C98F]
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
 // Liquids
 
-class Water extends Liquid {
+export class Water extends Liquid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
@@ -207,9 +257,48 @@ class Water extends Liquid {
     }
 }
 
+export class Lava extends Liquid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0xFFB900, 0xFFC000, 0xFFC800, 0xFFD000, 0xFFD700];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Alcohol extends Liquid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [ 0xC6C6CC, 0xC4C2C2, 0xC6C6CC ];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Acid extends Liquid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [ 0x46D459, 0x3DD150, 0x4BDB5D ];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+
+
+
 // Gases
 
-class Steam extends Gas {
+export class Steam extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
@@ -230,7 +319,7 @@ class Steam extends Gas {
     }
 }
 
-class Fire extends Gas {
+export class Fire extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
@@ -256,7 +345,7 @@ class Fire extends Gas {
     }
 }
 
-class Smoke extends Gas {
+export class Smoke extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
@@ -278,9 +367,22 @@ class Smoke extends Gas {
     }
 }
 
+export class Propane extends Gas {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        let colors = [0x00FF00, 0x33FF33, 0x66FF66, 0x99FF99, 0xCCFFCC ];
+
+        this.setColor(colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+
 // Spawners
 
-class SandSpawner extends Spawner {
+export class SandSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Sand)
 
@@ -292,7 +394,7 @@ class SandSpawner extends Spawner {
     }
 }
 
-class DirtSpawner extends Spawner {
+export class DirtSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Dirt)
 
@@ -304,7 +406,7 @@ class DirtSpawner extends Spawner {
     }
 }
 
-class AshSpawner extends Spawner {
+export class AshSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Ash)
 
@@ -316,7 +418,7 @@ class AshSpawner extends Spawner {
     }
 }
 
-class WaterSpawner extends Spawner {
+export class WaterSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Water)
 
@@ -330,7 +432,7 @@ class WaterSpawner extends Spawner {
 
 }
 
-class SteamSpawner extends Spawner {
+export class SteamSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Steam)
 
@@ -344,7 +446,7 @@ class SteamSpawner extends Spawner {
     }
 }
 
-class FireSpawner extends Spawner {
+export class FireSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Fire)
 
@@ -359,7 +461,7 @@ class FireSpawner extends Spawner {
     }
 }
 
-class SmokeSpawner extends Spawner {
+export class SmokeSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Smoke)
 
@@ -375,7 +477,7 @@ class SmokeSpawner extends Spawner {
 }
 
 // Void Blocks
-class VoidBlock extends Void {
+export class VoidBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Particle)
 
@@ -387,7 +489,7 @@ class VoidBlock extends Void {
     }
 }
 
-class VoidSolidsBlock extends Void {
+export class VoidSolidsBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Solid)
  
@@ -399,8 +501,7 @@ class VoidSolidsBlock extends Void {
     }
 }
 
-
-class VoidLiquidsBlock extends Void {
+export class VoidLiquidsBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Liquid)
  
@@ -412,8 +513,7 @@ class VoidLiquidsBlock extends Void {
     }
 }
 
-
-class VoidGassesBlock extends Void {
+export class VoidGassesBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Gas)
 
@@ -425,13 +525,4 @@ class VoidGassesBlock extends Void {
     }
 }
 
-
 // Misc
-
-export default Sand;
-
-export { 
-    Sand, Dirt, Stone, Water, Ash, Bedrock, Obsidian, Wood, Tnt, Ice, Steam, Fire, Smoke,
-    SandSpawner, DirtSpawner, AshSpawner, WaterSpawner, SteamSpawner, FireSpawner, SmokeSpawner,
-    VoidBlock, VoidSolidsBlock, VoidLiquidsBlock, VoidGassesBlock
-};
