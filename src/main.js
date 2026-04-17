@@ -86,17 +86,9 @@ registerAll(particles);
     const containers = {
         playArea: new Container(),
         ui: new Container(),
-        loadMenu: new Container(),
     };
 
-
-    addToStage(containers.playArea, containers.ui, containers.loadMenu);
-
-    // set background color and size of container
-    console.log(app.screen.width, app.screen.height);
-
-    containers.loadMenu.addChild(new Graphics().rect(-5, -5, 510, 410).fill(0xffffff));
-    containers.loadMenu.addChild(new Graphics().rect(0, 0, 500, 400).fill(0x000000));
+    addToStage(containers.playArea, containers.ui);
 
     containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x555555));
 
@@ -513,95 +505,131 @@ registerAll(particles);
     }
 
     async function defineLoadMenu(){
-        
-        let loadMenu = containers.loadMenu;
-        const bounds = loadMenu.getBounds();
         const canvasRect = app.view.getBoundingClientRect();
 
-        /*
-        let xButton = createButton('X', {bg: 0xff0000, w: 20, h: 20, toggleable: false});
-        xButton.view.on('pointerdown', (e) =>{ updateVisibilityOfLoadMenu(); paused = false; });
-        xButton.view.position.set(0, 0);
-        loadMenu.addChild(xButton.view);*/
+        const parentDiv = document.createElement("div");
+        parentDiv.id = 'loadMenu';
+        parentDiv.style.left = canvasRect.left + canvasRect.width / 2 - 250 + "px";
+        parentDiv.style.top = canvasRect.top + canvasRect.height / 2 - 250 + "px";
+        parentDiv.style.width = "500px";
+        parentDiv.style.height = "500px";
 
-        // Center container
-        loadMenu.x = app.screen.width / 2;
-        loadMenu.y = app.screen.height / 3;
-        loadMenu.pivot.x = loadMenu.width / 2;
-        loadMenu.pivot.y = loadMenu.height / 2;
-        loadMenu.interactive = true;
-        loadMenu.cursor = 'auto';
+        parentDiv.style.pointerEvents = 'auto';
 
-        const globalPos = loadMenu.toGlobal(new Point(0, 0));
+        parentDiv.addEventListener('pointerenter', () => {
+            // Disable PIXI playArea interaction so the canvas doesn't respond while hovering the menu
+            containers.playArea.interactive = false;
+            containers.playArea.eventMode = "none";
+
+            // Make sure the canvas cursor is not forcing "hidden" while the menu is hovered
+            containers.playArea.cursor = 'auto';
+            app.view.style.cursor = 'auto';
+        });
+
+        parentDiv.addEventListener('pointerleave', () => {
+            // Re-enable PIXI playArea interaction when leaving the menu (if the menu is visible)
+            containers.playArea.interactive = true;
+            containers.playArea.eventMode = "static";
+
+            // Restore the hidden cursor behavior over the play area
+            containers.playArea.cursor = 'none';
+            app.view.style.cursor = 'none';
+        });
+        parentDiv.classList.add('popupMenu');
+        
+        let title = document.createElement('h2');
+        title.style.textAlign = 'center';
+        title.textContent = "Load Play Area";
+        parentDiv.appendChild(title);
+
+        let searchText = document.createElement('h5');
+        searchText.style.textAlign = 'center';
+        searchText.textContent = "Search Play Areas";
+        parentDiv.appendChild(searchText);
 
         // Search Bar
         const searchBar = document.createElement("input");
         searchBar.id = "searchBar";
         searchBar.type = "text";
-        searchBar.style.position = "absolute";
         searchBar.style.zIndex = 10;
-        document.body.appendChild(searchBar);
 
-        searchBar.style.left = canvasRect.left + globalPos.x + (searchBar.offsetWidth / 4) + "px";
-        searchBar.style.top = canvasRect.top + globalPos.y + (searchBar.offsetHeight / 4) + "px";
-
+        searchBar.style.left = 0 + "px";
+        searchBar.style.top = 0 + "px";
         searchBar.style.width = "300px";
         searchBar.style.height = "50px";
+        searchBar.style.marginBottom = "20px";
+        searchBar.classList.add('mx-auto', 'd-block');
+
+        searchBar.addEventListener('input', async (event) => { 
+            let communitySaves = document.getElementById('communitySaves');
+            communitySaves.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
+
+            const allSaves = await database.findAllWith('ParticulateSaves', 'name', event.target.value);
+
+            communitySaves.innerHTML = '';
+            
+            allSaves.forEach( save => {
+                communitySaves.innerHTML += 
+                `<div class="row fs-5"> 
+                    <div class='col-lg-6 ps-5'> 
+                        <p class="p-2"> ${save.name} by: ${save.username} </p> 
+                    </div> 
+                    <div class="col-lg-6 ps-5"> 
+                        <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                    </div> 
+                    <hr />
+                </div>`;
+            })
+        });
+
+        parentDiv.appendChild(searchBar);
 
         
+        const communitySaves = document.createElement("div");
+        communitySaves.id = 'communitySaves';
 
-        const parentDiv = document.createElement("div");
-        parentDiv.id = 'parentDiv';
+        communitySaves.classList.add('scrollable-div');
+        communitySaves.style.zIndex = 10;
 
-        parentDiv.classList.add('scrollable-div');
-        parentDiv.style.position = "absolute";
-        parentDiv.style.zIndex = 10;
+        communitySaves.style.width = "100%";
+        console.log(parentDiv.getBoundingClientRect().height);
+        communitySaves.style.height = "325px";
 
-        parentDiv.style.width = bounds.width + "px";
-        parentDiv.style.height = bounds.height - 90 +"px";
-
-        parentDiv.style.left = canvasRect.left + globalPos.x + "px";
-        parentDiv.style.top = canvasRect.top + globalPos.y + 80 + "px";
-
-        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
+        communitySaves.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
 
         const allSaves = await database.readAllDocs('ParticulateSaves');
 
-        parentDiv.innerHTML = '';
+        communitySaves.innerHTML = '';
         
         allSaves.forEach( save => {
-            parentDiv.innerHTML += 
+            communitySaves.innerHTML += 
             `<div class="row fs-5"> 
+                <hr />
                 <div class='col-lg-6 ps-5'> 
                     <p class="p-2"> ${save.name} by: ${save.username} </p> 
                 </div> 
                 <div class="col-lg-6 ps-5"> 
                     <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
                 </div> 
-                <hr />
             </div>`;
         })
+
+        parentDiv.appendChild(communitySaves);
 
         document.body.appendChild(parentDiv);
 
         updateVisibilityOfLoadMenu();
+
     }
 
     function updateVisibilityOfLoadMenu(){
-        
-        let loadMenu = containers.loadMenu;
-        let parentDiv = document.getElementById('parentDiv');
-        let searchBar = document.getElementById('searchBar');
-
-        loadMenu.visible = !(loadMenu.visible);
+        let parentDiv = document.getElementById('loadMenu');
 
         parentDiv.hidden = !(parentDiv.hidden);
-        searchBar.hidden = !(searchBar.hidden);
     }
     
     async function updateLoadMenu(){
-        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
-
+        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
         const allSaves = await database.readAllDocs('ParticulateSaves');
 
         parentDiv.innerHTML = '';
@@ -628,27 +656,6 @@ registerAll(particles);
 
     document.getElementById('usernameInput').addEventListener('input', (event) => {
         username = event.target.value;
-    });
-
-    document.getElementById('searchBar').addEventListener('input', async (event) => {
-        parentDiv.innerHTML = "<div class='text-center mt-5'> Loading </div>"
-
-        const allSaves = await database.findAllWith('ParticulateSaves', 'name', event.target.value);
-
-        parentDiv.innerHTML = '';
-        
-        allSaves.forEach( save => {
-            parentDiv.innerHTML += 
-            `<div class="row fs-5"> 
-                <div class='col-lg-6 ps-5'> 
-                    <p class="p-2"> ${save.name} by: ${save.username} </p> 
-                </div> 
-                <div class="col-lg-6 ps-5"> 
-                    <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
-                </div> 
-                <hr />
-            </div>`;
-        })
     });
 
     window.downloadAndApplyPlayArea = function(id) {
@@ -711,8 +718,8 @@ registerAll(particles);
 
         const toolsConfig = {
             eraser: { text: 'Eraser', class: 'toolsButton', bg: '#FF5CFA', borderColor: '#a50da0ff', classes: ['toolsButton', 'selectableParticleButton'], onclick: () => { selectedParticle = null; } },
-            save: { text: 'Save', class: 'toolsButton', bg: '#00FF00', borderColor: '#008800ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfSaveMenu(); paused = true; } },
-            load: { text: 'Load', class: 'toolsButton', bg: '#00FFFF', borderColor: '#007272ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfLoadMenu(); paused = true; } },
+            save: { text: 'Save', class: 'toolsButton', bg: '#00FF00', borderColor: '#008800ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfSaveMenu(); if(!paused) { paused = true; updateControlButton(document.querySelector('#Pause')); } } },
+            load: { text: 'Load', class: 'toolsButton', bg: '#00FFFF', borderColor: '#007272ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfLoadMenu(); if(!paused) { paused = true; updateControlButton(document.querySelector('#Pause')); } } },
         };
 
         const catagoriesConfig = {
