@@ -123,4 +123,6 @@ input {
   margin-left:2%;
 }
 
-
+.selectedParticleButton{
+  border: #0a0 solid 4px !important;
+}
