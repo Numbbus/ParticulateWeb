@@ -317,6 +317,8 @@ registerAll(particles);
             btn.classList.add('selectedParticleButton');
         }
 
+        document.querySelector('#selectedParticleDiv').innerText = `Selected: ${btn.innerText}`;
+
     }
 
     function updateControlButton(btn){
