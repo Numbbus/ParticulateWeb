@@ -322,16 +322,12 @@ registerAll(particles);
     function updateControlButton(btn){
         if(btn == null || btn == undefined){ return; }
 
-        console.log(btn);
-
         if( btn.classList.contains('controlButtonOn') ){
             btn.classList.remove('controlButtonOn');
             btn.classList.add('controlsButton');
-            console.log('removing');
         }else{
             btn.classList.add('controlButtonOn');
             btn.classList.remove('controlsButton');
-            console.log('adding');
         }
     }
 
