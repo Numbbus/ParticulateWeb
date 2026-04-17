@@ -126,3 +126,8 @@ input {
 .selectedParticleButton{
   border: #0a0 solid 4px !important;
 }
+
+.controlButtonOn{
+  border-color: #0a0 !important;
+  color: #0a0 !important;
+}

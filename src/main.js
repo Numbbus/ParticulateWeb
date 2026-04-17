@@ -244,7 +244,7 @@ registerAll(particles);
     window.addEventListener('keydown', (event) => {
         if(mouseOver){
             //console.log(event.key); 
-            if(event.key == ' '){ paused = !paused; topBarText.pausedText.visible = paused; }
+            if(event.key == ' '){ paused = !paused; updateControlButton(document.querySelector('#Pause')); }
             else if(event.key == 'r'){ resetMatrix(); }
             else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(); }
             //else if(event.key == 's'){ savePlayArea(); }
@@ -317,6 +317,22 @@ registerAll(particles);
             btn.classList.add('selectedParticleButton');
         }
 
+    }
+
+    function updateControlButton(btn){
+        if(btn == null || btn == undefined){ return; }
+
+        console.log(btn);
+
+        if( btn.classList.contains('controlButtonOn') ){
+            btn.classList.remove('controlButtonOn');
+            btn.classList.add('controlsButton');
+            console.log('removing');
+        }else{
+            btn.classList.add('controlButtonOn');
+            btn.classList.remove('controlsButton');
+            console.log('adding');
+        }
     }
 
     const dropArea = document.querySelector("#pixi");
@@ -685,9 +701,9 @@ registerAll(particles);
         };
 
         const controlsConfig = {
-            pause: { text: 'Pause', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: () => { paused = !paused; } },
-            reset: { text: 'Reset', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: () => { resetMatrix(); } },
-            override: { text: 'Override', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: () => { override = !override; } },
+            pause: { text: 'Pause', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { paused = !paused; updateControlButton(event.currentTarget || event.target); } },
+            reset: { text: 'Reset', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { resetMatrix(); } },
+            override: { text: 'Override', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { override = !override; updateControlButton(event.currentTarget || event.target);} },
         };
 
         const toolsConfig = {
