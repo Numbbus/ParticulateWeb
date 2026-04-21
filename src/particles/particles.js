@@ -55,6 +55,18 @@ export class Ice extends StaticSolid {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.temp = -20;
+        this.meltingTemp = 0;
+        this.boilingPoint = 100;
+    }
+
+    action(){
+        if(this.temp >= 0){
+            this.matrix.replaceParticle(this.x, this.y, Water);
+        }else if( this.temp >= this.boilingPoint){
+            this.matrix.replaceParticle(this.x, this.y, Steam);
+        }
     }
 }
 
@@ -88,6 +100,8 @@ export class Tnt extends StaticSolid {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.autoIgnitionTemp = 250;
     }
 
     action(){
@@ -96,6 +110,8 @@ export class Tnt extends StaticSolid {
         neighbors.forEach((n, i) => {
             if(n != null && this.triggers.includes(`${n.constructor.name}`)){ this.isExploding = true; }
         })
+
+        if( this.temp >= this.autoIgnitionTemp){ this.isExploding = true; }
 
         if( this.isExploding ){
             if(this.startTime == null){
@@ -151,6 +167,14 @@ export class Wood extends StaticSolid {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.autoIgnitionTemp = 450;
+    }
+
+    action(){
+        if(this.temp >= this.autoIgnitionTemp){
+            this.matrix.replaceParticle(this.x, this.y, Fire);
+        }
     }
 }
 
@@ -229,6 +253,14 @@ export class Mud extends StiffSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
+
+    action(){
+        if(this.temp >= 20){
+            if( Math.random() * 100 < (10 + this.temp)){
+                this.matrix.replaceParticle(this.x, this.y, Dirt);
+            }
+        }
+    }
 }
 
 export class WetSand extends StiffSolid {
@@ -241,6 +273,15 @@ export class WetSand extends StiffSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
+
+    action(){
+        if(this.temp >= 20){
+            if( Math.random() * 100 < (10 + this.temp)){
+                this.matrix.replaceParticle(this.x, this.y, Sand);
+            }
+        }
+    }
+
 }
 
 // Liquids
@@ -254,6 +295,17 @@ export class Water extends Liquid {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+    
+        this.boilingPoint = 212;
+        this.freezePoint = 0;
+    }
+
+    action(){
+        if(this.temp >= this.boilingPoint){
+            this.matrix.replaceParticle(this.x, this.y, Steam);
+        }else if(this.temp <= this.freezePoint){
+            this.matrix.replaceParticle(this.x, this.y, Ice);
+        }
     }
 }
 
@@ -278,6 +330,14 @@ export class Alcohol extends Liquid {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.autoIgnitionTemp = 350;
+    }
+
+    action(){
+        if(this.temp >= this.autoIgnitionTemp){
+            this.matrix.replaceParticle(this.x, this.y, Fire);
+        }
     }
 }
 
@@ -318,13 +378,12 @@ export class Steam extends Gas {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
-        this.life = Math.floor(Math.random() * (500 - 400)) + 400;
+        this.condenseTemp = 200;
     }
 
     action() { 
-        this.life--;
-        if(this.life <= 0){
-            this.matrix.createParticle(this.x, this.y, Water, true);
+        if(this.temp <= this.condenseTemp){
+            this.matrix.replaceParticle(this.x, this.y, Water);
         }
     }
 }
@@ -386,6 +445,14 @@ export class Propane extends Gas {
         this.setColor(colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.autoIgnitionTemp = 500;
+    }
+
+    action(){
+        if(this.temp >= this.autoIgnitionTemp){
+            this.matrix.replaceParticle(this.x, this.y, Fire);
+        }
     }
 }
 
@@ -535,4 +602,4 @@ export class VoidGassesBlock extends Void {
     }
 }
 
-// Misc
+// Energy

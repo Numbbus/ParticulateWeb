@@ -21,6 +21,13 @@ class Particle{
         this.containers = matrix.getContainers();
 
         this.rect = new Graphics().rect(0, 0, this.tileSize, this.tileSize);
+
+        this.temp = 15; // 15 celcius 
+        this.autoIgnitionTemp = null;
+        this.meltingTemp = null;
+        this.boilingPoint = null
+        this.condenseTemp = null;
+        this.freezingPoint = null;
     }
 
 
@@ -97,6 +104,17 @@ class Particle{
 
     addToStage(obj){
         this.containers.playArea.addChild(obj);
+    }
+
+    raiseTemp(d){
+        this.temp += d;
+        
+        let hovered = this.matrix.withinBounds(this.x, this.y) ? this.matrix.getParticle(this.x, this.y) : null;
+        document.getElementById('particleTempDiv').innerText = `${hovered == null || hovered == undefined ? '' : 'Temp: '+hovered.getTemp()+'C°' }`;
+    }
+
+    getTemp(){
+        return this.temp;
     }
 }
 

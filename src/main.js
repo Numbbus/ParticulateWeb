@@ -2,6 +2,7 @@ import Matrix from './matrix.js' ;
 import { Database } from './database.js';
 
 import * as particles from "./particles/particles.js";
+import * as modifiers from "./modifiers.js";
 
 const { Application, EventSystem, Text, Container, Graphics, Point  } = PIXI;
 
@@ -167,6 +168,7 @@ registerAll(particles);
         let hovered = matrix.withinBounds(mouseX, mouseY) ? matrix.getParticle(mouseX, mouseY) : null;
 
         document.getElementById('hoveredParticleDiv').innerText = `Hovered: ${hovered == null || hovered == undefined ? 'None' : hovered.constructor.name }`;
+        document.getElementById('particleTempDiv').innerText = `${hovered == null || hovered == undefined ? '' : 'Temp: '+hovered.getTemp()+'C°' }`;
     });
 
     containers.playArea.on("pointerup", (event) => {
@@ -698,6 +700,7 @@ registerAll(particles);
             brushSizeDiv: { id: 'brushSizeDiv', label: 'Brush', classes: [], initialText: 'Brush Size: 1' },
             selectedParticleDiv: { id: 'selectedParticleDiv', label: 'Selected', classes: [], initialText: 'Selected: Sand', noWrap: true },
             hoveredParticleDiv: { id: 'hoveredParticleDiv', label: 'Hovered', classes: [], initialText: 'Hovered: None', noWrap: true },
+            particleTempDiv: { id: 'particleTempDiv', label: 'Temp', classes: [], initialText: '', noWrap: true },
         };
 
         const controlsConfig = {
@@ -720,7 +723,7 @@ registerAll(particles);
             gases: { text: 'Gases', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "gasesMenu"; updateCatagories(); } },
             spawners: { text: 'Spawners', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "spawnersMenu"; updateCatagories(); } },
             voids: { text: 'Void Blocks', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "voidsMenu"; updateCatagories(); } },
-            //misc: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
+            energy: { text: 'Energy', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "energyMenu"; updateCatagories(); } },
         };
 
         const allParticleButtons = {
@@ -735,10 +738,9 @@ registerAll(particles);
                 wood: { text: 'Wood', class: 'particleButton', bg: '#914815', txtColor: '#FFFFFF', borderColor: '#532a0cff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Wood; } },
                 tnt: { text: 'TNT', class: 'particleButton', bg: '#FF1E1E', txtColor: '#FFFFFF', borderColor: '#7e1e1eff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Tnt; } },
                 gravel: { text: 'Gravel', class: 'particleButton', bg: '#8B8B8B', borderColor: '#4f4f4fff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Gravel; } },
-                /*mud: { text: 'Mud', class: 'particleButton', bg: '#70543E', borderColor: '#3d2e1eff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Mud; } },
+                mud: { text: 'Mud', class: 'particleButton', bg: '#70543E', borderColor: '#3d2e1eff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Mud; } },
                 wetSand: { text: 'Wet Sand', class: 'particleButton', bg: '#a79766ff', borderColor: '#8b8341ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.WetSand; } },
                 mudWall: { text: 'Mud Wall', class: 'particleButton', bg: '#8B4513', borderColor: '#4e2700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.MudWall; } }
-                */
             },
             liquidsMenu: {
                 water: { text: 'Water', class: 'particleButton', bg: '#045AFF', borderColor: '#002e83ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Water; } },
@@ -768,6 +770,10 @@ registerAll(particles);
                 voidLiquidsBlock: { text: 'Void Liquids Block', class: 'particleButton', bg: '#0000FF', borderColor: '#000094ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.VoidLiquidsBlock; } },
                 voidGassesBlock: { text: 'Void Gases Block', class: 'particleButton', bg: '#FFFFFF', borderColor: '#777777ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.VoidGassesBlock; } },
             },
+            energyMenu:{
+                heatRay: { text: 'Heat Ray', class: 'particleButton', bg: '#FF0000', borderColor: '#7a0000ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.HeatRay; } },
+                freezeRay: { text: 'Freeze Ray', class: 'particleButton', bg: '#51c7fd', borderColor: 'rgb(11, 55, 121)', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.FreezeRay; } },
+            }
         };
 
         createSection(menuDiv, 'statsDiv', statsConfig, true);
@@ -851,6 +857,8 @@ registerAll(particles);
 
     }
 
-
 })();
 
+export function getMousePosition(){
+    return [mouseX, mouseY];
+}
