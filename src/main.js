@@ -38,6 +38,8 @@ const database = new Database();
 let saveName = null;
 let username = null;
 
+let view = 'normal';
+
 registerAll(particles);
 
 
@@ -109,7 +111,7 @@ registerAll(particles);
     function gameLoop(){
 
         if( !paused ){
-            matrix.updateGrid();
+            matrix.updateGrid(view);
         }
         if(mouseDown && !pinching){
             if(brushSize == 1){
@@ -192,11 +194,24 @@ registerAll(particles);
     
     window.addEventListener('keydown', (event) => {
         if(mouseOver){
-            //console.log(event.key); 
+            console.log(event.key); 
             if(event.key == ' '){ paused = !paused; updateControlButton(document.querySelector('#Pause')); }
             else if(event.key == 'r'){ resetMatrix(); }
-            else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(); }
-            //else if(event.key == 's'){ savePlayArea(); }
+            else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(view); }
+            else if(event.key == '1'){
+                view = 'normal'; 
+                for(let r = 0; r < matrix.getRows(); r++){
+                    for(let c=0; c < matrix.getCols(); c++){
+                        console.log(c, r);
+                        let p = matrix.getParticle(c, r);
+                        if (p) {
+                            p.setColor(p.colors);
+                        }
+                    }
+                }
+            }
+            else if(event.key == '2'){ view = 'thermal'; }
+            
         }
         
     });
@@ -707,7 +722,7 @@ registerAll(particles);
             pause: { text: 'Pause', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { paused = !paused; updateControlButton(event.currentTarget || event.target); } },
             reset: { text: 'Reset', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { resetMatrix(); } },
             override: { text: 'Override', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { override = !override; updateControlButton(event.currentTarget || event.target);} },
-            stepFrame: { text: '>', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { matrix.updateGrid(); } },
+            stepFrame: { text: '>', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { matrix.updateGrid(view); } },
         };
 
 

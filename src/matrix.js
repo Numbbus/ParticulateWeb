@@ -25,7 +25,7 @@ class Matrix {
         }
     }
 
-    updateGrid(){
+    updateGrid(view){
         for (let r = this.rows-1; r >= 0; r--)
         {
             for(let c = this.cols-1; c >= 0; c--)
@@ -34,6 +34,9 @@ class Matrix {
                 if(p != null){
                     p.move();
                     p.action();
+                    if(view == 'thermal'){
+                        p.setColor([p.getThermalColor()]);
+                    }
                 }
             }
         }

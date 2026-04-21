@@ -20,14 +20,13 @@ export class Class extends Class {
 
 
 // Solids
-
 export class Stone extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 70, 0, app, matrix)
 
-        let colors = [0x8C8C8C, 0x828282];
+        this.colors = [0x8C8C8C, 0x828282];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -37,10 +36,9 @@ export class Bedrock extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 90, 0, app, matrix)
 
-        let colors = [0x323232, 0x3A3A3A, 0x404040, 0x464646, 0x4E4E4E]
-;
+        this.colors = [0x323232, 0x3A3A3A, 0x404040, 0x464646, 0x4E4E4E];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -50,9 +48,9 @@ export class Ice extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 40, 0, app, matrix)
 
-        let colors = [0xB4FFFF, 0x82E6FF, 0x8CEBFF];
+        this.colors = [0xB4FFFF, 0x82E6FF, 0x8CEBFF];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -64,7 +62,7 @@ export class Ice extends StaticSolid {
     action(){
         if(this.temp >= 0){
             this.matrix.replaceParticle(this.x, this.y, Water);
-        }else if( this.temp >= this.boilingPoint){
+        }else if(this.temp >= this.boilingPoint){
             this.matrix.replaceParticle(this.x, this.y, Steam);
         }
     }
@@ -74,9 +72,9 @@ export class Obsidian extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 60, 0, app, matrix)
 
-        let colors = [0x1A1A1A, 0x181818, 0x161616];
+        this.colors = [0x1A1A1A, 0x181818, 0x161616];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -88,16 +86,16 @@ export class Tnt extends StaticSolid {
 
         this.triggers = ['Fire'];
 
-        this.fuseLength = 50; // in milliseconds
+        this.fuseLength = 50;
         this.isExploding = false;
         this.startTime = null;
 
         this.radius = 10;
         this.power = 90;
 
-        let colors = [0xC80000, 0xDC0000, 0xFF0000, 0xFF1E1E, 0xFF3C3C];
+        this.colors = [0xC80000, 0xDC0000, 0xFF0000, 0xFF1E1E, 0xFF3C3C];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -107,13 +105,17 @@ export class Tnt extends StaticSolid {
     action(){
         const neighbors = this.getNeighbors();
 
-        neighbors.forEach((n, i) => {
-            if(n != null && this.triggers.includes(`${n.constructor.name}`)){ this.isExploding = true; }
-        })
+        neighbors.forEach((n) => {
+            if(n != null && this.triggers.includes(`${n.constructor.name}`)){
+                this.isExploding = true;
+            }
+        });
 
-        if( this.temp >= this.autoIgnitionTemp){ this.isExploding = true; }
+        if(this.temp >= this.autoIgnitionTemp){
+            this.isExploding = true;
+        }
 
-        if( this.isExploding ){
+        if(this.isExploding){
             if(this.startTime == null){
                 this.startTime = performance.now();
             }
@@ -122,36 +124,44 @@ export class Tnt extends StaticSolid {
     }
 
     explode(matrix){
-        this.isExploding = true;
-
         let elapsedTime = performance.now() - this.startTime;
-        
-        if( elapsedTime >= this.fuseLength){
+
+        if(elapsedTime >= this.fuseLength){
             for(let r=this.y-this.radius; r < this.y+this.radius; r++){
-                for(let c = this.x-this.radius; c < this.x+this.radius; c++){
+                for(let c=this.x-this.radius; c < this.x+this.radius; c++){
                     let p = matrix.getParticle(c, r);
 
                     if(p != null){
                         if((Math.floor(Math.random() * 100) + 1) <= 100 - p.getToughness() + 50){
 
-                            let distance = Math.sqrt(Math.pow(c - this.x, 2) + Math.pow(r - this.y, 2));
+                            let distance = Math.sqrt((c - this.x)**2 + (r - this.y)**2);
                             let innerRad = Math.floor(this.radius/4);
 
                             if(distance <= innerRad){
-                                Math.floor(Math.random() * 100 + 1) <= 60 ? matrix.createParticle(c, r, Fire, true) : matrix.createParticle(c, r, Smoke, true);
+                                Math.random() <= 0.6
+                                    ? matrix.createParticle(c, r, Fire, true)
+                                    : matrix.createParticle(c, r, Smoke, true);
                             }
                             else if(distance <= this.radius){
                                 let probability = Math.pow(1 - (distance / this.radius), 0.05);
 
                                 if(Math.random() < probability){
-                                    if( p instanceof Tnt ){ p.isExploding = true; continue; }
-                                    else{
-                                        Math.floor(Math.random() * 100 + 1) <= 50 ? matrix.createParticle(c, r, Fire, true) : matrix.createParticle(c, r, Smoke, true);
+                                    if(p instanceof Tnt){
+                                        p.isExploding = true;
+                                        continue;
+                                    } else {
+                                        Math.random() <= 0.5
+                                            ? matrix.createParticle(c, r, Fire, true)
+                                            : matrix.createParticle(c, r, Smoke, true);
                                     }
                                 }
                             }
                         }
-                    }else{ Math.floor(Math.random() * 100 + 1) <= 30 ? matrix.createParticle(c, r, Fire, true) : matrix.createParticle(c, r, Smoke, true); }
+                    } else {
+                        Math.random() <= 0.3
+                            ? matrix.createParticle(c, r, Fire, true)
+                            : matrix.createParticle(c, r, Smoke, true);
+                    }
                 }
             }
         }
@@ -162,9 +172,9 @@ export class Wood extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 40, 0, app, matrix)
 
-        let colors = [0x814012, 0x864313, 0x8B4513, 0x914815, 0x964B16];
+        this.colors = [0x814012, 0x864313, 0x8B4513, 0x914815, 0x964B16];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -182,9 +192,9 @@ export class MudWall extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
+        this.colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -197,9 +207,9 @@ export class Sand extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 20, 0, app, matrix)
 
-        let colors = [0xDBD49D, 0xC7C089, 0xDED7A1, 0xCCC78F, 0xE9E9AE];
+        this.colors = [0xDBD49D, 0xC7C089, 0xDED7A1, 0xCCC78F, 0xE9E9AE];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -209,9 +219,9 @@ export class Dirt extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 25, 0, app, matrix)
 
-        let colors = [0x964B00, 0xA05014, 0x8C4614, 0x823C0A, 0x9B550F];
+        this.colors = [0x964B00, 0xA05014, 0x8C4614, 0x823C0A, 0x9B550F];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -221,9 +231,9 @@ export class Ash extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 10, 0, app, matrix)
 
-        let colors = [0xE6E6E6, 0xC8C8C8, 0xD7D7D7, 0xF0F0F0];
+        this.colors = [0xE6E6E6, 0xC8C8C8, 0xD7D7D7, 0xF0F0F0];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -233,30 +243,29 @@ export class Gravel extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 10, 0, app, matrix)
 
-        let colors = [0x8B8B8B, 0xA3A3A3, 0x6E6E6E, 0x5E5E5E, 0xBFBFBF];
+        this.colors = [0x8B8B8B, 0xA3A3A3, 0x6E6E6E, 0x5E5E5E, 0xBFBFBF];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
 }
 
 // Stiff Solids
-
 export class Mud extends StiffSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
+        this.colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
 
     action(){
         if(this.temp >= 20){
-            if( Math.random() * 100 < (10 + this.temp)){
+            if(Math.random() * 100 < (10 + this.temp)){
                 this.matrix.replaceParticle(this.x, this.y, Dirt);
             }
         }
@@ -267,22 +276,22 @@ export class WetSand extends StiffSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0xB8B17F, 0xA9A274, 0xC2BB88, 0x9F996B, 0xD0C98F]
+        this.colors = [0xB8B17F, 0xA9A274, 0xC2BB88, 0x9F996B, 0xD0C98F];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
 
     action(){
         if(this.temp >= 20){
-            if( Math.random() * 100 < (10 + this.temp)){
+            if(Math.random() * 100 < (10 + this.temp)){
                 this.matrix.replaceParticle(this.x, this.y, Sand);
             }
         }
     }
-
 }
+
 
 // Liquids
 
@@ -290,9 +299,9 @@ export class Water extends Liquid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [ 0x0000E6, 0x0000F0, 0x0000FA, 0x0000FF, 0x0A0AFF ];
+        this.colors = [0x0000E6, 0x0000F0, 0x0000FA, 0x0000FF, 0x0A0AFF];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     
@@ -303,7 +312,7 @@ export class Water extends Liquid {
     action(){
         if(this.temp >= this.boilingPoint){
             this.matrix.replaceParticle(this.x, this.y, Steam);
-        }else if(this.temp <= this.freezePoint){
+        } else if(this.temp <= this.freezePoint){
             this.matrix.replaceParticle(this.x, this.y, Ice);
         }
     }
@@ -313,11 +322,13 @@ export class Lava extends Liquid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0xFFB900, 0xFFC000, 0xFFC800, 0xFFD000, 0xFFD700];
+        this.colors = [0xFFB900, 0xFFC000, 0xFFC800, 0xFFD000, 0xFFD700];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.temp = 1000;
     }
 }
 
@@ -325,9 +336,9 @@ export class Alcohol extends Liquid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [ 0xC6C6CC, 0xC4C2C2, 0xC6C6CC ];
+        this.colors = [0xC6C6CC, 0xC4C2C2, 0xC6C6CC];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -345,9 +356,9 @@ export class Acid extends Liquid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [ 0x46D459, 0x3DD150, 0x4BDB5D ];
+        this.colors = [0x46D459, 0x3DD150, 0x4BDB5D];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -355,15 +366,13 @@ export class Acid extends Liquid {
     action(){
         let neighbors = this.getNeighbors();
 
-        neighbors.forEach( (n) => {
+        neighbors.forEach((n) => {
             if(n != null && !(n instanceof Acid)){
                 this.matrix.deleteParticle(n.getX(), n.getY());
             }
-        })
+        });
     }
 }
-
-
 
 
 // Gases
@@ -372,16 +381,16 @@ export class Steam extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0xffffff];
+        this.colors = [0xffffff];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
         this.condenseTemp = 200;
     }
 
-    action() { 
+    action(){ 
         if(this.temp <= this.condenseTemp){
             this.matrix.replaceParticle(this.x, this.y, Water);
         }
@@ -392,24 +401,24 @@ export class Fire extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0xF33C04, 0xFE650D, 0xFFC11F, 0xFFF75D];
+        this.colors = [0xF33C04, 0xFE650D, 0xFFC11F, 0xFFF75D];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
         this.life = Math.floor(Math.random() * (200 - 100)) + 100;
     }
 
-    action() {
+    action(){
         this.life--;
 
         if(this.life <= 0){
             if(Math.floor(Math.random() * 100) + 1 <= 35){
                 this.matrix.createParticle(this.x, this.y, Smoke, true);
+            } else {
+                this.matrix.deleteParticle(this.x, this.y);
             }
-            else{ this.matrix.deleteParticle(this.x, this.y); }
-            
         }
     }
 }
@@ -418,16 +427,16 @@ export class Smoke extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0x3B3B3B, 0x424242, 0x2E2E2E];
+        this.colors = [0x3B3B3B, 0x424242, 0x2E2E2E];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
         this.life = Math.floor(Math.random() * (300 - 200)) + 200;
     }
 
-    action() {
+    action(){
         this.life--;
 
         if(this.life <= 0){
@@ -440,9 +449,9 @@ export class Propane extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        let colors = [0x00FF00, 0x33FF33, 0x66FF66, 0x99FF99, 0xCCFFCC ];
+        this.colors = [0x00FF00, 0x33FF33, 0x66FF66, 0x99FF99, 0xCCFFCC];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -463,9 +472,9 @@ export class SandSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Sand)
 
-        let colors = [0xff0000];
+        this.colors = [0xff0000];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -475,9 +484,9 @@ export class DirtSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Dirt)
 
-        let colors = [0xFFFF00];
+        this.colors = [0xFFFF00];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -487,9 +496,9 @@ export class AshSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Ash)
 
-        let colors = [0x0F7D0F];
+        this.colors = [0x0F7D0F];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -499,23 +508,21 @@ export class WaterSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Water)
 
-        let colors = [0x00FFFF];
+        this.colors = [0x00FFFF];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
-
-
 }
 
 export class SteamSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Steam)
 
-        let colors = [0xeeeeee];
+        this.colors = [0xeeeeee];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -527,9 +534,9 @@ export class FireSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Fire)
 
-        let colors = [0xFF00FF];
+        this.colors = [0xFF00FF];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -542,9 +549,9 @@ export class SmokeSpawner extends Spawner {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Smoke)
 
-        let colors = [0xA9A9A9];
+        this.colors = [0xA9A9A9];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
@@ -553,14 +560,16 @@ export class SmokeSpawner extends Spawner {
     }
 }
 
+
 // Void Blocks
+
 export class VoidBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Particle)
 
-        let colors = [0xae34fa];
+        this.colors = [0xae34fa];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -570,9 +579,9 @@ export class VoidSolidsBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Solid)
  
-        let colors = [0xB52300];
+        this.colors = [0xB52300];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -582,9 +591,9 @@ export class VoidLiquidsBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Liquid)
  
-        let colors = [0x134A00];
+        this.colors = [0x134A00];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
@@ -594,12 +603,10 @@ export class VoidGassesBlock extends Void {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix, Gas)
 
-        let colors = [0x360034];
+        this.colors = [0x360034];
 
-        this.setColor(colors);
+        this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
 }
-
-// Energy
