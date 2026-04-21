@@ -291,6 +291,16 @@ export class Acid extends Liquid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
+
+    action(){
+        let neighbors = this.getNeighbors();
+
+        neighbors.forEach( (n) => {
+            if(n != null && !(n instanceof Acid)){
+                this.matrix.deleteParticle(n.getX(), n.getY());
+            }
+        })
+    }
 }
 
 

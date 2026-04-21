@@ -742,16 +742,16 @@ registerAll(particles);
             },
             liquidsMenu: {
                 water: { text: 'Water', class: 'particleButton', bg: '#045AFF', borderColor: '#002e83ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Water; } },
-                /*lava: { text: 'Lava', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Lava; } },
+                lava: { text: 'Lava', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Lava; } },
                 alcohol: { text: 'Alcohol', class: 'particleButton', bg: '#E6E6FA', borderColor: '#D8BFD8ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Alcohol; } },
                 acid: { text: 'Acid', class: 'particleButton', bg: '#00FF00', borderColor: '#33FF33ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Acid; } }
-                */
+            
             },
             gasesMenu: {
                 steam: { text: 'Steam', class: 'particleButton', bg: '#FFFFFF', borderColor: '#adadadff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Steam; } },
                 fire: { text: 'Fire', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Fire; } },
                 smoke: { text: 'Smoke', class: 'particleButton', bg: '#A9A9A9', borderColor: '#696969ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Smoke; } },
-                /*propane: { text: 'Propane', class: 'particleButton', bg: '#00FF00', borderColor: '#33FF33ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Propane; } } */
+                propane: { text: 'Propane', class: 'particleButton', bg: '#00FF00', borderColor: '#33FF33ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Propane; } } 
             },
             spawnersMenu: {
                 sandSpawner: { text: 'Sand Spawner', class: 'particleButton', bg: '#D2B48C', borderColor: '#817c54ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.SandSpawner; } },
