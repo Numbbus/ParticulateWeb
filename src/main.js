@@ -200,14 +200,7 @@ registerAll(particles);
             else if(event.key == 'ArrowRight' && paused){ matrix.updateGrid(view); }
             else if(event.key == '1'){
                 view = 'normal'; 
-                for(let r = 0; r < matrix.getRows(); r++){
-                    for(let c=0; c < matrix.getCols(); c++){
-                        let p = matrix.getParticle(c, r);
-                        if (p) {
-                            p.setColor(p.colors);
-                        }
-                    }
-                }
+                changeViewToNormal();
             }
             else if(event.key == '2'){ view = 'thermal'; }
             
@@ -722,6 +715,8 @@ registerAll(particles);
             reset: { text: 'Reset', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], onclick: (event) => { resetMatrix(); } },
             override: { text: 'Override', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { override = !override; updateControlButton(event.currentTarget || event.target);} },
             stepFrame: { text: '>', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { matrix.updateGrid(view); } },
+            thermalView: { text: 'Thermal View', class: 'controlsButton', bg: '#000', borderColor: '#fff', classes: ['controlsButton'], txtColor: '#FFFFFF', onclick: (event) => { updateControlButton(event.currentTarget || event.target); if(view == 'normal'){view = 'thermal'} else {view = 'normal'; changeViewToNormal();   } } },
+            
         };
 
 
@@ -869,6 +864,17 @@ registerAll(particles);
         }
         
 
+    }
+
+    function changeViewToNormal(){
+        for(let r = 0; r < matrix.getRows(); r++){
+            for(let c=0; c < matrix.getCols(); c++){
+                let p = matrix.getParticle(c, r);
+                if (p) {
+                    p.setColor(p.colors);
+                }
+            }
+        }
     }
 
 })();
