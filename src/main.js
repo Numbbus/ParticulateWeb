@@ -202,7 +202,6 @@ registerAll(particles);
                 view = 'normal'; 
                 for(let r = 0; r < matrix.getRows(); r++){
                     for(let c=0; c < matrix.getCols(); c++){
-                        console.log(c, r);
                         let p = matrix.getParticle(c, r);
                         if (p) {
                             p.setColor(p.colors);
