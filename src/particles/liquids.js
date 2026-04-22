@@ -9,6 +9,7 @@ class Liquid extends Particle{
         // 0 -> Right
         // 1 -> Left
         
+        this.conductivity = 0.40;
     }
 
     move(){
@@ -51,10 +52,6 @@ class Liquid extends Particle{
         }else{
             this.framesSinceLastUpdate++;
         }
-    }
-
-    action(){
-
     }
 }
 

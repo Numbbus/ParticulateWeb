@@ -42,16 +42,16 @@ class Matrix {
         }
     }
 
-    createParticle(x, y, ParticleClass, override){
+    createParticle(x, y, ParticleClass, override, temp = 15){
         if(this.withinBounds(x, y)){
-            if(ParticleClass.prototype instanceof Particle){
+            if(ParticleClass == null || ParticleClass.prototype instanceof Particle){
                 if(ParticleClass === null){ this.deleteParticle(x, y) }
 
                 else if(this.matrix[y][x] === null || override){
                     if(override){
                         this.deleteParticle(x, y);
                     }
-                    this.matrix[y][x] = new ParticleClass(x, y,this.app, this);
+                    this.matrix[y][x] = new ParticleClass(x, y,this.app, this, temp);
                 }
             }else if(ParticleClass.prototype instanceof Modifier){
                 let m = new ParticleClass(this, this.app, this.containers, x, y);

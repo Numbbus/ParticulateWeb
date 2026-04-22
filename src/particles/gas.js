@@ -8,6 +8,7 @@ class Gas extends Particle{
         // 0 -> Right
         // 1 -> Left
         
+        this.conductivity = 0.10;
     }
 
     move(){
@@ -33,10 +34,6 @@ class Gas extends Particle{
         }else{
             this.framesSinceLastUpdate++;
         }
-    }
-
-    action(){
-
     }
 }
 

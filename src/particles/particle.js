@@ -1,7 +1,7 @@
 const { Graphics } = PIXI;
 
 class Particle{
-    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15){
         this.x = x;
         this.y = y;
         this.isFlammable = isFlammable;
@@ -24,17 +24,19 @@ class Particle{
 
         this.rect = new Graphics().rect(0, 0, this.tileSize, this.tileSize);
 
-        this.temp = 15; // 15 celcius 
+        this.temp = temp; // 15 celcius 
         this.autoIgnitionTemp = null;
         this.meltingTemp = null;
         this.boilingPoint = null
         this.condenseTemp = null;
         this.freezingPoint = null;
+
+        this.conductivity = 0.25;
     }
 
 
     move(){}
-    action(){}
+    action(){ this.radiateHeat(); }
 
     getNeighbors(){
         let neighbors = [];
@@ -58,16 +60,19 @@ class Particle{
     }
 
 setColor(colors){
-    let i = Math.floor(Math.random() * colors.length);
-    const newColor = colors[i];
+    try{
+        let i = Math.floor(Math.random() * colors.length);
+        const newColor = colors[i];
 
-    if(this.color === newColor) return;
+        if(this.color === newColor) return;
 
-    this.color = newColor;
+        this.color = newColor;
 
-    this.rect.clear();
-    this.rect.rect(0, 0, this.tileSize, this.tileSize);
-    this.rect.fill(this.color);
+        this.rect.clear();
+        this.rect.rect(0, 0, this.tileSize, this.tileSize);
+        this.rect.fill(this.color);
+    }catch(e){}
+
 }
 
     destroyParticle(){
@@ -126,15 +131,18 @@ setColor(colors){
         return this.temp;
     }
 
-    radiateHeat() {
+    radiateHeat() { 
         const neighbors = this.getNeighbors();
 
         for (let neighbor of neighbors) {
             if (!neighbor) continue;
 
-            const diff = this.temp - neighbor.temp;
+            // prevent double-processing pairs
+            if (neighbor.x < this.x) continue;
+            if (neighbor.x === this.x && neighbor.y < this.y) continue;
 
-            const flow = diff * this.conductivity * 0.1; // 0.1 = dt
+            const diff = this.temp - neighbor.temp;
+            const flow = diff * this.conductivity * 0.1;
 
             this.temp -= flow;
             neighbor.temp += flow;

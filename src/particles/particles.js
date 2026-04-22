@@ -54,12 +54,16 @@ export class Ice extends StaticSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
+        this.conductivity = 0.20;
+
         this.temp = -20;
         this.meltingTemp = 0;
         this.boilingPoint = 100;
     }
 
     action(){
+        this.radiateHeat(); 
+
         if(this.temp >= 0){
             this.matrix.replaceParticle(this.x, this.y, Water);
         }else if(this.temp >= this.boilingPoint){
@@ -84,7 +88,7 @@ export class Tnt extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 30, 0, app, matrix)
 
-        this.triggers = ['Fire'];
+        this.triggers = ['Fire', 'Lava'];
 
         this.fuseLength = 50;
         this.isExploding = false;
@@ -103,6 +107,8 @@ export class Tnt extends StaticSolid {
     }
 
     action(){
+        //this.radiateHeat(); 
+
         const neighbors = this.getNeighbors();
 
         neighbors.forEach((n) => {
@@ -178,10 +184,14 @@ export class Wood extends StaticSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
+        this.conductivity = 0.12;
+
         this.autoIgnitionTemp = 450;
     }
 
     action(){
+        this.radiateHeat(); 
+
         if(this.temp >= this.autoIgnitionTemp){
             this.matrix.replaceParticle(this.x, this.y, Fire);
         }
@@ -264,6 +274,8 @@ export class Mud extends StiffSolid {
     }
 
     action(){
+        this.radiateHeat(); 
+
         if(this.temp >= 20){
             if(Math.random() * 100 < (10 + this.temp)){
                 this.matrix.replaceParticle(this.x, this.y, Dirt);
@@ -284,6 +296,8 @@ export class WetSand extends StiffSolid {
     }
 
     action(){
+        this.radiateHeat(); 
+        
         if(this.temp >= 20){
             if(Math.random() * 100 < (10 + this.temp)){
                 this.matrix.replaceParticle(this.x, this.y, Sand);
@@ -305,11 +319,15 @@ export class Water extends Liquid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     
+        this.conductivity = 0.6;
+
         this.boilingPoint = 212;
         this.freezePoint = 0;
     }
 
     action(){
+        this.radiateHeat(); 
+
         if(this.temp >= this.boilingPoint){
             this.matrix.replaceParticle(this.x, this.y, Steam);
         } else if(this.temp <= this.freezePoint){
@@ -328,6 +346,8 @@ export class Lava extends Liquid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
+        this.conductivity = 0.8
+
         this.temp = 1000;
     }
 }
@@ -342,12 +362,25 @@ export class Alcohol extends Liquid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
+        this.triggers = ['Fire', 'Lava']
+
         this.autoIgnitionTemp = 350;
     }
 
     action(){
+        this.radiateHeat(); 
+
         if(this.temp >= this.autoIgnitionTemp){
             this.matrix.replaceParticle(this.x, this.y, Fire);
+        }
+
+        const neighbors = this.getNeighbors();
+
+        for( let n of neighbors){
+            if(n && this.triggers.includes(`${n.constructor.name}`)){
+                this.matrix.replaceParticle(this.x, this.y, Fire);
+                break;
+            }
         }
     }
 }
@@ -364,6 +397,8 @@ export class Acid extends Liquid {
     }
 
     action(){
+        this.radiateHeat(); 
+
         let neighbors = this.getNeighbors();
 
         neighbors.forEach((n) => {
@@ -387,10 +422,13 @@ export class Steam extends Gas {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
+        this.temp = 250;
         this.condenseTemp = 200;
     }
 
     action(){ 
+        this.radiateHeat(); 
+
         if(this.temp <= this.condenseTemp){
             this.matrix.replaceParticle(this.x, this.y, Water);
         }
@@ -407,15 +445,28 @@ export class Fire extends Gas {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
-        this.life = Math.floor(Math.random() * (200 - 100)) + 100;
+        this.conductivity = 0.50;
+
+        this.temp = 800;
+        this.life = Math.floor(Math.random() * (300 - 200)) + 400;
     }
 
     action(){
-        this.life--;
+        this.radiateHeat(); 
 
-        if(this.life <= 0){
+        this.life--;
+        
+
+        if(this.life <= 0 && this.temp < 900){
             if(Math.floor(Math.random() * 100) + 1 <= 35){
-                this.matrix.createParticle(this.x, this.y, Smoke, true);
+                this.matrix.createParticle(this.x, this.y, Smoke, true, this.temp);
+            } else {
+                this.matrix.deleteParticle(this.x, this.y);
+            }
+        }
+        else if(this.temp <= 500){
+            if(Math.floor(Math.random() * 100) + 1 <= 35){
+                this.matrix.createParticle(this.x, this.y, Smoke, true, this.temp);
             } else {
                 this.matrix.deleteParticle(this.x, this.y);
             }
@@ -437,7 +488,10 @@ export class Smoke extends Gas {
     }
 
     action(){
+        this.radiateHeat(); 
+
         this.life--;
+        
 
         if(this.life <= 0){
             this.matrix.deleteParticle(this.x, this.y);
@@ -459,6 +513,8 @@ export class Propane extends Gas {
     }
 
     action(){
+        this.radiateHeat(); 
+        
         if(this.temp >= this.autoIgnitionTemp){
             this.matrix.replaceParticle(this.x, this.y, Fire);
         }

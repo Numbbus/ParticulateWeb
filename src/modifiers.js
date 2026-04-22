@@ -22,7 +22,8 @@ export class HeatRay extends Modifier {
         let p = this.matrix.getParticle(this.x, this.y)
 
         if(p !== null ){
-            p.raiseTemp(1);
+            p.raiseTemp(5);
+            //p.setColor([p.getThermalColor()]);
         }
     }
 }
@@ -37,6 +38,7 @@ export class FreezeRay extends Modifier {
 
         if(p !== null ){
             p.raiseTemp(-1);
+            //p.setColor([p.getThermalColor()]);
         }
     }
 }

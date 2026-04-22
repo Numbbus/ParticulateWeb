@@ -3,23 +3,21 @@ import Particle from "./particle.js";
 import Gas from "./gas.js"
 
 class Solid extends Particle{
-    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
-        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15){
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp)
     }
 }
 
 class StaticSolid extends Solid{
-    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix){
-        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15){
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp)
     }
-
-    action(){};
 }
 
 class MoveableSolid extends StaticSolid{
-    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15)
     {
-        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp)
         this.framesSinceLastUpdate = 0;
     }
 
@@ -54,15 +52,12 @@ class MoveableSolid extends StaticSolid{
         }
     }
 
-    action(){
-
-    }
 }
 
 class StiffSolid extends MoveableSolid{
-    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15)
     {
-        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp)
     }
 
     move(){
@@ -85,9 +80,6 @@ class StiffSolid extends MoveableSolid{
         }
     }
 
-    action(){
-
-    }
 }
 
 class Spawner extends Solid{

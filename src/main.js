@@ -201,8 +201,9 @@ registerAll(particles);
             else if(event.key == '1'){
                 view = 'normal'; 
                 changeViewToNormal();
+                updateControlButton(document.getElementById('Thermal View'));
             }
-            else if(event.key == '2'){ view = 'thermal'; }
+            else if(event.key == '2'){ view = 'thermal'; updateControlButton(document.getElementById('Thermal View')); }
             
         }
         
@@ -273,9 +274,6 @@ registerAll(particles);
             btn.classList.add('selectedParticleButton');
             document.querySelector('#selectedParticleDiv').innerText = `Selected: ${btn.innerText}`;
         }
-
-        
-
     }
 
     function updateControlButton(btn){
