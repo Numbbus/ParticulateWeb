@@ -175,3 +175,18 @@ input {
   color: rgb(141, 141, 141);
   background-color: rgb(70, 70, 70);
 }
+
+.dash-list {
+  list-style: none;
+  padding-left: 1em;
+}
+
+.dash-list li {
+  position: relative;
+}
+
+.dash-list li::before {
+  content: "-";
+  position: absolute;
+  left: -1em;
+}
