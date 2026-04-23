@@ -38,22 +38,32 @@ class Particle{
     move(){}
     action(){ this.radiateHeat(); }
 
-    getNeighbors(){
-        let neighbors = [];
-        
+    getNeighbors() {
+        const neighbors = [];
+
         const directions = [
             [-1, -1], [0, -1], [1, -1],
-            [-1, 0],          [1, 0],
-            [-1, 1], [0, 1], [1, 1]
+            [-1,  0],          [1,  0],
+            [-1,  1], [0,  1], [1,  1]
         ];
 
         for (const [dx, dy] of directions) {
-            const nRow = this.y + dy;
-            const nCol = this.x + dx;
+            const x = this.x + dx;
+            const y = this.y + dy;
 
-                if(this.matrix.withinBounds(nCol, nRow)){
-                    neighbors.push(this.matrix.getParticle(nCol, nRow));
-                }
+            if (this.matrix.withinBounds(x, y)) {
+                neighbors.push({
+                    x,
+                    y,
+                    particle: this.matrix.getParticle(x, y)
+                });
+            } else {
+                neighbors.push({
+                    x,
+                    y,
+                    particle: null
+                });
+            }
         }
 
         return neighbors;
@@ -135,17 +145,17 @@ setColor(colors){
         const neighbors = this.getNeighbors();
 
         for (let neighbor of neighbors) {
-            if (!neighbor) continue;
+            if (!neighbor.particle) continue;
 
             // prevent double-processing pairs
             if (neighbor.x < this.x) continue;
             if (neighbor.x === this.x && neighbor.y < this.y) continue;
 
-            const diff = this.temp - neighbor.temp;
+            const diff = this.temp - neighbor.particle.temp;
             const flow = diff * this.conductivity * 0.1;
 
             this.temp -= flow;
-            neighbor.temp += flow;
+            neighbor.particle.temp += flow;
         }
     }
 
@@ -154,6 +164,7 @@ setColor(colors){
         const maxTemp = 1000;
 
         let t = (this.temp - minTemp) / (maxTemp - minTemp);
+
         t = Math.max(0, Math.min(1, t)); // clamp 0–1
 
         const gradient = [

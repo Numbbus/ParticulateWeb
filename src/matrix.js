@@ -76,6 +76,8 @@ class Matrix {
     replaceParticle(x, y, p, t){
         this.deleteParticle(x, y);
         this.createParticle(x, y, p, false, t || 15);
+
+        return this.getParticle(x, y);
     }
 
 

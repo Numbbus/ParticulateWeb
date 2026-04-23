@@ -152,6 +152,11 @@ registerAll(particles);
         document.getElementById('mouseCoordsDiv').innerText = `X: ${mouseX} Y: ${mouseY}`;
 
         mouseDown = true;
+
+        let p = matrix.getParticle(mouseX, mouseY);
+        if(p){
+            console.log(p.burning);
+        }
     
     });
 
@@ -747,7 +752,8 @@ registerAll(particles);
                 gravel: { text: 'Gravel', class: 'particleButton', bg: '#8B8B8B', borderColor: '#4f4f4fff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Gravel; } },
                 mud: { text: 'Mud', class: 'particleButton', bg: '#70543E', borderColor: '#3d2e1eff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Mud; } },
                 wetSand: { text: 'Wet Sand', class: 'particleButton', bg: '#a79766ff', borderColor: '#8b8341ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.WetSand; } },
-                mudWall: { text: 'Mud Wall', class: 'particleButton', bg: '#8B4513', borderColor: '#4e2700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.MudWall; } }
+                mudWall: { text: 'Mud Wall', class: 'particleButton', bg: '#8B4513', borderColor: '#4e2700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.MudWall; } },
+                charcoal: { text: 'Charcoal', class: 'particleButton', bg: '#1b1b1b', borderColor: 'rgb(82, 82, 82)', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Charcoal; } }
             },
             liquidsMenu: {
                 water: { text: 'Water', class: 'particleButton', bg: '#045AFF', borderColor: '#002e83ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Water; } },

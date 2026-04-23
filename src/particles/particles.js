@@ -111,7 +111,7 @@ export class Tnt extends StaticSolid {
         const neighbors = this.getNeighbors();
 
         neighbors.forEach((n) => {
-            if(n != null && this.triggers.includes(`${n.constructor.name}`)){
+            if(n.particle != null && this.triggers.includes(`${n.particle.constructor.name}`)){
                 this.isExploding = true;
             }
         });
@@ -183,6 +183,8 @@ export class Wood extends StaticSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
+        this.lastBurnTime = 0;
+
         this.triggers = ['Fire','Lava'];
 
         this.conductivity = 0.12;
@@ -194,32 +196,57 @@ export class Wood extends StaticSolid {
         this.radiateHeat(); 
 
         if(this.temp >= this.autoIgnitionTemp){
-            this.matrix.replaceParticle(this.x, this.y, Fire);
-        }
+            this.burning = true;
+        }else if(this.temp >= this.autoIgnitionTemp + 450){this.matrix.replaceParticle(this.x, this.y, Fire);}
+
 
         const neighbors = this.getNeighbors();
 
         for( let n of neighbors){
-            if(n && this.triggers.includes(`${n.constructor.name}`)){
-                if(n instanceof Water){
+            if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                if(n.particle instanceof Water){
                     this.burning = false;
                 }else{
                     this.burning = true;
+                    this.lastBurnTime = performance.now();
                 }
             }
         }
 
-        if(this.burning){
-            if(Math.random() * 100 < (10 + this.temp)){
-                let chance =Math.random() * 100;
+        if (this.burning) {
+            const now = performance.now();
 
-                if(chance <= 40){ this.matrix.replaceParticle(this.x, this.y, Charcoal); this.matrix.getParticle(this.x, this.y).burning = true; }
-                else if(chance > 41 && chance <= 80){  this.matrix.replaceParticle(this.x, this.y, Ash); }
-                else{  this.matrix.deleteParticle(this.x, this.y); }
+            if (now - this.lastBurnTime >= 1000) {
 
+                let chance = Math.random() * 100;
+
+                if (chance < 50) {
+                    let index = Math.floor(Math.random() * 8);
+                    let n = neighbors[index];
+                    console.log(n);
+                    if(n.particle == null){
+                        this.matrix.createParticle(n.x, n.y, Fire);
+                    }
+                }else{
+                    if(chance <= 60){
+                        chance = Math.random() * 100;
+                        if (chance <= 70) {
+                            this.matrix.replaceParticle(this.x, this.y, Charcoal, this.temp).burning = true;
+                            return;
+                        } else if (chance <= 90) {
+                            this.matrix.replaceParticle(this.x, this.y, Ash, this.temp);
+                            return;
+                        } else {
+                            this.matrix.deleteParticle(this.x, this.y);
+                            return;
+                        }
+
+                    }
+                }
+                this.temp += 5;
+                this.lastBurnTime = now;
             }
         }
-
     }
 }
 
@@ -290,13 +317,69 @@ export class Charcoal extends MoveableSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 10, 0, app, matrix)
 
-        this.colors = [0x0f0f0f, 0x1a1a1a, 0x262626, 0x3b2f2f, 0x4a3a33];
+        this.colors = [0x080808, 0x121212, 0x1c1c1c, 0x262626, 0x303030];
+
+        this.triggers = ['Fire', 'Lava'];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
         this.burning = false;
+
+        this.autoIgnitionTemp = 350;
+    }
+
+    action(){
+        this.radiateHeat(); 
+
+        if(this.temp >= this.autoIgnitionTemp){
+            this.burning = true;
+        }else if(this.temp >= this.autoIgnitionTemp + 1000){this.matrix.replaceParticle(this.x, this.y, Fire);}
+
+
+        const neighbors = this.getNeighbors();
+
+        for( let n of neighbors){
+            if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                if(n.particle instanceof Water){
+                    this.burning = false;
+                }else{
+                    this.burning = true;
+                    this.lastBurnTime = performance.now();
+                }
+            }
+        }
+
+        if (this.burning) {
+            const now = performance.now();
+
+            if (now - this.lastBurnTime >= 1000) {
+
+                let chance = Math.random() * 100;
+
+                if (chance < 50) {
+                    let top = this.matrix.getParticle(this.x, this.y - 1);
+                    if (top == null) {
+                        this.matrix.createParticle(this.x, this.y-1, Fire);
+                    }
+                }else{
+                    if(chance <= 60){
+                        chance = Math.random() * 100;
+                        if (chance <= 50) {
+                            this.matrix.replaceParticle(this.x, this.y, Ash);
+                            return;
+                        } else {
+                            this.matrix.deleteParticle(this.x, this.y);
+                            return;
+                        }
+
+                    }
+                }
+                this.temp += 7;
+                this.lastBurnTime = now;
+            }
+        }
     }
 }
 
@@ -389,6 +472,10 @@ export class Lava extends Liquid {
 
         this.temp = 1000;
     }
+
+    action(){
+
+    }
 }
 
 export class Alcohol extends Liquid {
@@ -416,7 +503,7 @@ export class Alcohol extends Liquid {
         const neighbors = this.getNeighbors();
 
         for( let n of neighbors){
-            if(n && this.triggers.includes(`${n.constructor.name}`)){
+            if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
                 this.matrix.replaceParticle(this.x, this.y, Fire);
                 break;
             }
@@ -441,8 +528,8 @@ export class Acid extends Liquid {
         let neighbors = this.getNeighbors();
 
         neighbors.forEach((n) => {
-            if(n != null && !(n instanceof Acid)){
-                this.matrix.deleteParticle(n.getX(), n.getY());
+            if(n.particle != null && !(n.particle instanceof Acid)){
+                this.matrix.deleteParticle(n.x, n.y);
             }
         });
     }
