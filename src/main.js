@@ -480,13 +480,13 @@ registerAll(particles);
         saveButton.textContent = "Save";
         saveButton.classList.add('button', 'popupButton');
         saveButton.style.marginRight = "10%";
-        saveButton.onclick = saveAndDownloadPlayArea;
+        saveButton.onclick = () => { saveAndDownloadPlayArea(); updateVisibilityOfSaveMenu(); };
 
         const publishButton = document.createElement("button");
         publishButton.textContent = "Publish";
         publishButton.classList.add('button', 'popupButton');
         publishButton.style.marginLeft = "10%";
-        publishButton.onclick = saveAndPublishPlayArea;
+        publishButton.onclick = () => { saveAndPublishPlayArea(); updateVisibilityOfSaveMenu(); };
 
         parentDiv.appendChild(saveText);
         parentDiv.appendChild(saveNameInput);
