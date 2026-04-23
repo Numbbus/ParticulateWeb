@@ -160,22 +160,24 @@ registerAll(particles);
     
     });
 
+    app.ticker.add(() => {
+        outline.position.set(mouseX * tileSize, mouseY * tileSize);
+
+        let hovered = matrix.withinBounds(mouseX, mouseY)
+            ? matrix.getParticle(mouseX, mouseY)
+            : null;
+
+        mouseCoordsDiv.innerText = `X: ${mouseX} Y: ${mouseY}`;
+        hoveredParticleDiv.innerText = `Hovered: ${hovered ? hovered.constructor.name : 'None'}`;
+        particleTempDiv.innerText = hovered ? `Temp: ${Math.floor(hovered.getTemp())}C°` : '';
+    });
+
     containers.playArea.on("pointermove", (event) => {
         previouseMouseX = mouseX;
         previouseMouseY = mouseY;
 
         mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
         mouseY = Math.trunc(event.global.y / matrix.getTileSize()) -  Math.floor(brushSize / 2);
-
-        document.getElementById('mouseCoordsDiv').innerText = `X: ${mouseX} Y: ${mouseY}`;
-
-        outline.clear();
-        outline.rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 }); 
-
-        let hovered = matrix.withinBounds(mouseX, mouseY) ? matrix.getParticle(mouseX, mouseY) : null;
-
-        document.getElementById('hoveredParticleDiv').innerText = `Hovered: ${hovered == null || hovered == undefined ? 'None' : hovered.constructor.name }`;
-        document.getElementById('particleTempDiv').innerText = `${hovered == null || hovered == undefined ? '' : 'Temp: '+hovered.getTemp()+'C°' }`;
     });
 
     containers.playArea.on("pointerup", (event) => {
@@ -192,9 +194,8 @@ registerAll(particles);
         document.getElementById('brushSizeDiv').innerText = `Brush Size: ${brushSize}`;
 
         outline.clear();
-        outline.rect(mouseX * tileSize, mouseY * tileSize, tileSize*brushSize, tileSize*brushSize).stroke({ width: 1, color: 0xff0000 });
-        outline.pivot.set(0, 0);
-        containers.ui.addChild(outline);
+        outline.rect(0, 0, tileSize * brushSize, tileSize * brushSize)
+            .stroke({ width: 1, color: 0xff0000 });
     });
     
     window.addEventListener('keydown', (event) => {
