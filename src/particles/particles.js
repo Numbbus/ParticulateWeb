@@ -45,8 +45,8 @@ export class Bedrock extends StaticSolid {
 }
 
 export class Ice extends StaticSolid {
-    constructor(x, y, app, matrix){
-        super(x, y, false, true, 40, 0, app, matrix)
+    constructor(x, y, app, matrix, temp = -20){
+        super(x, y, false, true, 40, 0, app, matrix, temp)
 
         this.colors = [0xB4FFFF, 0x82E6FF, 0x8CEBFF];
 
@@ -56,7 +56,6 @@ export class Ice extends StaticSolid {
 
         this.conductivity = 0.20;
 
-        this.temp = -20;
         this.meltingTemp = 0;
         this.boilingPoint = 100;
     }
@@ -176,13 +175,15 @@ export class Tnt extends StaticSolid {
 
 export class Wood extends StaticSolid {
     constructor(x, y, app, matrix){
-        super(x, y, false, true, 40, 0, app, matrix)
+        super(x, y, true, true, 40, 0, app, matrix)
 
         this.colors = [0x814012, 0x864313, 0x8B4513, 0x914815, 0x964B16];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.triggers = ['Fire','Lava'];
 
         this.conductivity = 0.12;
 
@@ -195,6 +196,30 @@ export class Wood extends StaticSolid {
         if(this.temp >= this.autoIgnitionTemp){
             this.matrix.replaceParticle(this.x, this.y, Fire);
         }
+
+        const neighbors = this.getNeighbors();
+
+        for( let n of neighbors){
+            if(n && this.triggers.includes(`${n.constructor.name}`)){
+                if(n instanceof Water){
+                    this.burning = false;
+                }else{
+                    this.burning = true;
+                }
+            }
+        }
+
+        if(this.burning){
+            if(Math.random() * 100 < (10 + this.temp)){
+                let chance =Math.random() * 100;
+
+                if(chance <= 40){ this.matrix.replaceParticle(this.x, this.y, Charcoal); this.matrix.getParticle(this.x, this.y).burning = true; }
+                else if(chance > 41 && chance <= 80){  this.matrix.replaceParticle(this.x, this.y, Ash); }
+                else{  this.matrix.deleteParticle(this.x, this.y); }
+
+            }
+        }
+
     }
 }
 
@@ -261,6 +286,20 @@ export class Gravel extends MoveableSolid {
     }
 }
 
+export class Charcoal extends MoveableSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 10, 0, app, matrix)
+
+        this.colors = [0x0f0f0f, 0x1a1a1a, 0x262626, 0x3b2f2f, 0x4a3a33];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.burning = false;
+    }
+}
+
 // Stiff Solids
 export class Mud extends StiffSolid {
     constructor(x, y, app, matrix){
@@ -310,8 +349,8 @@ export class WetSand extends StiffSolid {
 // Liquids
 
 export class Water extends Liquid {
-    constructor(x, y, app, matrix){
-        super(x, y, false, true, 5, 0, app, matrix)
+    constructor(x, y, app, matrix, temp = 15){
+        super(x, y, false, true, 5, 0, app, matrix, temp)
 
         this.colors = [0x0000E6, 0x0000F0, 0x0000FA, 0x0000FF, 0x0A0AFF];
 
@@ -329,9 +368,9 @@ export class Water extends Liquid {
         this.radiateHeat(); 
 
         if(this.temp >= this.boilingPoint){
-            this.matrix.replaceParticle(this.x, this.y, Steam);
+            this.matrix.replaceParticle(this.x, this.y, Steam, this.temp + 50);
         } else if(this.temp <= this.freezePoint){
-            this.matrix.replaceParticle(this.x, this.y, Ice);
+            this.matrix.replaceParticle(this.x, this.y, Ice, this.temp - 10);
         }
     }
 }
@@ -413,8 +452,8 @@ export class Acid extends Liquid {
 // Gases
 
 export class Steam extends Gas {
-    constructor(x, y, app, matrix){
-        super(x, y, false, true, 5, 0, app, matrix)
+    constructor(x, y, app, matrix, temp = 250){
+        super(x, y, false, true, 5, 0, app, matrix, temp)
 
         this.colors = [0xffffff];
 
@@ -422,15 +461,16 @@ export class Steam extends Gas {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
-        this.temp = 250;
         this.condenseTemp = 200;
+
+        console.log(this.temp);
     }
 
     action(){ 
         this.radiateHeat(); 
 
         if(this.temp <= this.condenseTemp){
-            this.matrix.replaceParticle(this.x, this.y, Water);
+            this.matrix.replaceParticle(this.x, this.y, Water, this.temp);
         }
     }
 }

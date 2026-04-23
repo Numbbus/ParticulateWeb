@@ -42,7 +42,7 @@ class Matrix {
         }
     }
 
-    createParticle(x, y, ParticleClass, override, temp = 15){
+    createParticle(x, y, ParticleClass, override, temp){
         if(this.withinBounds(x, y)){
             if(ParticleClass == null || ParticleClass.prototype instanceof Particle){
                 if(ParticleClass === null){ this.deleteParticle(x, y) }
@@ -51,7 +51,11 @@ class Matrix {
                     if(override){
                         this.deleteParticle(x, y);
                     }
-                    this.matrix[y][x] = new ParticleClass(x, y,this.app, this, temp);
+                    if (temp !== undefined) {
+                        this.matrix[y][x] = new ParticleClass(x, y, this.app, this, temp);
+                    } else {
+                        this.matrix[y][x] = new ParticleClass(x, y, this.app, this);
+                    }
                 }
             }else if(ParticleClass.prototype instanceof Modifier){
                 let m = new ParticleClass(this, this.app, this.containers, x, y);
@@ -69,9 +73,9 @@ class Matrix {
         this.matrix[y][x] = null;
     }
 
-    replaceParticle(x, y, p){
+    replaceParticle(x, y, p, t){
         this.deleteParticle(x, y);
-        this.createParticle(x, y, p);
+        this.createParticle(x, y, p, false, t || 15);
     }
 
 

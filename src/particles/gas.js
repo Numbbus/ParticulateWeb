@@ -1,9 +1,9 @@
 import Particle from "./particle.js";
 
 class Gas extends Particle{
-    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+    constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15)
     {
-        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix)
+        super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp)
         this.direction = 0;
         // 0 -> Right
         // 1 -> Left
