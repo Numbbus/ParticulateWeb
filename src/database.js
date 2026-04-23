@@ -52,6 +52,7 @@ class Database{
     };
 
     async findAllWith(collectionName, fieldName, fieldValue){ 
+        console.log(fieldName);
         const q = query(
             collection(this.db, collectionName)
         );
@@ -60,8 +61,10 @@ class Database{
 
         const docs = querySnapshot.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(doc => doc[fieldName].includes(fieldValue));
-
+            .filter(doc => {
+                const value = doc[fieldName];
+                return typeof value === 'string' && value.includes(fieldValue);
+            });
         return docs;
 
     }
