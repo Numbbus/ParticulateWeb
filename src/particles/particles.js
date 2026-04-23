@@ -725,7 +725,7 @@ export class Propane extends Gas {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        this.colors = [0x00FF00, 0x33FF33, 0x66FF66, 0x99FF99, 0xCCFFCC];
+        this.colors = [0xfff2cc, 0xffe599, 0xfff7e6, 0xd9f2ff, 0xb3ecff]
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
