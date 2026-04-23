@@ -39,6 +39,7 @@ class Particle{
     action(){ this.radiateHeat(); }
 
     getNeighbors() {
+        if(!this.matrix){return null;}
         const neighbors = [];
 
         const directions = [

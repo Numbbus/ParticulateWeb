@@ -491,7 +491,7 @@ export class WetSand extends StiffSolid {
     action(){
         this.radiateHeat(); 
         
-        if(this.temp >= 20){
+        if(this.temp >= 50){
             if(Math.random() * 100 < (10 + this.temp)){
                 this.matrix.replaceParticle(this.x, this.y, Sand);
             }
@@ -502,18 +502,22 @@ export class WetSand extends StiffSolid {
         if (now - this.lastTransferAttempt >= 5000) {
             const neighbors = this.getNeighbors();
 
-            for( let n of neighbors){
-                if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
-                    if(n.y >= this.y && n.particle instanceof Sand){
-                        let chance = Math.random() * 100;
-                        if(chance <= 20){
-                            this.matrix.replaceParticle(n.x, n.y, WetSand);
-                            this.matrix.replaceParticle(this.x, this.y, Sand);
-                            return;
+            if(neighbors){
+                for( let n of neighbors){
+                    if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                        if(n.y >= this.y && n.particle instanceof Sand){
+                            let chance = Math.random() * 100;
+                            if(chance <= 20){
+                                this.matrix.replaceParticle(n.x, n.y, WetSand);
+                                this.matrix.replaceParticle(this.x, this.y, Sand);
+                                return;
+                            }
                         }
                     }
                 }
             }
+
+
             this.lastTransferAttempt = now;
         }
     }
@@ -728,13 +732,26 @@ export class Propane extends Gas {
         this.addToStage(this.rect);
 
         this.autoIgnitionTemp = 500;
+
+        this.triggers = ['Fire', 'Lava'];
     }
 
     action(){
         this.radiateHeat(); 
-        
+
         if(this.temp >= this.autoIgnitionTemp){
             this.matrix.replaceParticle(this.x, this.y, Fire);
+        }
+
+        const neighbors = this.getNeighbors();
+
+        if(neighbors){
+            for( let n of neighbors){
+                if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                    this.matrix.replaceParticle(this.x, this.y, Fire);
+                    return;
+                }
+            }
         }
     }
 }
