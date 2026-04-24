@@ -152,12 +152,6 @@ registerAll(particles);
         document.getElementById('mouseCoordsDiv').innerText = `X: ${mouseX} Y: ${mouseY}`;
 
         mouseDown = true;
-
-        let p = matrix.getParticle(mouseX, mouseY);
-        if(p){
-            console.log(p.burning);
-        }
-    
     });
 
     app.ticker.add(() => {
@@ -597,7 +591,6 @@ registerAll(particles);
         communitySaves.style.zIndex = 10;
 
         communitySaves.style.width = "100%";
-        console.log(parentDiv.getBoundingClientRect().height);
         communitySaves.style.height = "325px";
 
         communitySaves.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
@@ -664,7 +657,7 @@ registerAll(particles);
     });
 
     window.downloadAndApplyPlayArea = function(id) {
-        console.log(id);
+        console.log('Docu ID: ', id);
         downloadAndApplyPlayArea(id);
     };
 

@@ -223,7 +223,7 @@ export class Wood extends StaticSolid {
                 if (chance < 50) {
                     let index = Math.floor(Math.random() * 8);
                     let n = neighbors[index];
-                    console.log(n);
+
                     if(n.particle == null){
                         this.matrix.createParticle(n.x, n.y, Fire);
                     }
@@ -645,7 +645,6 @@ export class Steam extends Gas {
 
         this.condenseTemp = 200;
 
-        console.log(this.temp);
     }
 
     action(){ 

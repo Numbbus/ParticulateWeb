@@ -52,7 +52,6 @@ class Database{
     };
 
     async findAllWith(collectionName, fieldName, fieldValue){ 
-        console.log(fieldName);
         const q = query(
             collection(this.db, collectionName)
         );

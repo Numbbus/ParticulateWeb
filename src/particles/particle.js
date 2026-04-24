@@ -118,13 +118,11 @@ setColor(colors){
     { 
         this.x = n; 
         this.rect.x = n*this.tileSize;
-        console.log(this.rect.x);
     }
     setY(n)
     { 
         this.y = n; 
         this.rect.y = n*this.tileSize;
-        console.log(this.rect.y);
     }
 
     addToStage(obj){
