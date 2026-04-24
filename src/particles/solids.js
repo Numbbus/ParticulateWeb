@@ -129,13 +129,9 @@ class Void extends Solid{
         let neighbors = this.getNeighbors();
         let neighbor = undefined;
 
-        //console.log(neighbors);
-
-        for(let i = 0; i < neighbors.length; i++){
-            neighbor = neighbors[i];
-            if(!(neighbor instanceof Void) && neighbor instanceof this.voidParticle){
-                neighbor.rect.clear();
-                this.matrix.setParticle(neighbor.getX(), neighbor.getY(), null);
+        for(let n of neighbors){
+            if(!(n.particle instanceof Void) && n.particle instanceof this.voidParticle){
+                this.matrix.replaceParticle(n.x, n.y, null);
             }
         }
         
