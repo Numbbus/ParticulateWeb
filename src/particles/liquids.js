@@ -20,9 +20,9 @@ class Liquid extends Particle{
             let left = this.getX()-1 >= 0 ? this.matrix.getParticle(this.x-1, this.y) : undefined ;
             let top = this.getY()-1 >= 0 ? this.matrix.getParticle(this.x, this.y-1) : undefined ;
             
-            if( top && top instanceof Liquid && this.temp > top.temp){
+            /*if( top && top instanceof Liquid && this.temp > top.temp){
                 this.matrix.swapParticles(this.getX(), this.getY(), top.getX(), top.getY());
-            }else{
+            }else{*/
                 if(bottom === null || bottom instanceof Gas){ 
                     this.matrix.swapParticles(this.getX(), this.getY(), this.getX(), this.getY() + 1); 
                 }
@@ -41,7 +41,7 @@ class Liquid extends Particle{
                     }
 
                 }
-            }
+            //}
 
 
 

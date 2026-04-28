@@ -30,6 +30,14 @@ export class Stone extends StaticSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
+
+    action(){
+        this.radiateHeat();
+
+        if(this.temp >= 1200){
+                this.matrix.replaceParticle(this.x, this.y, Lava, this.temp);
+        }
+    }
 }
 
 export class Bedrock extends StaticSolid {
@@ -565,11 +573,15 @@ export class Lava extends Liquid {
 
         this.conductivity = 0.8
 
-        this.temp = 1000;
+        this.temp = 1500;
     }
 
     action(){
+        this.radiateHeat();
 
+        if(this.temp <= 500){
+                this.matrix.replaceParticle(this.x, this.y, Stone);
+        }
     }
 }
 
