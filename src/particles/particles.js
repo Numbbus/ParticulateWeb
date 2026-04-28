@@ -340,10 +340,6 @@ export class Ash extends MoveableSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
-
-    action(){
-
-    }
 }
 
 export class Gravel extends MoveableSolid {
@@ -692,14 +688,14 @@ export class Fire extends Gas {
 
         if(this.life <= 0 && this.temp < 900){
             if(Math.floor(Math.random() * 100) + 1 <= 35){
-                this.matrix.createParticle(this.x, this.y, Smoke, true, this.temp);
+                this.matrix.replaceParticle(this.x, this.y, Smoke, this.temp);
             } else {
                 this.matrix.deleteParticle(this.x, this.y);
             }
         }
         else if(this.temp <= 500){
             if(Math.floor(Math.random() * 100) + 1 <= 35){
-                this.matrix.createParticle(this.x, this.y, Smoke, true, this.temp);
+                this.matrix.replaceParticle(this.x, this.y, Smoke, this.temp);
             } else {
                 this.matrix.deleteParticle(this.x, this.y);
             }
