@@ -321,7 +321,7 @@ export class Dirt extends MoveableSolid {
         const neighbors = this.getNeighbors();
 
         for( let n of neighbors){
-            if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+            if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
                 this.matrix.deleteParticle(n.x, n.y);
                 this.matrix.replaceParticle(this.x, this.y, Mud);
                 return;
@@ -444,6 +444,7 @@ export class Mud extends StiffSolid {
         if(this.temp >= 20){
             if(Math.random() * 100 < (10 + this.temp)){
                 this.matrix.replaceParticle(this.x, this.y, Dirt);
+                return;
             }
         }
 
@@ -451,7 +452,8 @@ export class Mud extends StiffSolid {
         
         if(this.temp >= 20){
             if(Math.random() * 100 < (10 + this.temp)){
-                this.matrix.replaceParticle(this.x, this.y, Sand);
+                this.matrix.replaceParticle(this.x, this.y, Dirt);
+                return;
             }
         }
 
@@ -461,7 +463,7 @@ export class Mud extends StiffSolid {
             const neighbors = this.getNeighbors();
 
             for( let n of neighbors){
-                if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
                     if(n.y >= this.y && n.particle instanceof Dirt){
                         let chance = Math.random() * 100;
                         if(chance <= 20){

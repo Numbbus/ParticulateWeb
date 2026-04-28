@@ -111,16 +111,17 @@ registerAll(particles);
     function gameLoop(){
 
         if( !paused ){
-            matrix.updateGrid(view);
+        matrix.updateGrid(view);
         }
         if(mouseDown && !pinching){
-            if(brushSize == 1){
-                matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle, override);
-            }else{
-                const coords = matrix.traverseMatrix(previouseMouseX, previouseMouseY, mouseX, mouseY);
-                matrix.fillBrushArea(selectedParticle, brushSize, coords, override);
-            }
+                if(brushSize == 1){
+                        matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle, override);
+                }else{
+                        const coords = matrix.traverseMatrix(previouseMouseX, previouseMouseY, mouseX, mouseY);
+                        matrix.fillBrushArea(selectedParticle, brushSize, coords, override);
+                }
         }
+
     }
 
     let outline = new Graphics().rect(0,0, tileSize, tileSize).stroke({ width: 1, color: 0xff0000 });
