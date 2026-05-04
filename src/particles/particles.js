@@ -185,7 +185,7 @@ export class Wood extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, true, true, 40, 0, app, matrix)
 
-        this.colors = [0x814012, 0x864313, 0x8B4513, 0x914815, 0x964B16];
+        this.colors = [0xae8f55, 0xb7945e, 0xc29e63];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -262,7 +262,7 @@ export class MudWall extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        this.colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
+        this.colors = [0x73390F, 0x783D00, 0x703810];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
@@ -429,7 +429,7 @@ export class Mud extends StiffSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        this.colors = [0x8B4513, 0x964B00, 0xA05014, 0x8C4614, 0x823C0A];
+        this.colors = [0x401F00, 0x542B0D, 0x452200];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
