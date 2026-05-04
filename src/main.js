@@ -771,6 +771,10 @@ registerAll(particles);
                 steamSpawner: { text: 'Steam Spawner', class: 'particleButton', bg: '#FFFFFF', borderColor: '#adadadff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.SteamSpawner; } },
                 fireSpawner: { text: 'Fire Spawner', class: 'particleButton', bg: '#FF4500', borderColor: '#912700ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.FireSpawner; } },
                 smokeSpawner: { text: 'Smoke Spawner', class: 'particleButton', bg: '#A9A9A9', borderColor: '#696969ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.SmokeSpawner; } },
+                propaneSpawner: { text: 'Propane Spawner', class: 'particleButton', bg: '#6aac00ff', borderColor: '#4a8b00ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.PropaneSpawner; } },
+                lavaSpawner: { text: 'Lava Spawner', class: 'particleButton', bg: '#e26600ff', borderColor: '#8f2d00ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.LavaSpawner; } },
+                acidSpawner: { text: 'Acid Spawner', class: 'particleButton', bg: '#13e000ff', borderColor: '#006e0fff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.AcidSpawner; } },
+                alcoholSpawner: { text: 'Alcohol Spawner', class: 'particleButton', bg: '#ffffffff', borderColor: '#acacacff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.AlcoholSpawner; } },
             },
             voidsMenu: {
                 voidBlock: { text: 'Void Block', class: 'particleButton', bg: '#000000', borderColor: '#464646ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.VoidBlock; } },

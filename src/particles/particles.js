@@ -633,7 +633,7 @@ export class Acid extends Liquid {
         let neighbors = this.getNeighbors();
 
         neighbors.forEach((n) => {
-            if(n.particle != null && !(n.particle instanceof Acid)){
+            if(n.particle != null && !(n.particle instanceof Acid) && !(n.particle instanceof AcidSpawner)){
                 this.matrix.deleteParticle(n.x, n.y);
             }
         });
@@ -857,6 +857,66 @@ export class SmokeSpawner extends Spawner {
 
         this.life = 5;
         this.direction = -1;
+    }
+}
+
+export class PropaneSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix, Propane)
+
+        this.colors = [0xC5D600];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.life = 5;
+        this.direction = -1;
+    }
+}
+
+export class LavaSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix, Lava)
+
+        this.colors = [0xE88B00];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.life = 5;
+        this.direction = 1;
+    }
+}
+
+export class AcidSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix, Acid)
+
+        this.colors = [0x04E800];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.life = 5;
+        this.direction = 1;
+    }
+}
+
+export class AlcoholSpawner extends Spawner {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix, Alcohol)
+
+        this.colors = [0x04E800];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.life = 5;
+        this.direction = 1;
     }
 }
 
