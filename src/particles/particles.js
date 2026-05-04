@@ -72,9 +72,9 @@ export class Ice extends StaticSolid {
         this.radiateHeat(); 
 
         if(this.temp >= 0){
-            this.matrix.replaceParticle(this.x, this.y, Water);
+            this.matrix.replaceParticle(this.x, this.y, Water, this.temp);
         }else if(this.temp >= this.boilingPoint){
-            this.matrix.replaceParticle(this.x, this.y, Steam);
+            this.matrix.replaceParticle(this.x, this.y, Steam, this.temp);
         }
     }
 }
