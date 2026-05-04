@@ -106,7 +106,7 @@ registerAll(particles);
 
     tileSize = matrix.getTileSize();
 
-    app.ticker.add(gameLoop);
+    //app.ticker.add(gameLoop);
 
     function gameLoop(){
 
@@ -121,6 +121,7 @@ registerAll(particles);
                         matrix.fillBrushArea(selectedParticle, brushSize, coords, override);
                 }
         }
+
 
     }
 
@@ -165,6 +166,8 @@ registerAll(particles);
         mouseCoordsDiv.innerText = `X: ${mouseX} Y: ${mouseY}`;
         hoveredParticleDiv.innerText = `Hovered: ${hovered ? hovered.constructor.name : 'None'}`;
         particleTempDiv.innerText = hovered ? `Temp: ${Math.floor(hovered.getTemp())}C°` : '';
+
+        gameLoop();
     });
 
     containers.playArea.on("pointermove", (event) => {
@@ -783,8 +786,8 @@ registerAll(particles);
                 voidGassesBlock: { text: 'Void Gases Block', class: 'particleButton', bg: '#FFFFFF', borderColor: '#777777ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.VoidGassesBlock; } },
             },
             energyMenu:{
-                heatRay: { text: 'Heat Ray', class: 'particleButton', bg: '#FF0000', borderColor: '#7a0000ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.HeatRay; } },
-                freezeRay: { text: 'Freeze Ray', class: 'particleButton', bg: '#51c7fd', borderColor: 'rgb(11, 55, 121)', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.FreezeRay; } },
+                heatRay: { text: 'Heat', class: 'particleButton', bg: '#FF0000', borderColor: '#7a0000ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.HeatRay; } },
+                freezeRay: { text: 'Freeze', class: 'particleButton', bg: '#51c7fd', borderColor: 'rgb(11, 55, 121)', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.FreezeRay; } },
             }
         };
 
