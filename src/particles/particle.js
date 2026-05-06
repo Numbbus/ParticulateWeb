@@ -31,7 +31,9 @@ class Particle{
         this.condenseTemp = null;
         this.freezingPoint = null;
 
-        this.conductivity = 0.25;
+        this.heatConductivity = 0.25;
+
+        this.conductive = false;
     }
 
 
@@ -43,9 +45,9 @@ class Particle{
         const neighbors = [];
 
         const directions = [
-            [-1, -1], [0, -1], [1, -1],
+                      [0, -1],
             [-1,  0],          [1,  0],
-            [-1,  1], [0,  1], [1,  1]
+                      [0,  1]
         ];
 
         for (const [dx, dy] of directions) {
@@ -70,21 +72,21 @@ class Particle{
         return neighbors;
     }
 
-setColor(colors){
-    try{
-        let i = Math.floor(Math.random() * colors.length);
-        const newColor = colors[i];
+    setColor(colors){
+        try{
+            let i = Math.floor(Math.random() * colors.length);
+            const newColor = colors[i];
 
-        if(this.color === newColor) return;
+            if(this.color === newColor) return;
 
-        this.color = newColor;
+            this.color = newColor;
 
-        this.rect.clear();
-        this.rect.rect(0, 0, this.tileSize, this.tileSize);
-        this.rect.fill(this.color);
-    }catch(e){}
+            this.rect.clear();
+            this.rect.rect(0, 0, this.tileSize, this.tileSize);
+            this.rect.fill(this.color);
+        }catch(e){}
 
-}
+    }
 
     destroyParticle(){
         if (this.rect) {
@@ -151,7 +153,7 @@ setColor(colors){
             if (neighbor.x === this.x && neighbor.y < this.y) continue;
 
             const diff = this.temp - neighbor.particle.temp;
-            const flow = diff * this.conductivity * 0.1;
+            const flow = diff * this.heatConductivity * 0.1;
 
             this.temp -= flow;
             neighbor.particle.temp += flow;

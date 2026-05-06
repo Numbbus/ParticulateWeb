@@ -43,4 +43,19 @@ export class FreezeRay extends Modifier {
     }
 }
 
+export class Shock extends Modifier {
+    constructor(matrix, app, containers, x, y){
+        super(matrix, app, containers, x, y);
+    }
+
+    action(){
+        let p = this.matrix.getParticle(this.x, this.y)
+
+        if(p !== null && p.conductive){
+            p.shock();
+            //p.setColor([p.getThermalColor()]);
+        }
+    }
+}
+
 export default Modifier;

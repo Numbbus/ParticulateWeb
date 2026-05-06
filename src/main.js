@@ -160,7 +160,9 @@ registerAll(particles);
         mouseDown = true;
     });
 
+    app.tick = 0;
     app.ticker.add(() => {
+        app.tick++;
         outline.position.set(mouseX * tileSize, mouseY * tileSize);
 
         let hovered = matrix.withinBounds(mouseX, mouseY)
@@ -744,6 +746,7 @@ registerAll(particles);
             load: { text: 'Load', class: 'toolsButton', bg: '#00FFFF', borderColor: '#007272ff', classes: ['toolsButton'], onclick: () => { updateVisibilityOfLoadMenu(); if(!paused) { paused = true; updateControlButton(document.querySelector('#Pause')); } } },
             heatRay: { text: 'Heat', class: 'particleButton', bg: '#FF0000', borderColor: '#7a0000ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.HeatRay; } },
             freezeRay: { text: 'Freeze', class: 'particleButton', bg: '#51c7fd', borderColor: 'rgb(11, 55, 121)', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.FreezeRay; } },
+            shock: { text: 'Shock', class: 'particleButton', bg: '#fbff00ff', borderColor: 'rgba(189, 176, 0, 1)', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = modifiers.Shock; } },
         };
 
         const catagoriesConfig = {
@@ -753,7 +756,7 @@ registerAll(particles);
             spawners: { text: 'Spawners', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "spawnersMenu"; updateCatagories(); } },
             voids: { text: 'Void Blocks', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "voidsMenu"; updateCatagories(); } },
             //energy: { text: 'Energy', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "energyMenu"; updateCatagories(); } },
-            //machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
+            machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
             //life: { text: 'Life', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "lifeMenu"; updateCatagories(); } },
             life: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
         };

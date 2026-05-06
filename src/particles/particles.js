@@ -19,6 +19,7 @@ export class Class extends Class {
 */
 
 
+
 // Solids
 export class Stone extends StaticSolid {
     constructor(x, y, app, matrix){
@@ -272,13 +273,50 @@ export class MudWall extends StaticSolid {
 
 export class Wire extends StaticSolid {
     constructor(x, y, app, matrix){
-        super(x, y, false, true, 10, 0, app, matrix)
+        super(x, y, false, true, 10, 1, app, matrix)
 
         this.colors = [0xBB7333, 0xC27632, 0xA86227] ;
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.conductive = true;
+        this.energized = false;
+        this.lastEnergizedTick = -1;
+
+        this.triggers = ['Wire', 'Battery'];
+
+        this.timeout = null;
+    }   
+
+    action(){
+        let neighbors = this.getNeighbors();
+
+        for (let n of neighbors){
+            if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                let p = n.particle;
+
+                if (p.conductive && p.lastEnergizedTick === this.app.tick - 1){
+                    this.shock();
+                    return;
+                }
+            }
+        }
+    }
+
+    shock(){
+        if (this.timeout) return;
+
+        this.energized = true;
+        this.lastEnergizedTick = this.app.tick;
+        this.setColor([0xFFFF66]);
+
+        this.timeout = setTimeout(() => {
+            this.energized = false;
+            this.setColor(this.colors);
+            this.timeout = null;
+        }, 500);
     }
 }
 
@@ -375,6 +413,9 @@ export class Battery extends StaticSolid {
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.conductive = true;
+        this.energized = true;
     }
 }
 
