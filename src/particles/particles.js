@@ -415,11 +415,41 @@ export class LightBulb extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 5, 0, app, matrix)
 
-        this.colors = [0xFFFF99, 0xFFFF66, 0xFFFF33, 0xFFEE00, 0xE6D200];
+        this.poweredColors = [0xFFFF99, 0xFFFF66];
+        this.unpoweredColors = [0x2E2722, 0x292421]
 
-        this.setColor(this.colors);
+        this.setColor(this.unpoweredColors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.triggers = ['Wire', 'Battery', 'LightBulb']
+
+        this.on = false;
+    }
+
+    action(){
+        this.radiateHeat();
+        let energizedNeighbors = false;
+
+        for (let n of this.getNeighbors()){
+            if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                let p = n.particle;
+
+                if(p.energized){
+                    energizedNeighbors = true;
+                    break;
+                }
+            }
+        }
+
+        if(energizedNeighbors){
+            this.setColor(this.poweredColors);
+            this.on = true;
+        }else{
+            this.setColor(this.unpoweredColors);
+            this.on = false;
+        }
+
     }
 }
 
