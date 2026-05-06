@@ -159,20 +159,23 @@ setColor(colors){
     }
 
     getThermalColor(){
-        const minTemp = -200;
-        const maxTemp = 1000;
+        const minTemp = -212;
+        const maxTemp = 2000;
 
         let t = (this.temp - minTemp) / (maxTemp - minTemp);
 
         t = Math.max(0, Math.min(1, t)); // clamp 0–1
 
         const gradient = [
-            [0, 0, 255],   // blue
-            [0, 255, 255], // cyan
-            [0, 255, 0],   // green
-            [255, 255, 0], // yellow
-            [255, 0, 0]    // red
+            // Loosely follow Rainbow thermal color pallet 
+            [0, 1, 76],   
+            [0, 92, 211], 
+            [88, 179, 43],  
+            [243, 202, 9], 
+            [251, 24, 20],    
+            [255, 255, 255]
         ];
+
         const scaled = t * (gradient.length - 1);
         const index = Math.floor(scaled);
         const frac = scaled - index;
