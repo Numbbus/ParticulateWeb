@@ -360,26 +360,7 @@
         document.getElementById("bugForm").addEventListener("submit", function(e) {
             e.preventDefault();
 
-            const title = document.getElementById("title").value;
-            const description = document.getElementById("description").value;
-            const severity = document.getElementById("severity").value;
-
-            const formURL = "https://docs.google.com/forms/d/e/1FAIpQLScfIFpHjkwFM1Ym615uPSbi_GVvfu6hZLrfSsRnxSWy6AsRrg/formResponse";
-
-            const data = new FormData();
-
-            data.append("entry.1874372462", title);
-            data.append("entry.84580292", description);
-            data.append("entry.1224250037", severity);
-
-            fetch(formURL, {
-                method: "POST",
-                mode: "no-cors",
-                body: data
-            });
-
-            alert("Bug report sent!");
-            document.getElementById("bugForm").reset();
+            alert("Bug reports are currently down! Sorry for the inconvienence!");
         });
     </script>
 
