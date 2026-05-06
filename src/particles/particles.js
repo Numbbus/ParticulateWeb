@@ -285,6 +285,9 @@ export class Wire extends StaticSolid {
         this.energized = false;
         this.lastEnergizedTick = -1;
 
+        this.connectedToBattery = false;
+        this.connectedToWireConnectedToBattery = false;
+
         this.triggers = ['Wire', 'Battery'];
 
         this.timeout = null;
@@ -292,10 +295,21 @@ export class Wire extends StaticSolid {
 
     action(){
         let neighbors = this.getNeighbors();
-
+        let foundBattery = false;
         for (let n of neighbors){
             if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
                 let p = n.particle;
+                if(p instanceof Battery){
+                    this.connectedToBattery = true;
+                    foundBattery=true;
+                }else if(p.connectedToBattery || p.connectedToWireConnectedToBattery){
+                    this.connectedToWireConnectedToBattery = true;
+                }
+
+                if(!foundBattery){
+                    this.connectedToBattery = false;
+                }
+
 
                 if (p.conductive && p.lastEnergizedTick === this.app.tick - 1){
                     this.shock();
@@ -312,11 +326,16 @@ export class Wire extends StaticSolid {
         this.lastEnergizedTick = this.app.tick;
         this.setColor([0xFFFF66]);
 
-        this.timeout = setTimeout(() => {
-            this.energized = false;
-            this.setColor(this.colors);
-            this.timeout = null;
-        }, 500);
+        if(!this.connectedToWireConnectedToBattery){
+            this.timeout = setTimeout(() => {
+                this.energized = false;
+                this.setColor(this.colors);
+                this.timeout = null;
+            }, 500);
+        }else{
+            
+        }
+
     }
 }
 
@@ -416,6 +435,23 @@ export class Battery extends StaticSolid {
 
         this.conductive = true;
         this.energized = true;
+
+        this.triggers = ['Wire', 'LightBulb'];
+    }
+
+    action(){
+        this.radiateHeat();
+
+        for (let n of this.getNeighbors()){
+            if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                let p = n.particle;
+
+                if (p.conductive){
+                    p.shock(true);
+                    return;
+                }
+            }
+        }
     }
 }
 
