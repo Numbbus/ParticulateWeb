@@ -270,6 +270,149 @@ export class MudWall extends StaticSolid {
     }
 }
 
+export class Wire extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 10, 0, app, matrix)
+
+        this.colors = [0xBB7333, 0xC27632, 0xA86227] ;
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Pipe extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 20, 0, app, matrix)
+
+        this.colors = [0x6E7B8B, 0x5F6A78, 0x515C69];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Cloner extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 40, 0, app, matrix)
+
+        this.colors = [0xA11135, 0x961434, 0xA11F3E];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Pusher extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 30, 0, app, matrix)
+
+        this.colors = [0x453455, 0x353455, 0x453455];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class FiberOptic extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 15, 0, app, matrix)
+
+        this.colors = [0x080708, 0x1A1A1A, 0x211E20];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class PortalIn extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix)
+
+        this.colors = [0x0065ff, 0x0070ff];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class PortalOut extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 50, 0, app, matrix)
+
+        this.colors = [0xff9a00, 0xffbb00];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class LightBulb extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 5, 0, app, matrix)
+
+        this.colors = [0xFFFF99, 0xFFFF66, 0xFFFF33, 0xFFEE00, 0xE6D200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Battery extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 25, 0, app, matrix)
+
+        this.colors = [0x8F5017, 0x8A582B, 0x82491B] ;
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Cooler extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 35, 0, app, matrix)
+
+        this.colors = [0x00BFFF, 0x00A9E6, 0x0093CC, 0x007DB3, 0x006799];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Heater extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 35, 0, app, matrix)
+
+        this.colors = [0xFF4500, 0xE63E00, 0xCC3700, 0xB33000, 0x992900];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
+
+export class Sensor extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 18, 0, app, matrix)
+
+        this.colors = [0xFFD700, 0xE6C200, 0xCCAD00, 0xB39800, 0x998200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+}
 
 // Moveable Solids
 
@@ -434,26 +577,18 @@ export class Mud extends StiffSolid {
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.lastTransferAttempt = 0;
     
-        this.triggers = ['Water'];
+        this.triggers = ['Dirt'];
     }
 
     action(){
         this.radiateHeat(); 
-
-        if(this.temp >= 20){
-            if(Math.random() * 100 < (10 + this.temp)){
-                this.matrix.replaceParticle(this.x, this.y, Dirt);
-                return;
-            }
-        }
-
-        this.radiateHeat(); 
         
-        if(this.temp >= 20){
+        if(this.temp >= 50){
             if(Math.random() * 100 < (10 + this.temp)){
-                this.matrix.replaceParticle(this.x, this.y, Dirt);
-                return;
+                this.matrix.replaceParticle(this.x, this.y, Dirt, this.temp);
             }
         }
 
@@ -462,18 +597,22 @@ export class Mud extends StiffSolid {
         if (now - this.lastTransferAttempt >= 5000) {
             const neighbors = this.getNeighbors();
 
-            for( let n of neighbors){
-                if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
-                    if(n.y >= this.y && n.particle instanceof Dirt){
-                        let chance = Math.random() * 100;
-                        if(chance <= 20){
-                            this.matrix.replaceParticle(n.x, n.y, Mud);
-                            this.matrix.replaceParticle(this.x, this.y, Dirt);
-                            return;
+            if(neighbors){
+                for( let n of neighbors){
+                    if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                        if(n.y >= this.y && n.particle instanceof Dirt){
+                            let chance = Math.random() * 100;
+                            if(chance <= 20){
+                                this.matrix.replaceParticle(n.x, n.y, Mud);
+                                this.matrix.replaceParticle(this.x, this.y, Dirt);
+                                return;
+                            }
                         }
                     }
                 }
             }
+
+
             this.lastTransferAttempt = now;
         }
     }
@@ -499,7 +638,7 @@ export class WetSand extends StiffSolid {
         
         if(this.temp >= 50){
             if(Math.random() * 100 < (10 + this.temp)){
-                this.matrix.replaceParticle(this.x, this.y, Sand);
+                this.matrix.replaceParticle(this.x, this.y, Sand), this.temp;
             }
         }
 
