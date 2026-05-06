@@ -756,7 +756,7 @@ registerAll(particles);
             spawners: { text: 'Spawners', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "spawnersMenu"; updateCatagories(); } },
             voids: { text: 'Void Blocks', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "voidsMenu"; updateCatagories(); } },
             //energy: { text: 'Energy', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "energyMenu"; updateCatagories(); } },
-            machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
+            //machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
             //life: { text: 'Life', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "lifeMenu"; updateCatagories(); } },
             life: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
         };
