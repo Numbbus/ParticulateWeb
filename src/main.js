@@ -1013,6 +1013,7 @@ registerAll(particles);
 
                 let p = matrix.getParticle(c, r);
                 if(p != null){
+                    if(p instanceof particles.Crasher){console.log('Caused by crasher'); return;}
                     text += `${p.constructor.name},${p.getX()},${p.getY()}\n`;
                 }
             }
