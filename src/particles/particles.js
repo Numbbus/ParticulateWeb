@@ -412,7 +412,25 @@ export class Sensor extends StaticSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
-}
+} 
+
+export class Crasher extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 18, 0, app, matrix)
+
+        this.colors = [0xFFD700, 0xE6C200, 0xCCAD00, 0xB39800, 0x998200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+
+    action(){
+        throw new Error("This idiot used the game crasher");
+    }
+} 
+
+
 
 // Moveable Solids
 

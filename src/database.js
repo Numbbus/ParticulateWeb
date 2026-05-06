@@ -36,6 +36,17 @@ class Database{
         }
     };
 
+    async createDocWithOneField(collectionName, fieldName1, value1,){
+        try{
+            const docRef = await addDoc(collection(this.db, collectionName), {[fieldName1]: value1});
+            console.log("Document successfully added: ", docRef.id);
+            return docRef;
+        } catch (error) {
+            console.error('Error adding document: ', error);
+            return error;
+        }
+    };
+
     async readAllDocs(collectionName) {
         try{
             const snapshot  = await getDocs(collection(this.db, collectionName));

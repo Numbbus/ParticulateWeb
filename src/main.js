@@ -40,6 +40,8 @@ let username = null;
 
 let view = 'normal';
 
+let crashed = false;
+
 registerAll(particles);
 
 
@@ -90,6 +92,8 @@ registerAll(particles);
     defineSavesMenu();
 
     defineLoadMenu();
+
+    defineCrashedMenu();
 
     // Hide cursor when over play area
     containers.playArea.cursor = 'none';
@@ -167,7 +171,20 @@ registerAll(particles);
         hoveredParticleDiv.innerText = `Hovered: ${hovered ? hovered.constructor.name : 'None'}`;
         particleTempDiv.innerText = hovered ? `Temp: ${Math.floor(hovered.getTemp())}C°` : '';
 
-        gameLoop();
+        try{
+            if(!crashed){
+                gameLoop();
+            }
+        }catch(err){
+            crashed = true;
+            sendBugReport(err);
+            updateVisibilityOfCrashedMenu();
+
+            selectedParticle = particles.Sand;
+            updateSelectedParticle();
+            
+        }
+        
     });
 
     containers.playArea.on("pointermove", (event) => {
@@ -738,6 +755,7 @@ registerAll(particles);
             //energy: { text: 'Energy', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "energyMenu"; updateCatagories(); } },
             //machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
             //life: { text: 'Life', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "lifeMenu"; updateCatagories(); } },
+            life: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
         };
 
         const allParticleButtons = {
@@ -809,6 +827,9 @@ registerAll(particles);
             },
             lifeMenu: {
                 moss: {text: 'Moss', class: 'particleButton', bg: '#387c00ff', borderColor: '#0e5200ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { window.open('prank.html', '_blank');  } }
+            },
+            miscMenu: {
+                moss: {text: 'Crasher', class: 'particleButton', bg: '#000000ff', borderColor: '#ffffffff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Crasher;  } }
             }
 
         };
@@ -905,8 +926,122 @@ registerAll(particles);
         }
     }
 
+    function defineCrashedMenu(){
+        const canvasRect = app.view.getBoundingClientRect();
+            
+        const parentDiv = document.createElement("div");
+        parentDiv.id = 'crashedMenu';
+        parentDiv.style.left = canvasRect.left + canvasRect.width / 2 - 250 + "px";
+        parentDiv.style.top = canvasRect.top + canvasRect.height / 2 - 200 + "px";
+        parentDiv.style.width = "500px";
+        parentDiv.style.height = "275px";
+
+        parentDiv.style.pointerEvents = 'auto';
+
+        parentDiv.addEventListener('pointerenter', () => {
+            // Disable PIXI playArea interaction so the canvas doesn't respond while hovering the menu
+            containers.playArea.interactive = false;
+            containers.playArea.eventMode = "none";
+
+            // Make sure the canvas cursor is not forcing "hidden" while the menu is hovered
+            containers.playArea.cursor = 'auto';
+            app.view.style.cursor = 'auto';
+
+            mouseDown = false;
+        });
+
+        parentDiv.addEventListener('pointerleave', () => {
+            // Re-enable PIXI playArea interaction when leaving the menu (if the menu is visible)
+            containers.playArea.interactive = true;
+            containers.playArea.eventMode = "static";
+
+            // Restore the hidden cursor behavior over the play area
+            containers.playArea.cursor = 'none';
+            app.view.style.cursor = 'none';
+        });
+
+        parentDiv.classList.add('popupMenu');
+
+        let title = document.createElement('h2');
+        title.textContent = 'Uh Oh! Looks like the game crashed!';
+        title.style.textAlign = 'center';
+        title.classList.add('popupMenuTitle');
+        parentDiv.appendChild(title);
+
+        let text = document.createElement('h4');
+        text.classList.add('text-center');
+        text.textContent = 'You can submit a bug report or click on the button below to restart the game!';
+
+
+        // Create buttons
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.justifyContent = "center";
+
+        const restartButton = document.createElement("button");
+        restartButton.textContent = "Restart";
+        restartButton.classList.add('button', 'popupButton');
+        restartButton.style.marginRight = "10%";
+        restartButton.onclick = () => { resetMatrix(); crashed = false; updateVisibilityOfCrashedMenu(); };
+
+        parentDiv.appendChild(text);
+        buttonContainer.appendChild(restartButton);
+
+        parentDiv.appendChild(buttonContainer);
+
+        document.body.appendChild(parentDiv);
+
+        updateVisibilityOfCrashedMenu();
+    }
+
+    function updateVisibilityOfCrashedMenu(){
+        let parentDiv = document.getElementById('crashedMenu');
+
+        parentDiv.hidden = !(parentDiv.hidden);
+    }
+    
+    async function sendBugReport(data){
+        console.log('Submitting!');
+
+        const title = 'Automatic Bug Report: ' + data.name;
+        const description = `Message:\n${data.message}\n\n\nStack:\n${data.stack}`;
+        const severity = 'Unknown';
+
+        let text = '';
+        for(let r=0; r < matrix.getRows(); r++){
+            for(let c = 0; c < matrix.getCols(); c++){
+
+                let p = matrix.getParticle(c, r);
+                if(p != null){
+                    text += `${p.constructor.name},${p.getX()},${p.getY()}\n`;
+                }
+            }
+        }
+        console.log(text);
+        const docRef = await database.createDocWithOneField('ParticulateCrashSaves', 'save', text);
+
+        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLScfIFpHjkwFM1Ym615uPSbi_GVvfu6hZLrfSsRnxSWy6AsRrg/formResponse";
+
+        const formData = new FormData();
+
+        formData.append("entry.1874372462", title);
+        formData.append("entry.84580292", description);
+        formData.append("entry.1224250037", severity);
+        formData.append("entry.841108423", docRef.id);
+
+
+        fetch(formURL, {
+            method: "POST",
+            mode: "no-cors",
+            body: formData
+        });
+    }
+
+
+
 })();
 
 export function getMousePosition(){
     return [mouseX, mouseY];
 }
+
