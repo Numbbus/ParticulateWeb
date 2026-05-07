@@ -51,7 +51,7 @@ export class Shock extends Modifier {
     action(){
         let p = this.matrix.getParticle(this.x, this.y)
 
-        if(p !== null && p.conductive){
+        if(p !== null && (p.conductive || p.powerable)){
             p.shock();
             //p.setColor([p.getThermalColor()]);
         }
