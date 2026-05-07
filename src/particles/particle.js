@@ -133,9 +133,6 @@ class Particle{
 
     raiseTemp(d){
         this.temp += d;
-        
-        let hovered = this.matrix.withinBounds(this.x, this.y) ? this.matrix.getParticle(this.x, this.y) : null;
-        document.getElementById('particleTempDiv').innerText = `${hovered == null || hovered == undefined ? '' : 'Temp: '+hovered.getTemp()+'C°' }`;
     }
 
     getTemp(){
