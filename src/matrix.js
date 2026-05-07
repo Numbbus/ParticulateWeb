@@ -65,6 +65,34 @@ class Matrix {
         } 
     }
 
+    findParticle(p){
+        // Returns the first particle that matches the given class
+        for (let r = 0; r < this.rows; r++){
+            for(let c = 0; c < this.cols; c++){
+                let particle = this.getParticle(c, r);
+
+                if(particle && particle instanceof p){
+                    return particle;
+                }
+            }
+        }
+    }
+
+    findAllParticles(p){
+        // Returns the all particles that matches the given class
+        let particles = [];
+        for (let r = 0; r < this.rows; r++){
+            for(let c = 0; c < this.cols; c++){
+                let particle = this.getParticle(c, r);
+
+                if(particle && particle instanceof p){
+                    particles.push(particle);
+                }
+            }
+        }
+        return particles;
+    }
+
     deleteParticle(x, y){
         const p = this.matrix[y][x];
         if (!p) return;
@@ -80,6 +108,14 @@ class Matrix {
         return this.getParticle(x, y);
     }
 
+    moveParticle(p, x, y){
+        // Only can move particle to empty spaces
+        if(this.withinBounds(x, y) && this.matrix[y][x] == null){
+            this.matrix[p.y][p.x] = null;
+            this.matrix[y][x] = p;
+            p.setPosition(x, y);
+        }
+    }
 
     swapParticles(x1, y1, x2, y2){         
         if(this.withinBounds(x1, y1) && this.withinBounds(x2, y2)){
