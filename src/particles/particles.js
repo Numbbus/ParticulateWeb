@@ -413,27 +413,121 @@ export class FiberOptic extends StaticSolid {
     }
 }
 
-export class PortalIn extends StaticSolid {
+class Portal extends StaticSolid{
     constructor(x, y, app, matrix){
         super(x, y, false, true, 50, 0, app, matrix)
+
+        this.pair = null;
+
+    }
+}
+
+export class PortalIn extends Portal {
+    constructor(x, y, app, matrix){
+        super(x, y, app, matrix)
 
         this.colors = [0x0065ff, 0x0070ff];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.pair = null;
+
+        let allPortals = matrix.findAllParticles(PortalOut);
+
+        for(let portal of allPortals){
+            if(!portal.pair){
+                this.pair = portal;
+                portal.pair = this;
+                break;
+            }
+        }
+    }
+
+    action(){
+
+        if(this.pair){
+            const neighbors = this.getNeighbors();
+
+            if(neighbors){
+                for(let n of neighbors){
+                    if(n.particle && !(n.particle instanceof Portal)){
+                        let nx = n.x;
+                        let ny = n.y;
+                        
+                        let px = this.pair.getX();
+                        let py = this.pair.getY();
+
+                        if(ny == this.y){
+                            if(nx - this.x == 1){
+                                this.matrix.moveParticle(n.particle, px-1, py);
+                            }else{
+                                this.matrix.moveParticle(n.particle, px+1, py);
+                            }
+                        }else{
+                            if(ny - this.y == 1){
+                                this.matrix.moveParticle(n.particle, px, py-1);
+                            }else{
+                                this.matrix.moveParticle(n.particle, px, py+1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.pair = this.matrix.getParticle(this.pair.x, this.pair.y);
+        }else{
+            let allPortals = this.matrix.findAllParticles(PortalOut);
+
+            for(let portal of allPortals){
+                if(!portal.pair){
+                    this.pair = portal;
+                    portal.pair = this;
+                    break;
+                }
+            }
+        }
+        
+        
     }
 }
 
-export class PortalOut extends StaticSolid {
+export class PortalOut extends Portal {
     constructor(x, y, app, matrix){
-        super(x, y, false, true, 50, 0, app, matrix)
+        super(x, y, app, matrix)
 
         this.colors = [0xff9a00, 0xffbb00];
 
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        let allPortals = matrix.findAllParticles(PortalIn);
+
+        for(let portal of allPortals){
+            if(!portal.pair){
+                this.pair = portal;
+                portal.pair = this;
+                break
+            }
+        }
+    }
+
+    action(){
+        if(this.pair){
+            this.pair = this.matrix.getParticle(this.pair.x, this.pair.y);
+        }else{
+            let allPortals = this.matrix.findAllParticles(PortalIn);
+
+            for(let portal of allPortals){
+                if(!portal.pair){
+                    this.pair = portal;
+                    portal.pair = this;
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -500,6 +594,18 @@ export class Cooler extends StaticSolid {
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
     }
+
+    action(){
+        this.radiateHeat();
+
+        let neighbors = this.getNeighbors();
+
+        for(let n of neighbors){
+            if(n && n.particle){
+                n.particle.raiseTemp(-1);
+            }
+        }
+    }
 }
 
 export class Heater extends StaticSolid {
@@ -511,6 +617,18 @@ export class Heater extends StaticSolid {
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+    }
+
+    action(){
+        this.radiateHeat();
+
+        let neighbors = this.getNeighbors();
+
+        for(let n of neighbors){
+            if(n && n.particle){
+                n.particle.raiseTemp(1);
+            }
+        }
     }
 }
 
@@ -787,7 +905,7 @@ export class WetSand extends StiffSolid {
                                 this.matrix.replaceParticle(this.x, this.y, Sand);
                                 return;
                             }
-                        }
+                        }Steam
                     }
                 }
             }
@@ -1088,7 +1206,7 @@ export class WaterSpawner extends Spawner {
 }
 
 export class SteamSpawner extends Spawner {
-    constructor(x, y, app, matrix){
+    constructor(x, y, app, matrix, temp = 250){
         super(x, y, false, true, 50, 0, app, matrix, Steam)
 
         this.colors = [0xeeeeee];
@@ -1098,7 +1216,10 @@ export class SteamSpawner extends Spawner {
         this.addToStage(this.rect);
 
         this.direction = -1;
+
+        this.temp = 300;
     }
+    
 }
 
 export class FireSpawner extends Spawner {
