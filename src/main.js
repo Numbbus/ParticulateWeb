@@ -158,6 +158,12 @@ registerAll(particles);
         document.getElementById('mouseCoordsDiv').innerText = `X: ${mouseX} Y: ${mouseY}`;
 
         mouseDown = true;
+
+        /*let p = matrix.getParticle(mouseX, mouseY);
+
+        if(p){
+            try{console.log(p.pair);}catch(e){}
+        }*/
     });
 
     app.tick = 0;
@@ -181,7 +187,7 @@ registerAll(particles);
             crashed = true;
             sendBugReport(err);
             updateVisibilityOfCrashedMenu();
-
+            console.error(err);
             selectedParticle = particles.Sand;
             updateSelectedParticle();
             
@@ -756,9 +762,9 @@ registerAll(particles);
             spawners: { text: 'Spawners', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "spawnersMenu"; updateCatagories(); } },
             voids: { text: 'Void Blocks', class: 'categoryButton', txtColor: '#FFFFFF', classes: ['categoryButton'], onclick: () => { selectedCategory = "voidsMenu"; updateCatagories(); } },
             //energy: { text: 'Energy', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "energyMenu"; updateCatagories(); } },
-            //machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
+            machines: { text: 'Machines', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "machinesMenu"; updateCatagories(); } },
             //life: { text: 'Life', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "lifeMenu"; updateCatagories(); } },
-            life: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
+            misc: { text: 'Misc', class: 'categoryButton', classes: ['categoryButton'], onclick: () => { selectedCategory = "miscMenu"; updateCatagories(); } },
         };
 
         const allParticleButtons = {
@@ -816,17 +822,17 @@ registerAll(particles);
             },
             machinesMenu:{
                 wire: { text: 'Wire', class: 'particleButton', bg: '#f17909ff', borderColor: '#a15600ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Wire; } },
-                pipe: { text: 'Pipe', class: 'particleButton', bg: '#445558ff', borderColor: '#546d81ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Pipe; } },
-                cloner: { text: 'Cloner', class: 'particleButton', bg: '#a11135ff', borderColor: '#6b052cff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Cloner; } },
-                pusher: { text: 'Pusher', class: 'particleButton', bg: '#453455ff', borderColor: '#37224eff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Pusher; } },
-                fiberOptic: { text: 'Fiber Optic', class: 'particleButton', bg: '#000000ff', borderColor: '#3f3f3fff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.FiberOptic; } },
+                //pipe: { text: 'Pipe', class: 'particleButton', bg: '#445558ff', borderColor: '#546d81ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Pipe; } },
+                //cloner: { text: 'Cloner', class: 'particleButton', bg: '#a11135ff', borderColor: '#6b052cff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Cloner; } },
+                //pusher: { text: 'Pusher', class: 'particleButton', bg: '#453455ff', borderColor: '#37224eff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Pusher; } },
+                //fiberOptic: { text: 'Fiber Optic', class: 'particleButton', bg: '#000000ff', borderColor: '#3f3f3fff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.FiberOptic; } },
                 portalIn: { text: 'Portal In', class: 'particleButton', bg: '#0065ff', borderColor: '#00378aff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.PortalIn; } },
                 portalOut: { text: 'Portal Out', class: 'particleButton', bg: '#ff9a00', borderColor: '#865100ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.PortalOut; } },
                 lightbulb: { text: 'Light Bulb', class: 'particleButton', bg: '#ffe93eff', borderColor: '#918428ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.LightBulb; } },
                 battery: { text: 'Battery', class: 'particleButton', bg: '#9b6a00ff', borderColor: '#8b5400ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Battery; } },
                 heater: { text: 'Heater', class: 'particleButton', bg: '#d63200ff', borderColor: '#912200ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Heater; } },
                 cooler: { text: 'Cooler', class: 'particleButton', bg: '#00d8cdff', borderColor: '#006d67ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Cooler; } },
-                sensor: { text: 'Sensor', class: 'particleButton', bg: '#3291ebff', borderColor: '#004c63ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Sensor; } },
+                //sensor: { text: 'Sensor', class: 'particleButton', bg: '#3291ebff', borderColor: '#004c63ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Sensor; } },
             },
             lifeMenu: {
                 moss: {text: 'Moss', class: 'particleButton', bg: '#387c00ff', borderColor: '#0e5200ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { window.open('prank.html', '_blank');  } }
