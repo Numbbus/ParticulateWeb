@@ -212,7 +212,7 @@ export class Wood extends StaticSolid {
         const neighbors = this.getNeighbors();
 
         for( let n of neighbors){
-            if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+            if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
                 if(n.particle instanceof Water){
                     this.burning = false;
                 }else{
@@ -233,7 +233,7 @@ export class Wood extends StaticSolid {
                     let index = Math.floor(Math.random() * 8);
                     let n = neighbors[index];
 
-                    if(n.particle == null){
+                    if(n && n.particle == null){
                         this.matrix.createParticle(n.x, n.y, Fire);
                     }
                 }else{
@@ -288,28 +288,17 @@ export class Wire extends StaticSolid {
         this.connectedToBattery = false;
         this.connectedToWireConnectedToBattery = false;
 
-        this.triggers = ['Wire', 'Battery'];
+        this.triggers = ['Wire'];
 
         this.timeout = null;
     }   
 
     action(){
         let neighbors = this.getNeighbors();
-        let foundBattery = false;
+
         for (let n of neighbors){
             if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
                 let p = n.particle;
-                if(p instanceof Battery){
-                    this.connectedToBattery = true;
-                    foundBattery=true;
-                }else if(p.connectedToBattery || p.connectedToWireConnectedToBattery){
-                    this.connectedToWireConnectedToBattery = true;
-                }
-
-                if(!foundBattery){
-                    this.connectedToBattery = false;
-                }
-
 
                 if (p.conductive && p.lastEnergizedTick === this.app.tick - 1){
                     this.shock();
@@ -324,7 +313,7 @@ export class Wire extends StaticSolid {
 
         this.energized = true;
         this.lastEnergizedTick = this.app.tick;
-        this.setColor([0xFFFF66]);
+        this.setColor([0xDDDD66]);
 
         if(!this.connectedToWireConnectedToBattery){
             this.timeout = setTimeout(() => {
@@ -334,6 +323,43 @@ export class Wire extends StaticSolid {
             }, 500);
         }else{
             
+        }
+
+    }
+}
+
+export class Battery extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 25, 0, app, matrix)
+
+        this.colors = [0x8F5017, 0x8A582B, 0x82491B] ;
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.conductive = true;
+        this.energized = true;
+
+        this.lastPulseTick = app.tick;
+
+        this.triggers = ['Wire', 'LightBulb'];
+    }
+
+    action(){
+        this.radiateHeat();
+
+        if(this.app.tick - this.lastPulseTick === 20){
+            for (let n of this.getNeighbors()){
+                if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                    let p = n.particle;
+
+                    if (p.conductive){
+                        p.shock(true);
+                    }
+                }
+            }
+            this.lastPulseTick = this.app.tick;
         }
 
     }
@@ -425,6 +451,10 @@ export class LightBulb extends StaticSolid {
         this.triggers = ['Wire', 'Battery', 'LightBulb']
 
         this.on = false;
+
+        this.powerable = true;
+
+        this.lastPoweredTick = -1;
     }
 
     action(){
@@ -437,6 +467,7 @@ export class LightBulb extends StaticSolid {
 
                 if(p.energized){
                     energizedNeighbors = true;
+                    this.lastPoweredTick = this.app.tick;
                     break;
                 }
             }
@@ -445,43 +476,17 @@ export class LightBulb extends StaticSolid {
         if(energizedNeighbors){
             this.setColor(this.poweredColors);
             this.on = true;
-        }else{
+        }else if(this.app.tick - this. lastPoweredTick === 25){
             this.setColor(this.unpoweredColors);
             this.on = false;
         }
 
     }
-}
 
-export class Battery extends StaticSolid {
-    constructor(x, y, app, matrix){
-        super(x, y, false, true, 25, 0, app, matrix)
-
-        this.colors = [0x8F5017, 0x8A582B, 0x82491B] ;
-
-        this.setColor(this.colors);
-        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
-        this.addToStage(this.rect);
-
-        this.conductive = true;
-        this.energized = true;
-
-        this.triggers = ['Wire', 'LightBulb'];
-    }
-
-    action(){
-        this.radiateHeat();
-
-        for (let n of this.getNeighbors()){
-            if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
-                let p = n.particle;
-
-                if (p.conductive){
-                    p.shock(true);
-                    return;
-                }
-            }
-        }
+    shock(){
+        this.setColor(this.poweredColors);
+        this.on = true;
+        this.lastPoweredTick = this.app.tick;
     }
 }
 
@@ -871,10 +876,12 @@ export class Alcohol extends Liquid {
 
         const neighbors = this.getNeighbors();
 
-        for( let n of neighbors){
-            if(n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
-                this.matrix.replaceParticle(this.x, this.y, Fire);
-                break;
+        if(neighbors){
+            for( let n of neighbors){
+                if(n && n.particle && this.triggers.includes(`${n.particle.constructor.name}`)){
+                    this.matrix.replaceParticle(this.x, this.y, Fire);
+                    break;
+                }
             }
         }
     }
