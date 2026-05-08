@@ -644,6 +644,46 @@ export class Sensor extends StaticSolid {
     }
 } 
 
+export class PressurePlate extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 18, 0, app, matrix)
+
+        this.colors = [0xFFD700, 0xE6C200, 0xCCAD00, 0xB39800, 0x998200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+    }
+} 
+
+export class Switch extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 18, 0, app, matrix)
+
+        this.colors = [0xFFD700, 0xE6C200, 0xCCAD00, 0xB39800, 0x998200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.on = false;
+    }
+} 
+
+export class Button extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 18, 0, app, matrix)
+
+        this.colors = [0xFFD700, 0xE6C200, 0xCCAD00, 0xB39800, 0x998200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.on = false;
+    }
+} 
+
 export class Crasher extends StaticSolid {
     constructor(x, y, app, matrix){
         super(x, y, false, true, 18, 0, app, matrix)
@@ -657,6 +697,28 @@ export class Crasher extends StaticSolid {
 
     action(){
         throw new Error("This idiot used the game crasher");
+    }
+} 
+
+export class VeyonWorker extends StaticSolid {
+    constructor(x, y, app, matrix){
+        super(x, y, false, true, 18, 0, app, matrix)
+
+        this.colors = [0xFFD700, 0xE6C200, 0xCCAD00, 0xB39800, 0x998200];
+
+        this.setColor(this.colors);
+        this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
+        this.addToStage(this.rect);
+
+        this.lastUpdate = -1;
+    }
+
+    action(){
+        let neighbors = this.getNeighbors();
+
+        for(let n of neighbors){
+            this.matrix.replaceParticle(n.x, n.y, VeyonWorker);
+        }
     }
 } 
 

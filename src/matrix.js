@@ -102,10 +102,13 @@ class Matrix {
     }
 
     replaceParticle(x, y, p, t){
-        this.deleteParticle(x, y);
-        this.createParticle(x, y, p, false, t || 15);
+        if(this.withinBounds(x, y)){
+            this.deleteParticle(x, y);
+            this.createParticle(x, y, p, false, t || 15);
 
-        return this.getParticle(x, y);
+            return this.getParticle(x, y);
+        }
+        return undefined;
     }
 
     moveParticle(p, x, y){

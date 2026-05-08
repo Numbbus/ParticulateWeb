@@ -941,12 +941,15 @@ registerAll(particles);
                 heater: { text: 'Heater', class: 'particleButton', bg: '#d63200ff', borderColor: '#912200ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Heater; } },
                 cooler: { text: 'Cooler', class: 'particleButton', bg: '#00d8cdff', borderColor: '#006d67ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Cooler; } },
                 //sensor: { text: 'Sensor', class: 'particleButton', bg: '#3291ebff', borderColor: '#004c63ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Sensor; } },
+                //pressurePlate: { text: 'Pressure Plate', class: 'particleButton', bg: '#8b9c9bff', borderColor: '#363636ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.PressurePlate; } },
+                //switch: { text: 'Switch', class: 'particleButton', bg: '#5a5b9cff', borderColor: '#25253fff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Switch; } },
             },
             lifeMenu: {
                 moss: {text: 'Moss', class: 'particleButton', bg: '#387c00ff', borderColor: '#0e5200ff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { window.open('prank.html', '_blank');  } }
             },
             miscMenu: {
-                moss: {text: 'Crasher', class: 'particleButton', bg: '#000000ff', borderColor: '#ffffffff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Crasher;  } }
+                crasher: {text: 'Crasher', class: 'particleButton', bg: '#000000ff', borderColor: '#ffffffff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.Crasher;  } },
+                veyonWorker: {text: 'Veyon Worker', class: 'particleButton', bg: '#000000ff', borderColor: '#ffffffff', classes: ['particleButton', 'selectableParticleButton'], onclick: () => { selectedParticle = particles.VeyonWorker;  } }
             }
 
         };
