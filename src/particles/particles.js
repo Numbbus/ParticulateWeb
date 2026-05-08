@@ -536,6 +536,7 @@ export class LightBulb extends StaticSolid {
 
         this.poweredColors = [0xFFFF99, 0xFFFF66];
         this.unpoweredColors = [0x2E2722, 0x292421]
+        this.colors = [0x2E2722, 0x292421]
 
         this.setColor(this.unpoweredColors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
