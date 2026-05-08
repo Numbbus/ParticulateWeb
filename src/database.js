@@ -5,7 +5,7 @@ import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.11.0/firebas
 
 // Add Firebase products that you want to use
 import { getAuth } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js'
-import { getFirestore, collection, getDocs, addDoc, query, where, doc, getDoc} from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'
+import { getFirestore, collection, getDocs, addDoc, query, where, doc, getDoc, orderBy} from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'
 
 
 
@@ -25,27 +25,20 @@ class Database{
         this.db = getFirestore(this.app);
     }
 
-    async createDoc(collectionName, fieldName1, value1, fieldName2, value2, fieldName3, value3){
-        try{
-            const docRef = await addDoc(collection(this.db, collectionName), {[fieldName1]: value1, [fieldName2]: value2, [fieldName3]: value3});
-            console.log("Document successfully added: ", docRef.id);
-            return docRef;
-        } catch (error) {
-            console.error('Error adding document: ', error);
-            return error;
-        }
-    };
+    async createDoc(collectionName, data) {
+        try {
+            const docRef = await addDoc(
+                collection(this.db, collectionName),
+                data
+            );
 
-    async createDocWithOneField(collectionName, fieldName1, value1,){
-        try{
-            const docRef = await addDoc(collection(this.db, collectionName), {[fieldName1]: value1});
-            console.log("Document successfully added: ", docRef.id);
+            console.log("Document successfully added:", docRef.id);
             return docRef;
         } catch (error) {
-            console.error('Error adding document: ', error);
-            return error;
+            console.error("Error adding document:", error);
+            throw error;
         }
-    };
+    }
 
     async readAllDocs(collectionName) {
         try{
@@ -61,6 +54,27 @@ class Database{
             console.error('Error reading document', error);
         }
     };
+
+    async readAllDocsByDate(collectionName) {
+        try {
+            const q = query(
+                collection(this.db, collectionName),
+                orderBy("date", "desc")
+            );
+
+            const snapshot = await getDocs(q);
+
+            const docs = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            return docs;
+
+        } catch (error) {
+            console.error("Error reading documents", error);
+        }
+    }
 
     async findAllWith(collectionName, fieldName, fieldValue){ 
         const q = query(

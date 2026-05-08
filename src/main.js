@@ -42,6 +42,8 @@ let view = 'normal';
 
 let crashed = false;
 
+let sortBy = 'None';
+
 registerAll(particles);
 
 
@@ -113,9 +115,8 @@ registerAll(particles);
     //app.ticker.add(gameLoop);
 
     function gameLoop(){
-
         if( !paused ){
-        matrix.updateGrid(view);
+            matrix.updateGrid(view);
         }
         if(mouseDown && !pinching){
                 if(brushSize == 1){
@@ -417,7 +418,9 @@ registerAll(particles);
             }
         }
 
-        database.createDoc('ParticulateSaves', 'name', saveName, 'username', username, 'save', text);
+        const now = new Date();
+
+        database.createDoc('ParticulateSaves', {'name': saveName, 'username': username, date: now, 'save': text});
     }
 
     function defineSavesMenu() {
@@ -567,13 +570,8 @@ registerAll(particles);
         
         let title = document.createElement('h2');
         title.style.textAlign = 'center';
-        title.textContent = "Load Play Area";
+        title.textContent = "Community Saves";
         parentDiv.appendChild(title);
-
-        let searchText = document.createElement('h5');
-        searchText.style.textAlign = 'center';
-        searchText.textContent = "Search Play Areas";
-        parentDiv.appendChild(searchText);
 
         // Search Bar
         const searchBar = document.createElement("input");
@@ -585,34 +583,75 @@ registerAll(particles);
         searchBar.style.top = 0 + "px";
         searchBar.style.width = "300px";
         searchBar.style.height = "50px";
-        searchBar.style.marginBottom = "20px";
+        searchBar.style.marginBottom = "10px";
         searchBar.classList.add('mx-auto', 'd-block');
+        searchBar.placeholder="Search...";
 
         searchBar.addEventListener('input', async (event) => { 
-            let communitySaves = document.getElementById('communitySaves');
-            communitySaves.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
-
             const allSaves = await database.findAllWith('ParticulateSaves', 'name', event.target.value);
-
-            communitySaves.innerHTML = '';
-            
-            allSaves.forEach( save => {
-                communitySaves.innerHTML += 
-                `<div class="row fs-5"> 
-                    <div class='col-lg-6 ps-5'> 
-                        <p class="p-2"> ${save.name} by: ${save.username} </p> 
-                    </div> 
-                    <div class="col-lg-6 ps-5"> 
-                        <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
-                    </div> 
-                    <hr />
-                </div>`;
-            })
+            updateCommunitySaves(allSaves);
         });
 
         parentDiv.appendChild(searchBar);
 
-        
+        const controlsWrapper = document.createElement('div');
+        controlsWrapper.classList.add('d-flex', 'justify-content-center', 'align-items-center', 'gap-2', 'w-100');
+
+        const dropdown = document.getElementById("dropdown");
+
+        dropdown.addEventListener("click", async (e) => {
+            const item = e.target.closest(".dropdown-item");
+
+            if (!item) return;
+
+            e.preventDefault();
+
+            const text = item.textContent.trim();
+
+            sortBy = text;
+
+            if(text === 'Recently Created'){
+                const allSaves = await database.readAllDocsByDate('ParticulateSaves');
+                updateCommunitySaves(allSaves);
+            }else if(text === 'None'){
+                const allSaves = await database.readAllDocs('ParticulateSaves');
+                updateCommunitySaves(allSaves);
+            }
+            
+
+            console.log("Selected text:", text);
+
+            const button = dropdown.querySelector("button");
+            button.textContent = `Sort By: ${text}`;
+        });
+
+        // Add dropdown
+        controlsWrapper.appendChild(dropdown);
+
+        // Create refresh button
+        let refreshBtn = document.createElement('button');
+
+        refreshBtn.classList.add('btn', 'btn-secondary');
+        refreshBtn.textContent = '↻';
+
+        refreshBtn.addEventListener('click', async (e) => {
+            let saves = null;
+
+            if (sortBy === 'None') {
+                saves = await database.readAllDocs('ParticulateSaves');
+            } else if (sortBy === 'Recently Created') {
+                saves = await database.readAllDocsByDate('ParticulateSaves');
+            }
+
+            updateCommunitySaves(saves);
+        });
+
+        // Add refresh button beside dropdown
+        controlsWrapper.appendChild(refreshBtn);
+
+        // Add wrapper to parent
+        parentDiv.appendChild(controlsWrapper);
+
         const communitySaves = document.createElement("div");
         communitySaves.id = 'communitySaves';
 
@@ -622,36 +661,86 @@ registerAll(particles);
         communitySaves.style.width = "100%";
         communitySaves.style.height = "325px";
 
-        communitySaves.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
-
         const allSaves = await database.readAllDocs('ParticulateSaves');
-
-        communitySaves.innerHTML = '';
-        
-        allSaves.forEach( save => {
-            communitySaves.innerHTML += 
-            `<div class="row fs-5"> 
-                <hr />
-                <div class='col-lg-6 ps-5'> 
-                    <p class="p-2"> ${save.name} by: ${save.username} </p> 
-                </div> 
-                <div class="col-lg-6 ps-5"> 
-                    <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
-                </div> 
-            </div>`;
-        })
 
         parentDiv.appendChild(communitySaves);
 
         document.body.appendChild(parentDiv);
 
+        updateCommunitySaves(allSaves);
+
         updateVisibilityOfLoadMenu();
 
     }
 
-    function updateVisibilityOfLoadMenu(){
-        let parentDiv = document.getElementById('loadMenu');
+    function updateCommunitySaves(docs){
+        let communitySaves = document.getElementById('communitySaves');
+        communitySaves.innerHTML = "<div class='text-center mt-5'> Loading... </div>"
 
+        communitySaves.innerHTML = '';
+        
+        if(sortBy === 'None'){
+            docs.forEach( save => {
+                if(!save.date){ 
+                    communitySaves.innerHTML += 
+                    `
+                    <div class="row fs-5"> 
+                        <hr />
+                        <div class='col-lg-6 ps-5'> 
+                            <p class="p-2 mb-0 pb-0"> ${save.name} by: ${save.username} </p> 
+                            <p class="fs-6 p-2 pt-0"> Date Created: N/A </p>
+                        </div> 
+                        <div class="col-lg-6 ps-5"> 
+                            <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                        </div> 
+                    </div>
+                    `;
+                }else{
+                    let date = save.date.toDate();
+                    let d = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+                    communitySaves.innerHTML += 
+                    `
+                    <div class="row fs-5"> 
+                        <hr />
+                        <div class='col-lg-6 ps-5'> 
+                            <p class="p-2 mb-0 pb-0"> ${save.name} by: ${save.username} </p> 
+                            <p class="fs-6 p-2 pt-0"> Date Created: ${d} </p>
+                        </div> 
+                        <div class="col-lg-6 ps-5"> 
+                            <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                        </div> 
+                    </div>
+                    `;
+                }
+
+            })
+        }else{
+            docs.forEach( save => {
+                if(save.date){
+                    let date = save.date.toDate();
+                    let d = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+                    communitySaves.innerHTML += 
+                    `
+                    <div class="row fs-5"> 
+                        <hr />
+                        <div class='col-lg-6 ps-5'> 
+                            <p class="p-2 mb-0 pb-0"> ${save.name} by: ${save.username} </p> 
+                            <p class="fs-6 p-2 pt-0"> Date Created: ${d} </p>
+                        </div> 
+                        <div class="col-lg-6 ps-5"> 
+                            <button class="btn btn-dark mt-1" onclick = 'downloadAndApplyPlayArea("${save.id}")'> Download </button> 
+                        </div> 
+                    </div>
+                    `;
+                }
+            });
+        }
+
+    }
+
+    async function updateVisibilityOfLoadMenu(){
+        let parentDiv = document.getElementById('loadMenu');
+        console.log
         parentDiv.hidden = !(parentDiv.hidden);
     }
     
@@ -1027,8 +1116,8 @@ registerAll(particles);
                 }
             }
         }
-        console.log(text);
-        const docRef = await database.createDocWithOneField('ParticulateCrashSaves', 'save', text);
+
+        const docRef = await database.createDoc('ParticulateCrashSaves', {'save': text});
 
         const formURL = "https://docs.google.com/forms/d/e/1FAIpQLScfIFpHjkwFM1Ym615uPSbi_GVvfu6hZLrfSsRnxSWy6AsRrg/formResponse";
 
