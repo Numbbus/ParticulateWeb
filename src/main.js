@@ -266,6 +266,14 @@ registerAll(particles);
     });
 
     function resetMatrix(){
+        for(let r = 0; r<matrix.getRows(); r++){
+            for(let c = 0; c<matrix.getCols(); c++){
+                let p = matrix.getParticle(c, r);
+                if(p instanceof particles.VeyonWorker){
+                    return;
+                }
+            }
+        }
         containers.playArea.removeChildren().forEach(child => child.destroy({ children: true }));
         containers.playArea.addChild(new Graphics().rect(0, 0, app.screen.width, app.screen.height).fill(0x555555));
         matrix = new Matrix(app, containers); 

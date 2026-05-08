@@ -1,6 +1,7 @@
 import Liquid from "./liquids.js";
 import Particle from "./particle.js";
 import Gas from "./gas.js"
+import { VeyonWorker } from "./particles.js";
 
 class Solid extends Particle{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15){
@@ -130,6 +131,9 @@ class Void extends Solid{
         let neighbor = undefined;
 
         for(let n of neighbors){
+            if(n.particle && n.particle instanceof VeyonWorker){
+                return;
+            }
             if(!(n.particle instanceof Void) && n.particle instanceof this.voidParticle){
                 this.matrix.replaceParticle(n.x, n.y, null);
             }

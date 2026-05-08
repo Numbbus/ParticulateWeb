@@ -1101,7 +1101,7 @@ export class Acid extends Liquid {
         let neighbors = this.getNeighbors();
 
         neighbors.forEach((n) => {
-            if(n.particle != null && !(n.particle instanceof Acid) && !(n.particle instanceof AcidSpawner)){
+            if(n.particle != null && !(n.particle instanceof Acid) && !(n.particle instanceof AcidSpawner) && !(n.particle instanceof VeyonWorker)){
                 this.matrix.deleteParticle(n.x, n.y);
             }
         });

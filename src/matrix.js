@@ -1,5 +1,6 @@
 import Particle from "./particles/particle.js";
 import Modifier from "./modifiers.js";
+import { VeyonWorker } from "./particles/particles.js";
 
 class Matrix {
     constructor(app, containers){
@@ -45,6 +46,7 @@ class Matrix {
     createParticle(x, y, ParticleClass, override, temp){
         if(this.withinBounds(x, y)){
             if(ParticleClass == null || ParticleClass.prototype instanceof Particle){
+                if(this.getParticle(x, y) && this.getParticle(x, y) instanceof VeyonWorker){return;}
                 if(ParticleClass === null){ this.deleteParticle(x, y) }
 
                 else if(this.matrix[y][x] === null || override){
