@@ -782,7 +782,26 @@ registerAll(particles);
     window.addEventListener('resize', () => {
         //console.log(`Width: ${window.innerWidth}, Height: ${window.innerHeight}`);
         createNewMenu();
+
+        updatePositionOfMenus();
     });
+
+    function updatePositionOfMenus(){
+        const canvasRect = app.view.getBoundingClientRect();
+
+        let loadMenu = document.getElementById('loadMenu');
+        let savesMenu = document.getElementById('saveMenu');
+        let crashedMenu = document.getElementById('crashedMenu');
+
+        loadMenu.style.left = canvasRect.left + canvasRect.width / 2 - 250 + "px";
+        loadMenu.style.top = canvasRect.top + canvasRect.height / 2 - 250 + "px";
+
+        savesMenu.style.left = canvasRect.left + canvasRect.width / 2 - 250 + "px";
+        savesMenu.style.top = canvasRect.top + canvasRect.height / 2 - 200 + "px";
+
+        crashedMenu.style.left = canvasRect.left + canvasRect.width / 2 - 250 + "px";
+        crashedMenu.style.top = canvasRect.top + canvasRect.height / 2 - 200 + "px";
+    }
 
     function adjustBrightness(hex, factor) { 
         let r = (hex >> 16) & 0xff;
