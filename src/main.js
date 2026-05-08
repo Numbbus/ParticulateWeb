@@ -362,6 +362,13 @@ registerAll(particles);
     });
 
     function saveAndDownloadPlayArea(){
+
+        let inputOne = document.getElementById('saveNameInput');
+        inputOne.value = '';
+
+        let inputTwo = document.getElementById('usernameInput');
+        inputTwo.value = '';
+
         let text = '';
 
         for(let r=0; r < matrix.getRows(); r++){
@@ -407,6 +414,13 @@ registerAll(particles);
     }
 
     function saveAndPublishPlayArea(){
+
+        let inputOne = document.getElementById('saveNameInput');
+        inputOne.value = '';
+
+        let inputTwo = document.getElementById('usernameInput');
+        inputTwo.value = '';
+
         let text = '';
 
         for(let r=0; r < matrix.getRows(); r++){
