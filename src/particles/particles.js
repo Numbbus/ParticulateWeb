@@ -361,7 +361,6 @@ export class Battery extends StaticSolid {
             }
             this.lastPulseTick = this.app.tick;
         }
-
     }
 }
 
@@ -653,6 +652,24 @@ export class PressurePlate extends StaticSolid {
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.lastPulseTick = app.tick;
+    }
+
+    action(){
+        this.radiateHeat();
+        if(this.app.tick - this.lastPulseTick === 20){
+            let top = this.matrix.getParticle(this.x, this.y-1);
+            
+            if(top && !(top instanceof StaticSolid)){
+                let bottom = this.matrix.getParticle(this.x, this.y+1);
+                if(bottom){
+                    bottom.shock();
+                }
+                
+            }
+            this.lastPulseTick = this.app.tick;
+        }
     }
 } 
 

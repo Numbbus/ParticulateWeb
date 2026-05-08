@@ -14,7 +14,7 @@ class StaticSolid extends Solid{
     }
 }
 
-class MoveableSolid extends StaticSolid{
+class MoveableSolid extends Solid{
     constructor(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp = 15)
     {
         super(x, y, isFlammable, isDestructable, toughness, speed, app, matrix, temp)

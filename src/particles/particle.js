@@ -37,8 +37,9 @@ class Particle{
     }
 
 
-    move(){}
-    action(){ this.radiateHeat(); }
+    move(){};
+    action(){ this.radiateHeat(); };
+    shock(){};
 
     getNeighbors() {
         if(!this.matrix){return null;}
