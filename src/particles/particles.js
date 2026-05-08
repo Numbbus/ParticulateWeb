@@ -418,7 +418,7 @@ class Portal extends StaticSolid{
         super(x, y, false, true, 50, 0, app, matrix)
 
         this.pair = null;
-
+        this.lastCheck = -1;
     }
 }
 
@@ -477,7 +477,7 @@ export class PortalIn extends Portal {
             }
 
             this.pair = this.matrix.getParticle(this.pair.x, this.pair.y);
-        }else{
+        }else if(this.app.tick - this.lastCheck >= 500){
             let allPortals = this.matrix.findAllParticles(PortalOut);
 
             for(let portal of allPortals){
@@ -517,7 +517,7 @@ export class PortalOut extends Portal {
     action(){
         if(this.pair){
             this.pair = this.matrix.getParticle(this.pair.x, this.pair.y);
-        }else{
+        }else if (this.app.tick - this.lastCheck >= 500){
             let allPortals = this.matrix.findAllParticles(PortalIn);
 
             for(let portal of allPortals){
