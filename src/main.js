@@ -106,6 +106,7 @@ registerAll(particles);
 
     containers.playArea.on("pointerout", () => {
         containers.playArea.cursor = 'none'; // stays none over play area
+        mouseDown = false;
     });
 
     let matrix = new Matrix(app, containers)
