@@ -112,8 +112,12 @@ registerAll(particles);
         withinBounds = false;
     });
 
-    containers.playArea.on("pointerenter", () => {
+    containers.playArea.on("pointerenter", (event) => {
         withinBounds = true;
+        previouseMouseX = mouseX;
+        previouseMouseY = mouseY;
+        mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
+        mouseY = Math.trunc(event.global.y / matrix.getTileSize()) - Math.floor(brushSize / 2);
     });
 
     let matrix = new Matrix(app, containers)
@@ -148,6 +152,10 @@ registerAll(particles);
     app.renderer.events = new EventSystem(app.renderer);
     containers.playArea.eventMode = "static";
     containers.playArea.hitArea = app.screen;
+
+    document.addEventListener('mouseup', (event) => {
+        mouseDown = false;
+    });
 
     containers.playArea.on("pointerover", (event) => {
         mouseOver = true;
@@ -1193,6 +1201,8 @@ registerAll(particles);
 
 
 })();
+
+
 
 export function getMousePosition(){
     return [mouseX, mouseY];
