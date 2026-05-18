@@ -221,6 +221,8 @@ registerAll(particles);
         outline.clear();
         outline.rect(0, 0, tileSize * brushSize, tileSize * brushSize)
             .stroke({ width: 1, color: 0xff0000 });
+        mouseX = Math.trunc(event.global.x / matrix.getTileSize()) - Math.floor(brushSize / 2);
+        mouseY = Math.trunc(event.global.y / matrix.getTileSize()) - Math.floor(brushSize / 2);
     });
     
     window.addEventListener('keydown', (event) => {
