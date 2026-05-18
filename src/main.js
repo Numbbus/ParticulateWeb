@@ -17,6 +17,8 @@ let mouseDown = false;
 let mouseX = 0;
 let mouseY = 0;
 
+let withinBounds = false;
+
 let previouseMouseX = null;
 let previouseMouseY = null;
 
@@ -106,7 +108,12 @@ registerAll(particles);
 
     containers.playArea.on("pointerout", () => {
         containers.playArea.cursor = 'none'; // stays none over play area
-        mouseDown = false;
+        //mouseDown = false;
+        withinBounds = false;
+    });
+
+    containers.playArea.on("pointerenter", () => {
+        withinBounds = true;
     });
 
     let matrix = new Matrix(app, containers)
@@ -119,7 +126,7 @@ registerAll(particles);
         if( !paused ){
             matrix.updateGrid(view);
         }
-        if(mouseDown && !pinching){
+        if(mouseDown && withinBounds && !pinching){
                 if(brushSize == 1){
                         matrix.traverseMatrixAndCreate(previouseMouseX, previouseMouseY, mouseX, mouseY, selectedParticle, override);
                 }else{
