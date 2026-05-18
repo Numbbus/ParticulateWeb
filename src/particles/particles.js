@@ -532,17 +532,17 @@ export class PortalOut extends Portal {
 
 export class LightBulb extends StaticSolid {
     constructor(x, y, app, matrix){
-        super(x, y, false, true, 5, 0, app, matrix)
+        super(x, y, false, true, 5, 0, app, matrix);
 
         this.poweredColors = [0xFFFF99, 0xFFFF66];
-        this.unpoweredColors = [0x2E2722, 0x292421]
-        this.colors = [0x2E2722, 0x292421]
+        this.unpoweredColors = [0x2E2722, 0x292421];
+        this.colors = [0x2E2722, 0x292421];
 
         this.setColor(this.unpoweredColors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
 
-        this.triggers = ['Wire', 'Battery', 'LightBulb']
+        this.triggers = ['Wire', 'Battery', 'LightBulb'];
 
         this.on = false;
 
@@ -586,7 +586,7 @@ export class LightBulb extends StaticSolid {
 
 export class Cooler extends StaticSolid {
     constructor(x, y, app, matrix){
-        super(x, y, false, true, 35, 0, app, matrix)
+        super(x, y, false, true, 35, 0, app, matrix);
 
         this.colors = [0x00BFFF, 0x00A9E6, 0x0093CC, 0x007DB3, 0x006799];
 
