@@ -38,6 +38,8 @@ class Particle{
         this.conductive = false;
 
         this.lastUpdatedTick = this.app.tick;
+
+        this.thermalGradients = app.thermalGradients;
     }
 
 
@@ -170,15 +172,7 @@ class Particle{
 
         t = Math.max(0, Math.min(1, t)); // clamp 0–1
 
-        const gradient = [
-            // Loosely follow Rainbow thermal color pallet 
-            [0, 1, 76],   
-            [0, 92, 211], 
-            [88, 179, 43],  
-            [243, 202, 9], 
-            [251, 24, 20],    
-            [255, 255, 255]
-        ];
+        const gradient = this.thermalGradients.rainbow; 
 
         const scaled = t * (gradient.length - 1);
         const index = Math.floor(scaled);

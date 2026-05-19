@@ -46,6 +46,24 @@ let crashed = false;
 
 let sortBy = 'None';
 
+const thermalGradients = {
+    rainbow:
+    [[0, 1, 76],   
+    [0, 92, 211], 
+    [88, 179, 43],  
+    [243, 202, 9], 
+    [251, 24, 20],    
+    [255, 255, 255]],
+
+    whiteHot:
+    [[0, 0, 0],
+    [255, 255, 255]],
+
+    blackHot:
+    [[255, 255, 255],
+    [0, 0, 0]],
+}
+
 registerAll(particles);
 
 
@@ -60,6 +78,8 @@ registerAll(particles);
         width: Math.min(window.innerWidth - margin * 2, maxWidth),
         height: Math.min(window.innerHeight - margin * 2, maxHeight)
     });
+
+    app.thermalGradients = thermalGradients;
 
     const hammer = new Hammer.Manager(app.view);
     const pinch = new Hammer.Pinch();
