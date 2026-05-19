@@ -19,6 +19,8 @@ class Particle{
         this.app = app;
         this.matrix = matrix;
 
+        this.updated = false;
+
         this.tileSize = matrix.getTileSize();
         this.containers = matrix.getContainers();
 
@@ -47,7 +49,7 @@ class Particle{
 
         const directions = [
                       [0, -1],
-            [-1,  0],          [1,  0],
+             [-1,  0],        [1,  0],
                       [0,  1]
         ];
 
