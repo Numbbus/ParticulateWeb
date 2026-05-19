@@ -1013,6 +1013,8 @@ export class Water extends Liquid {
 
         this.boilingPoint = 212;
         this.freezePoint = 0;
+
+        this.density = 1;
     }
 
     action(){
@@ -1028,7 +1030,7 @@ export class Water extends Liquid {
 
 export class Lava extends Liquid {
     constructor(x, y, app, matrix){
-        super(x, y, false, true, 5, 0, app, matrix)
+        super(x, y, false, true, 5, 2, app, matrix)
 
         this.colors = [0xFFB900, 0xFFC000, 0xFFC800, 0xFFD000, 0xFFD700];
 
@@ -1039,6 +1041,8 @@ export class Lava extends Liquid {
         this.conductivity = 0.8
 
         this.temp = 1500;
+
+        this.density = 3;
     }
 
     action(){
@@ -1063,6 +1067,8 @@ export class Alcohol extends Liquid {
         this.triggers = ['Fire', 'Lava']
 
         this.autoIgnitionTemp = 350;
+
+        this.density = 0.8;
     }
 
     action(){
@@ -1094,6 +1100,9 @@ export class Acid extends Liquid {
         this.setColor(this.colors);
         this.rect.position.set(this.x * this.tileSize, this.y * this.tileSize);
         this.addToStage(this.rect);
+
+        this.density = 1.2;
+        
     }
 
     action(){
