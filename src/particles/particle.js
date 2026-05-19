@@ -36,6 +36,8 @@ class Particle{
         this.heatConductivity = 0.25;
 
         this.conductive = false;
+
+        this.lastUpdatedTick = this.app.tick;
     }
 
 
@@ -67,7 +69,7 @@ class Particle{
                 neighbors.push({
                     x,
                     y,
-                    particle: null
+                    particle: undefined
                 });
             }
         }
