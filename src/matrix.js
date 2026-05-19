@@ -10,6 +10,8 @@ class Matrix {
 
         this.tileSize = 6;
 
+        this.updateDirection = 1;
+
         // Initialize matrix to size of the canvas with null values
         this.rows = Math.trunc(containers.playArea.height / this.tileSize);
         this.cols = Math.trunc(containers.playArea.width / this.tileSize);
@@ -27,16 +29,62 @@ class Matrix {
     }
 
     updateGrid(view){
-        for (let r = this.rows-1; r >= 0; r--)
-        {
-            for(let c = this.cols-1; c >= 0; c--)
-            {
+        for (let r = 0; r < this.rows; r++) {
+
+            for(let c = 0; c < this.cols; c++) {
+
                 let p = this.getParticle(c, r);
-                if(p != null){
-                    p.move();
-                    p.action();
-                    if(view == 'thermal'){
-                        p.setColor([p.getThermalColor()]);
+
+                if(p){
+                    p.updated = false;
+                }
+            }
+        }
+        
+        if(this.updateDirection === 1){
+
+            this.updateDirection = 0;
+
+            for (let r = this.rows - 1; r >= 0; r--) {
+
+                for(let c = this.cols - 1; c >= 0; c--) {
+
+                    let p = this.getParticle(c, r);
+
+                    if(p && !p.updated){
+
+                        p.move();
+                        p.action();
+
+                        p.updated = true;
+
+                        if(view == 'thermal'){
+                            p.setColor([p.getThermalColor()]);
+                        }
+                    }
+                }
+            }
+
+        }else{
+
+            this.updateDirection = 1;
+
+            for (let r = this.rows - 1; r >= 0; r--) {
+
+                for(let c = 0; c < this.cols; c++) {
+
+                    let p = this.getParticle(c, r);
+
+                    if(p && !p.updated){
+
+                        p.move();
+                        p.action();
+
+                        p.updated = true;
+
+                        if(view == 'thermal'){
+                            p.setColor([p.getThermalColor()]);
+                        }
                     }
                 }
             }
